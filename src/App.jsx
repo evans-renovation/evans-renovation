@@ -143,7 +143,7 @@ export default function App() {
           {/* Logo */}
           <div className="cursor-pointer" onClick={() => window.scrollTo(0,0)}>
    <img 
-     src="/EVANS_LOGO.svg" 
+     src="/EVANS_LOGO.png" 
      alt="Evans Rénovation" 
      className="h-16 w-auto object-contain mix-blend-screen invert" 
    />
@@ -384,5 +384,6 @@ export default function App() {
     </div>
   );
 }
+
 
 
