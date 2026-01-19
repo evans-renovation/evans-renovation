@@ -184,9 +184,9 @@ export default function App() {
             Based in Charente & Dordogne
           </div>
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-8 tracking-tight leading-[1.1] animate-in slide-in-from-bottom-8 duration-700 delay-100">
-            Restoring the <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500 italic pr-2">Heart</span>
-            of the Home.
+            Breathing new <br/>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500 italic pr-2">Life</span>
+            into old Stone.
           </h1>
           <p className="text-lg md:text-xl text-slate-300 mb-10 max-w-xl mx-auto font-light leading-relaxed animate-in slide-in-from-bottom-8 duration-700 delay-200">
             English craftsmanship meets French architectural heritage. We manage your renovation from the first stone to the final finish.
@@ -384,6 +384,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
