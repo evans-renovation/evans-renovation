@@ -145,7 +145,7 @@ export default function App() {
    <img 
      src="/EVANS_LOGO.svg" 
      alt="Evans Rénovation" 
-     className="h-16 w-auto object-contain" 
+     className="h-16 w-auto object-contain mix-blend-screen invert" 
    />
 </div>
           
@@ -384,4 +384,5 @@ export default function App() {
     </div>
   );
 }
+
 
