@@ -145,7 +145,7 @@ export default function App() {
    <img 
      src="/EVANS_LOGO.png" 
      alt="Evans Rénovation" 
-     className="h-16 w-auto object-contain mix-blend-screen invert" 
+     className={`h-16 w-auto object-contain transition-all duration-300 ${scrolled ? '' : 'invert brightness-0'}`} 
    />
 </div>
           
@@ -384,6 +384,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
