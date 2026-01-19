@@ -141,14 +141,13 @@ export default function App() {
       <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-6'}`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           {/* Logo */}
-          <div className="flex flex-col select-none cursor-pointer" onClick={() => window.scrollTo(0,0)}>
-            <span className={`text-2xl font-bold tracking-tighter uppercase transition-colors ${scrolled ? 'text-slate-900' : 'text-white'}`}>
-              Evans
-            </span>
-            <span className={`text-[10px] tracking-[0.35em] font-medium uppercase -mt-1 ${scrolled ? 'text-amber-600' : 'text-amber-400'}`}>
-              Rénovation
-            </span>
-          </div>
+          <div className="cursor-pointer" onClick={() => window.scrollTo(0,0)}>
+   <img 
+     src="/EVANS_LOGO.svg" 
+     alt="Evans Rénovation" 
+     className="h-16 w-auto object-contain" 
+   />
+</div>
           
           {/* Desktop Links */}
           <div className={`hidden md:flex items-center space-x-8 text-xs font-bold uppercase tracking-widest ${scrolled ? 'text-slate-600' : 'text-slate-200'}`}>
@@ -385,3 +384,4 @@ export default function App() {
     </div>
   );
 }
+
