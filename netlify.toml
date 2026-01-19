@@ -1,0 +1,9 @@
+# This file tells Netlify exactly what to do so you don't have to guess in the settings
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
