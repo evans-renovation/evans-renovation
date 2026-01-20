@@ -174,6 +174,30 @@ const systemPrompt = prompts[language];
               {item}
             </a>
           ))}
+          {/* ... inside the Mobile Menu Overlay div ... */}
+
+{['Portfolio', 'Services', 'Workshop', 'Contact'].map((item) => (
+  <a 
+    key={item}
+    href={`#${item.toLowerCase()}`} 
+    onClick={() => setIsMenuOpen(false)}
+    className="text-2xl text-white font-serif font-light tracking-wide hover:text-evans-amber transition-colors"
+  >
+    {item}
+  </a>
+))}
+
+{/* --- NEW: Add this Mobile Language Button here --- */}
+<button 
+  onClick={() => {
+    setLanguage(language === 'en' ? 'fr' : 'en');
+    setIsMenuOpen(false); // Close menu after switching
+  }}
+  className="mt-8 px-6 py-2 border border-white/20 rounded-full text-sm font-bold uppercase tracking-widest text-slate-400 hover:text-white hover:border-white transition-all"
+>
+  {language === 'en' ? 'Switch to French' : 'Switch to English'}
+</button>
+          
         </div>
       )}
 
@@ -470,6 +494,7 @@ const systemPrompt = prompts[language];
     </div>
   );
 }
+
 
 
 
