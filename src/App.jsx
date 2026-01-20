@@ -87,7 +87,32 @@ export default function App() {
       setIsAiLoading(false);
     }
   };
+// --- NEW: Add this function here ---
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    
+    // 1. Go to https://formspree.io, create a free form, and get your unique ID
+    // 2. Replace "YOUR_ID_HERE" with that ID (e.g., "xkdqvng")
+    const formEndpoint = "https://formspree.io/f/xaqqjray";
 
+    try {
+      const response = await fetch(formEndpoint, {
+        method: "POST",
+        body: formData,
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (response.ok) {
+        alert("Message sent successfully!");
+        e.target.reset(); // Clears the form inputs
+      } else {
+        alert("Oops! There was a problem sending your form.");
+      }
+    } catch (error) {
+      alert("Error sending message. Please try again later.");
+    }
+  };
   // --- Data & Content ---
   const services = [
     { 
@@ -358,7 +383,10 @@ export default function App() {
           </div>
 
           {/* Simple Form */}
-          <form className="bg-white p-8 rounded-2xl text-slate-900 shadow-xl" onSubmit={(e) => e.preventDefault()}>
+          <form 
+  className="bg-white p-8 rounded-2xl text-slate-900 shadow-xl" 
+  onSubmit={handleFormSubmit}
+>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <input type="text" placeholder="Name" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none" />
@@ -384,6 +412,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
