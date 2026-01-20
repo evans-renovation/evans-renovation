@@ -182,13 +182,7 @@ const systemPrompt = prompts[language];
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           {/* Logo */}
           <div className="cursor-pointer" onClick={() => window.scrollTo(0,0)}>
-            {/* Inside the Navbar, maybe next to the Contact button */}
-<button 
-  onClick={() => setLanguage(language === 'en' ? 'fr' : 'en')}
-  className="ml-4 px-3 py-1 border border-slate-300 rounded text-xs font-bold uppercase hover:bg-slate-100 transition-colors"
->
-  {language === 'en' ? 'FR' : 'EN'}
-</button>
+            
    <img 
      src="/EVANS_LOGO.png" 
      alt="Evans Rénovation" 
@@ -476,6 +470,7 @@ const systemPrompt = prompts[language];
     </div>
   );
 }
+
 
 
 
