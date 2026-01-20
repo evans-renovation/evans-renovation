@@ -387,18 +387,49 @@ export default function App() {
   className="bg-white p-8 rounded-2xl text-slate-900 shadow-xl" 
   onSubmit={handleFormSubmit}
 >
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <input type="text" placeholder="Name" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none" />
-                <input type="text" placeholder="Phone" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none" />
-              </div>
-              <input type="email" placeholder="Email Address" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none" />
-              <textarea rows="4" placeholder="Tell us about your project..." className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none"></textarea>
-              <button className="w-full py-4 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 transition-all shadow-lg">
-                Send Message
-              </button>
-            </div>
-          </form>
+  <div className="space-y-4">
+    <div className="grid grid-cols-2 gap-4">
+      {/* 1. Added name="name" */}
+      <input 
+        type="text" 
+        name="name" 
+        placeholder="Name" 
+        required
+        className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none" 
+      />
+      
+      {/* 2. Added name="phone" */}
+      <input 
+        type="text" 
+        name="phone" 
+        placeholder="Phone" 
+        className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none" 
+      />
+    </div>
+
+    {/* 3. Added name="email" */}
+    <input 
+      type="email" 
+      name="email" 
+      placeholder="Email Address" 
+      required
+      className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none" 
+    />
+
+    {/* 4. Added name="message" */}
+    <textarea 
+      name="message"
+      rows="4" 
+      placeholder="Tell us about your project..." 
+      required
+      className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none"
+    ></textarea>
+    
+    <button className="w-full py-4 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 transition-all shadow-lg">
+      Send Message
+    </button>
+  </div>
+</form>
         </div>
 
         <div className="border-t border-white/10 mt-24 pt-8 text-center text-slate-500 text-sm flex flex-col items-center gap-4">
@@ -412,6 +443,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
