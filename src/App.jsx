@@ -334,7 +334,7 @@ export default function App() {
         <div className="max-w-4xl mx-auto text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-serif mb-6">Ready to discuss your project?</h2>
           <p className="text-slate-400 text-lg max-w-xl mx-auto">
-            Whether it's a small repair or a full conversion, get in touch with the brothers today.
+            Whether it's a small repair or a full conversion, get in touch with Evans Renovation today.
           </p>
         </div>
 
@@ -345,7 +345,7 @@ export default function App() {
               <Phone className="text-evans-amber shrink-0" />
               <div>
                 <div className="text-sm text-slate-400 uppercase tracking-widest font-bold">Call Us</div>
-                <div className="text-2xl font-serif">+33 (0)6 00 00 00 00</div>
+                <div className="text-2xl font-serif">+33 (0)6 52 93 97 52</div>
               </div>
             </div>
             <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-white/5 transition-colors">
@@ -384,6 +384,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
