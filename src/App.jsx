@@ -197,16 +197,27 @@ const systemPrompt = prompts[language];
 </div>
           
           {/* Desktop Links */}
-          <div className={`hidden md:flex items-center space-x-8 text-xs font-bold uppercase tracking-widest ${scrolled ? 'text-slate-600' : 'text-slate-200'}`}>
-            <a href="#portfolio" className="hover:text-evans-amber transition-colors">Portfolio</a>
-            <a href="#services" className="hover:text-evans-amber transition-colors">Services</a>
-            <a href="#workshop" className="flex items-center gap-2 hover:text-evans-amber transition-colors">
-              AI Workshop <Sparkles size={14} className="text-evans-amber" />
-            </a>
-            <a href="#contact" className={`px-6 py-3 rounded-md transition-all ${scrolled ? 'bg-slate-900 text-white hover:bg-slate-800' : 'bg-white text-slate-900 hover:bg-slate-100'}`}>
-              Contact Us
-            </a>
-          </div>
+<div className={`hidden md:flex items-center space-x-8 text-xs font-bold uppercase tracking-widest ${scrolled ? 'text-slate-600' : 'text-slate-200'}`}>
+  <a href="#portfolio" className="hover:text-evans-amber transition-colors">Portfolio</a>
+  <a href="#services" className="hover:text-evans-amber transition-colors">Services</a>
+  <a href="#workshop" className="flex items-center gap-2 hover:text-evans-amber transition-colors">
+    AI Workshop <Sparkles size={14} className="text-evans-amber" />
+  </a>
+  <a href="#contact" className={`px-6 py-3 rounded-md transition-all ${scrolled ? 'bg-slate-900 text-white hover:bg-slate-800' : 'bg-white text-slate-900 hover:bg-slate-100'}`}>
+    Contact Us
+  </a>
+  
+  {/* NEW: Language Button with Logo Transition */}
+  <button 
+    onClick={() => setLanguage(language === 'en' ? 'fr' : 'en')}
+    className={`
+      ml-4 px-3 py-1 rounded border-2 font-bold text-xs uppercase tracking-widest transition-all duration-300 hover:opacity-75
+      ${scrolled ? 'border-slate-900 text-slate-900' : 'border-slate-900 text-slate-900 invert brightness-0'}
+    `}
+  >
+    {language === 'en' ? 'FR' : 'EN'}
+  </button>
+</div>
 
           {/* Mobile Toggle */}
           <button className={`md:hidden p-2 ${scrolled ? 'text-slate-900' : 'text-white'}`} onClick={() => setIsMenuOpen(true)}>
@@ -465,6 +476,7 @@ const systemPrompt = prompts[language];
     </div>
   );
 }
+
 
 
 
