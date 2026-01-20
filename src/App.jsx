@@ -21,6 +21,9 @@ export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   
+  // NEW: Language State ('en' for English, 'fr' for French)
+const [language, setLanguage] = useState('en');
+  
   // --- AI Feature State ---
   const [projectInput, setProjectInput] = useState('');
   const [aiOutput, setAiOutput] = useState(null);
@@ -75,7 +78,19 @@ export default function App() {
     setAiError(null);
     setAiOutput(null);
 
-    const systemPrompt = "You are a senior renovation consultant for 'Evans Rénovation' in France. Create a 5-step renovation roadmap for the client's request. Focus on: 1. Initial survey/permissions (Mairie), 2. Structural integrity, 3. Systems (electric/plumbing), 4. Insulation/Drywall, 5. Finishes. Keep it professional, encouraging, and mention French specificities (e.g., Norme NF C 15-100) if relevant.";
+    // Inside handleGenerateRoadmap function...
+
+// Define prompts for both languages
+const prompts = {
+  en: "You are a senior renovation consultant for 'Evans Rénovation' in France. Create a 5-step renovation roadmap for the client's request. Focus on: 1. Initial survey/permissions (Mairie), 2. Structural integrity, 3. Systems (electric/plumbing), 4. Insulation/Drywall, 5. Finishes. Keep it professional and encouraging. IMPORTANT: Respond ONLY in English. Do NOT use Markdown formatting (no asterisks, bolding, or hash signs). Use a clean, plain-text numbered list.",
+  
+  fr: "Vous êtes un consultant expert en rénovation pour 'Evans Rénovation' en France. Créez une feuille de route de rénovation en 5 étapes pour la demande du client. Concentrez-vous sur : 1. Enquête initiale/permis (Mairie), 2. Intégrité structurelle, 3. Systèmes (électricité/plomberie, normes françaises), 4. Isolation/Cloisons sèches, 5. Finitions. Soyez professionnel et encourageant. IMPORTANT : Répondez UNIQUEMENT en français. N'utilisez PAS de formatage Markdown (pas d'astérisques, de gras ou de signes dièse). Utilisez une liste numérotée simple en texte brut."
+};
+
+// Select the prompt based on the current language setting
+const systemPrompt = prompts[language];
+
+// ... then call fetchGemini(..., systemPrompt) as usual
     
     try {
       const result = await fetchGemini(`Client Project Idea: ${projectInput}`, systemPrompt);
@@ -167,6 +182,13 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           {/* Logo */}
           <div className="cursor-pointer" onClick={() => window.scrollTo(0,0)}>
+            {/* Inside the Navbar, maybe next to the Contact button */}
+<button 
+  onClick={() => setLanguage(language === 'en' ? 'fr' : 'en')}
+  className="ml-4 px-3 py-1 border border-slate-300 rounded text-xs font-bold uppercase hover:bg-slate-100 transition-colors"
+>
+  {language === 'en' ? 'FR' : 'EN'}
+</button>
    <img 
      src="/EVANS_LOGO.png" 
      alt="Evans Rénovation" 
@@ -443,6 +465,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
