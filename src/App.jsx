@@ -189,7 +189,7 @@ export default function App() {
             into old Stone.
           </h1>
           <p className="text-lg md:text-xl text-slate-300 mb-10 max-w-xl mx-auto font-light leading-relaxed animate-in slide-in-from-bottom-8 duration-700 delay-200">
-            English craftsmanship meets French architectural heritage. We manage your renovation from the first stone to the final finish.
+            Combining a deep understanding of local buildings with a friendly, can-do attitude to manage your renovation from the first challenge to the final finish.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-in slide-in-from-bottom-8 duration-700 delay-300">
             <a href="#portfolio" className="bg-evans-amber text-slate-900 px-8 py-4 rounded-lg font-bold hover:bg-amber-400 transition-all flex items-center justify-center group">
@@ -352,7 +352,7 @@ export default function App() {
               <Mail className="text-evans-amber shrink-0" />
               <div>
                 <div className="text-sm text-slate-400 uppercase tracking-widest font-bold">Email Us</div>
-                <div className="text-2xl font-serif">hello@evansreno.com</div>
+                <div className="text-2xl font-serif">cameron@evansrenovation.fr bradley@evansrenovation.fr</div>
               </div>
             </div>
           </div>
@@ -384,6 +384,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
