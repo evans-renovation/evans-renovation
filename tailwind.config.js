@@ -8,7 +8,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
-        serif: ['Fraunces', 'serif'],
+        serif: ['Lora', 'serif'],
       },
       colors: {
         // Custom branding colors
@@ -19,3 +19,4 @@ export default {
   },
   plugins: [],
 }
+
