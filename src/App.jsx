@@ -92,17 +92,17 @@ export default function App() {
   const services = [
     { 
       title: "Total Renovation", 
-      desc: "From ruin to residence. We handle full-scale restorations of Charentaise stone properties.", 
+      desc: "We manage your entire project from start to finish, applying local insight to navigate regulations and restore your property.", 
       icon: <Hammer className="w-6 h-6 text-evans-amber" /> 
     },
     { 
-      title: "Kitchens & Baths", 
-      desc: "Modern English plumbing standards meets classic French aesthetics.", 
+      title: "Kitchens & Bathrooms", 
+      desc: "We design and install reliable, high-performance bathrooms and kitchens that work perfectly and look stunning.", 
       icon: <Paintbrush className="w-6 h-6 text-evans-amber" /> 
     },
     { 
       title: "Structural & Masonry", 
-      desc: "Opening walls, repairing stonework, and ensuring structural longevity.", 
+      desc: "Structural work and masonry repairs handled with the precision and understanding that local buildings require.", 
       icon: <Ruler className="w-6 h-6 text-evans-amber" /> 
     }
   ];
@@ -384,6 +384,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
