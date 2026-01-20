@@ -280,7 +280,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-amber-600 mb-3">Our Expertise</h2>
-            <h3 className="text-3xl md:text-4xl font-serif text-slate-900">Quality craftsmanship for every stage of the build.</h3>
+            <h3 className="text-3xl md:text-4xl font-serif text-slate-900">Twenty years of local building knowledge applied to every detail</h3>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -384,6 +384,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
