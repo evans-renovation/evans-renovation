@@ -29,7 +29,7 @@ export default function App() {
 
   // IMPORTANT: For local use, paste your API key inside the quotes below.
   // Get one here: https://aistudio.google.com/app/apikey
-  const apiKey = ""; 
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
   // Handle scroll effects for navbar
   useEffect(() => {
@@ -443,6 +443,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
