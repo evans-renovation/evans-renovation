@@ -316,14 +316,29 @@ const systemPrompt = prompts[language];
           
           {/* Desktop Links */}
 <div className={`hidden md:flex items-center space-x-8 text-xs font-bold uppercase tracking-widest ${scrolled ? 'text-slate-600' : 'text-slate-200'}`}>
- <a href="#portfolio" className="..."> {t.nav_portfolio} </a>
-<a href="#services" className="..."> {t.nav_services} </a>
-<a href="#workshop" className="...">
-  {t.nav_workshop} <Sparkles size={14} className="text-evans-amber" />
-</a>
-<a href="#contact" className="..."> {t.nav_contact} </a>
   
-  {/* NEW: Language Button with Logo Transition */}
+  {/* 1. Portfolio Link */}
+  <a href="#portfolio" className="hover:text-evans-amber transition-colors">
+    {t.nav_portfolio}
+  </a>
+
+  {/* 2. Services Link */}
+  <a href="#services" className="hover:text-evans-amber transition-colors">
+    {t.nav_services}
+  </a>
+
+  {/* 3. AI Workshop Link (Fixed Layout) */}
+  <a href="#workshop" className="flex items-center gap-2 hover:text-evans-amber transition-colors whitespace-nowrap">
+    {t.nav_workshop} 
+    <Sparkles size={14} className="text-evans-amber" />
+  </a>
+
+  {/* 4. Contact Link */}
+  <a href="#contact" className={`px-6 py-3 rounded-md transition-all ${scrolled ? 'bg-slate-900 text-white hover:bg-slate-800' : 'bg-white text-slate-900 hover:bg-slate-100'}`}>
+    {t.nav_contact}
+  </a>
+
+  {/* 5. Language Toggle */}
   <button 
     onClick={() => setLanguage(language === 'en' ? 'fr' : 'en')}
     className={`
@@ -354,17 +369,26 @@ const systemPrompt = prompts[language];
         
         {/* Hero Content */}
         <div className="relative z-20 text-center px-6 max-w-4xl mt-16">
+  {/* Badge */}
   <div className="inline-block px-4 py-1 mb-6 border border-white/20 rounded-full bg-white/5 backdrop-blur-sm text-amber-400 text-[10px] font-bold uppercase tracking-[0.2em] animate-in slide-in-from-bottom-4 duration-700">
     {t.hero_badge}
   </div>
+  
+  {/* Main Headline */}
   <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-8 tracking-tight leading-[1.1] animate-in slide-in-from-bottom-8 duration-700 delay-100">
     {t.hero_title_1} <br/>
-    <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500 italic pr-2">{t.hero_title_2} </span>
+    <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500 italic pr-2">
+      {t.hero_title_2}
+    </span>
     {t.hero_title_3}
   </h1>
+  
+  {/* Description Paragraph */}
   <p className="text-lg md:text-xl text-slate-300 mb-10 max-w-xl mx-auto font-light leading-relaxed animate-in slide-in-from-bottom-8 duration-700 delay-200">
     {t.hero_desc}
   </p>
+  
+  {/* Buttons */}
   <div className="flex flex-col sm:flex-row gap-4 justify-center animate-in slide-in-from-bottom-8 duration-700 delay-300">
     <a href="#portfolio" className="bg-evans-amber text-slate-900 px-8 py-4 rounded-lg font-bold hover:bg-amber-400 transition-all flex items-center justify-center group">
       {t.hero_btn_work}
@@ -592,6 +616,7 @@ const systemPrompt = prompts[language];
     </div>
   );
 }
+
 
 
 
