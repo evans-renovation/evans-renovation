@@ -408,29 +408,28 @@ const systemPrompt = prompts[language];
             
             {/* Left Col: Explainer */}
             <div className="flex-1 md:sticky md:top-32">
-              <div className="flex items-center gap-2 text-amber-600 font-bold text-xs uppercase tracking-widest mb-4">
-                <Sparkles size={16} /> Digital Consultant
-              </div>
-              <h2 className="text-4xl font-serif text-slate-900 mb-6">Visualize your project before we break ground.</h2>
-              <p className="text-slate-500 leading-relaxed mb-8">
-                Renovating in France involves specific regulations and stages. 
-                Describe your rough idea here, and our AI tool will generate a structured, professional roadmap to help you understand the scope.
-              </p>
-              <div className="flex flex-col gap-4 text-sm text-slate-600">
-                <div className="flex items-center gap-3">
-                  <CheckCircle2 size={18} className="text-green-500" />
-                  <span>Receive a 5-step breakdown</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle2 size={18} className="text-green-500" />
-                  <span>Understand French terminology</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle2 size={18} className="text-green-500" />
-                  <span>Instant, free preliminary advice</span>
-                </div>
-              </div>
-            </div>
+  <div className="flex items-center gap-2 text-amber-600 font-bold text-xs uppercase tracking-widest mb-4">
+    <Sparkles size={16} /> {t.ai_label}
+  </div>
+  <h2 className="text-4xl font-serif text-slate-900 mb-6">{t.ai_title}</h2>
+  <p className="text-slate-500 leading-relaxed mb-8">
+    {t.ai_desc}
+  </p>
+  <div className="flex flex-col gap-4 text-sm text-slate-600">
+    <div className="flex items-center gap-3">
+      <CheckCircle2 size={18} className="text-green-500" />
+      <span>{t.ai_point_1}</span>
+    </div>
+    <div className="flex items-center gap-3">
+      <CheckCircle2 size={18} className="text-green-500" />
+      <span>{t.ai_point_2}</span>
+    </div>
+    <div className="flex items-center gap-3">
+      <CheckCircle2 size={18} className="text-green-500" />
+      <span>{t.ai_point_3}</span>
+    </div>
+  </div>
+</div>
 
             {/* Right Col: The Tool */}
             <div className="flex-1 w-full bg-slate-50 p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
@@ -616,6 +615,7 @@ const systemPrompt = prompts[language];
     </div>
   );
 }
+
 
 
 
