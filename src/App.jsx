@@ -533,20 +533,20 @@ const systemPrompt = prompts[language];
 
       {/* Portfolio Grid */}
       <section id="portfolio" className="py-24 px-6 bg-white scroll-mt-20">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
-  {/* Translated Title */}
-  <h2 className="text-3xl font-serif text-slate-900">{t.port_title}</h2>
-  
-  {/* Translated Link */}
-  <a href="#" className="text-sm font-bold uppercase tracking-widest text-slate-500 hover:text-amber-600 border-b-2 border-transparent hover:border-amber-600 transition-all pb-1">
-    {t.port_link}
-  </a>
-</div>
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+            <h2 className="text-3xl font-serif text-slate-900">{t.port_title}</h2>
+            <a href="#" className="text-sm font-bold uppercase tracking-widest text-slate-500 hover:text-amber-600 border-b-2 border-transparent hover:border-amber-600 transition-all pb-1">
+              {t.port_link}
+            </a>
+          </div>
           
+          {/* Projects Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {projects.map((p) => (
               <div key={p.id} className="group relative aspect-[3/4] overflow-hidden rounded-xl bg-slate-200 cursor-pointer">
-                {/* Placeholder Image Logic */}
+                {/* Image Logic */}
                 <div className="absolute inset-0 bg-slate-300 group-hover:scale-105 transition-transform duration-700" />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent opacity-80" />
                 
@@ -659,6 +659,7 @@ const systemPrompt = prompts[language];
     </div>
   );
 }
+
 
 
 
