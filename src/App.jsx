@@ -511,12 +511,14 @@ const systemPrompt = prompts[language];
 
       {/* Services Grid */}
       <section id="services" className="py-24 px-6 bg-slate-50 scroll-mt-20">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-  {/* Now uses the translation variables */}
-  <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-amber-600 mb-3">{t.serv_eyebrow}</h2>
-  <h3 className="text-3xl md:text-4xl font-serif text-slate-900">{t.serv_title}</h3>
-</div>
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-amber-600 mb-3">{t.serv_eyebrow}</h2>
+            <h3 className="text-3xl md:text-4xl font-serif text-slate-900">{t.serv_title}</h3>
+          </div>
 
+          {/* Grid */}
           <div className="grid md:grid-cols-3 gap-8">
             {services.map((s, i) => (
               <div key={i} className="group p-8 bg-white rounded-2xl border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
@@ -659,6 +661,7 @@ const systemPrompt = prompts[language];
     </div>
   );
 }
+
 
 
 
