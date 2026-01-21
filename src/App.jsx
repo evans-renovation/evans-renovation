@@ -145,6 +145,15 @@ const systemPrompt = prompts[language];
       // Portfolio
       port_title: "Recent Projects",
       port_link: "View Instagram",
+
+      proj_1_title: "Barn Conversion",
+      proj_1_type: "Full Build",
+      proj_2_title: "Farmhouse Kitchen",
+      proj_2_type: "Interior",
+      proj_3_title: "Pool House",
+      proj_3_type: "Extension",
+      proj_4_title: "Townhouse Reno",
+      proj_4_type: "Restoration",
       
       // Contact
       cont_title: "Ready to discuss your project?",
@@ -200,6 +209,15 @@ const systemPrompt = prompts[language];
       port_title: "Projets Récents",
       port_link: "Voir Instagram",
       
+      proj_1_title: "Conversion de Grange",
+      proj_1_type: "Rénovation Complète",
+      proj_2_title: "Cuisine de Ferme",
+      proj_2_type: "Intérieur",
+      proj_3_title: "Pool House",
+      proj_3_type: "Extension",
+      proj_4_title: "Maison de Ville",
+      proj_4_type: "Restauration",
+      
       // Contact
       cont_title: "Prêt à discuter de votre projet ?",
       cont_desc: "Qu'il s'agisse d'une petite réparation ou d'une conversion complète, contactez Evans Rénovation dès aujourd'hui.",
@@ -244,27 +262,47 @@ const systemPrompt = prompts[language];
   // --- Data & Content ---
   const services = [
     { 
-      title: "Total Renovation", 
-      desc: "We manage your entire project from start to finish, applying local insight to navigate regulations and restore your property.", 
+      title: t.serv_1_title, 
+      desc: t.serv_1_desc, 
       icon: <Hammer className="w-6 h-6 text-evans-amber" /> 
     },
     { 
-      title: "Kitchens & Bathrooms", 
-      desc: "We design and install reliable, high-performance bathrooms and kitchens that work perfectly and look stunning.", 
+      title: t.serv_2_title, 
+      desc: t.serv_2_desc, 
       icon: <Paintbrush className="w-6 h-6 text-evans-amber" /> 
     },
     { 
-      title: "Structural & Masonry", 
-      desc: "Structural work and masonry repairs handled with the precision and understanding that local buildings require.", 
+      title: t.serv_3_title, 
+      desc: t.serv_3_desc, 
       icon: <Ruler className="w-6 h-6 text-evans-amber" /> 
     }
   ];
 
   const projects = [
-    { id: 1, title: "Barn Conversion", loc: "Verteillac", type: "Full Build" },
-    { id: 2, title: "Farmhouse Kitchen", loc: "Aubeterre", type: "Interior" },
-    { id: 3, title: "Pool House", loc: "Ribérac", type: "Extension" },
-    { id: 4, title: "Townhouse Reno", loc: "Angoulême", type: "Restoration" },
+    { 
+      id: 1, 
+      title: t.proj_1_title, 
+      loc: "Verteillac", 
+      type: t.proj_1_type 
+    },
+    { 
+      id: 2, 
+      title: t.proj_2_title, 
+      loc: "Aubeterre", 
+      type: t.proj_2_type 
+    },
+    { 
+      id: 3, 
+      title: t.proj_3_title, 
+      loc: "Ribérac", 
+      type: t.proj_3_type 
+    },
+    { 
+      id: 4, 
+      title: t.proj_4_title, 
+      loc: "Angoulême", 
+      type: t.proj_4_type 
+    },
   ];
 
   // --- UI Components ---
@@ -615,6 +653,7 @@ const systemPrompt = prompts[language];
     </div>
   );
 }
+
 
 
 
