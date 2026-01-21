@@ -82,9 +82,9 @@ const [language, setLanguage] = useState('en');
 
 // Define prompts for both languages
 const prompts = {
-  en: "You are a senior renovation consultant for 'Evans Rénovation' in France. Create a 5-step renovation roadmap for the client's request. Focus on: 1. Initial survey/permissions (Mairie), 2. Structural integrity, 3. Systems (electric/plumbing), 4. Insulation/Drywall, 5. Finishes. Keep it professional and encouraging. IMPORTANT: Respond ONLY in English. Do NOT use Markdown formatting (no asterisks, bolding, or hash signs). Use a clean, plain-text numbered list.",
+  en: "You are a senior renovation consultant for 'Evans Rénovation' in France. The client will describe a project idea below. Generate a customized 5-step roadmap SPECIFIC to their request. If the project is simple (e.g., painting), focus on surface prep and finishes. If it is complex (e.g., extensions), include Mairie permissions and structural checks. Do NOT force steps that are irrelevant to the user's input. Keep it professional, encouraging, and mention French specificities only if applicable. IMPORTANT: Respond ONLY in English. Do NOT use Markdown formatting.",
   
-  fr: "Vous êtes un consultant expert en rénovation pour 'Evans Rénovation' en France. Créez une feuille de route de rénovation en 5 étapes pour la demande du client. Concentrez-vous sur : 1. Enquête initiale/permis (Mairie), 2. Intégrité structurelle, 3. Systèmes (électricité/plomberie, normes françaises), 4. Isolation/Cloisons sèches, 5. Finitions. Soyez professionnel et encourageant. IMPORTANT : Répondez UNIQUEMENT en français. N'utilisez PAS de formatage Markdown (pas d'astérisques, de gras ou de signes dièse). Utilisez une liste numérotée simple en texte brut."
+  fr: "Vous êtes un consultant expert pour 'Evans Rénovation' en France. Le client décrira une idée de projet ci-dessous. Générez une feuille de route de 5 étapes personnalisée et SPÉCIFIQUE à leur demande. Si le projet est simple (ex: peinture), concentrez-vous sur la préparation et les finitions. Si complexe (ex: extension), incluez les permis Mairie et la structure. NE forcez PAS des étapes non pertinentes. Soyez professionnel et encourageant. IMPORTANT : Répondez UNIQUEMENT en français. N'utilisez PAS de formatage Markdown."
 };
 
 // Select the prompt based on the current language setting
@@ -481,6 +481,7 @@ const systemPrompt = prompts[language];
     </div>
   );
 }
+
 
 
 
