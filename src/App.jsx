@@ -102,6 +102,119 @@ const systemPrompt = prompts[language];
       setIsAiLoading(false);
     }
   };
+  const translations = {
+    en: {
+      // Navbar
+      nav_portfolio: "Portfolio",
+      nav_services: "Services",
+      nav_workshop: "AI Workshop",
+      nav_contact: "Contact Us",
+      
+      // Hero Section
+      hero_badge: "Based in Charente & Dordogne",
+      hero_title_1: "Breathing new",
+      hero_title_2: "Life",
+      hero_title_3: "into old Stone.",
+      hero_desc: "Combining a deep understanding of local buildings with a friendly, can-do attitude to manage your renovation from the first challenge to the final finish.",
+      hero_btn_work: "View Our Work",
+      hero_btn_ai: "Plan with AI",
+
+      // AI Workshop
+      ai_label: "Digital Consultant",
+      ai_title: "Visualize your project before we break ground.",
+      ai_desc: "Renovating in France involves specific regulations and stages. Describe your rough idea here, and our AI tool will generate a structured, professional roadmap to help you understand the scope.",
+      ai_point_1: "Receive a 5-step breakdown",
+      ai_point_2: "Understand French terminology",
+      ai_point_3: "Instant, free preliminary advice",
+      ai_input_label: "Describe your project idea",
+      ai_placeholder: "e.g., I want to convert an old stone barn near Ribérac into a 3-bedroom gîte with a mezzanine...",
+      ai_btn_generate: "Generate Roadmap",
+      ai_btn_loading: "Analyzing Request...",
+      ai_output_title: "Recommended Roadmap",
+
+      // Services
+      serv_eyebrow: "Our Expertise",
+      serv_title: "Twenty years of local building knowledge applied to every detail",
+      serv_1_title: "Total Renovation",
+      serv_1_desc: "We manage your entire project from start to finish, applying local insight to navigate regulations and restore your property.",
+      serv_2_title: "Kitchens & Bathrooms",
+      serv_2_desc: "We design and install reliable, high-performance bathrooms and kitchens that work perfectly and look stunning.",
+      serv_3_title: "Structural & Masonry",
+      serv_3_desc: "Structural work and masonry repairs handled with the precision and understanding that local buildings require.",
+
+      // Portfolio
+      port_title: "Recent Projects",
+      port_link: "View Instagram",
+      
+      // Contact
+      cont_title: "Ready to discuss your project?",
+      cont_desc: "Whether it's a small repair or a full conversion, get in touch with Evans Renovation today.",
+      cont_call: "Call Us",
+      cont_email: "Email Us",
+      form_name: "Name",
+      form_phone: "Phone",
+      form_email: "Email Address",
+      form_msg: "Tell us about your project...",
+      form_btn: "Send Message"
+    },
+    fr: {
+      // Navbar
+      nav_portfolio: "Portfolio",
+      nav_services: "Services",
+      nav_workshop: "Atelier IA",
+      nav_contact: "Contactez-nous",
+      
+      // Hero Section
+      hero_badge: "Basé en Charente et Dordogne",
+      hero_title_1: "Insuffler une nouvelle",
+      hero_title_2: "Vie",
+      hero_title_3: "à la vieille Pierre.",
+      hero_desc: "Alliant une connaissance approfondie du bâti local à une attitude conviviale pour gérer votre rénovation, du premier défi à la finition finale.",
+      hero_btn_work: "Voir nos réalisations",
+      hero_btn_ai: "Planifier avec l'IA",
+
+      // AI Workshop
+      ai_label: "Consultant Numérique",
+      ai_title: "Visualisez votre projet avant de commencer.",
+      ai_desc: "Rénover en France implique des règles spécifiques. Décrivez votre idée, et notre outil IA générera une feuille de route professionnelle pour vous aider à comprendre l'ampleur des travaux.",
+      ai_point_1: "Recevez un plan en 5 étapes",
+      ai_point_2: "Comprendre la terminologie",
+      ai_point_3: "Conseils préliminaires gratuits",
+      ai_input_label: "Décrivez votre idée de projet",
+      ai_placeholder: "ex : Je veux transformer une vieille grange près de Ribérac en gîte de 3 chambres...",
+      ai_btn_generate: "Générer la feuille de route",
+      ai_btn_loading: "Analyse en cours...",
+      ai_output_title: "Feuille de route recommandée",
+
+      // Services
+      serv_eyebrow: "Notre Expertise",
+      serv_title: "Vingt ans d'expérience locale appliqués à chaque détail",
+      serv_1_title: "Rénovation Totale",
+      serv_1_desc: "Nous gérons votre projet du début à la fin, en utilisant notre expertise locale pour naviguer dans les réglementations et restaurer votre propriété.",
+      serv_2_title: "Cuisines & Salles de bains",
+      serv_2_desc: "Nous concevons et installons des cuisines et salles de bains fiables et performantes, aussi fonctionnelles qu'esthétiques.",
+      serv_3_title: "Structure & Maçonnerie",
+      serv_3_desc: "Travaux structurels et réparations de maçonnerie traités avec la précision que les bâtiments locaux exigent.",
+
+      // Portfolio
+      port_title: "Projets Récents",
+      port_link: "Voir Instagram",
+      
+      // Contact
+      cont_title: "Prêt à discuter de votre projet ?",
+      cont_desc: "Qu'il s'agisse d'une petite réparation ou d'une conversion complète, contactez Evans Rénovation dès aujourd'hui.",
+      cont_call: "Appelez-nous",
+      cont_email: "Envoyez-nous un email",
+      form_name: "Nom",
+      form_phone: "Téléphone",
+      form_email: "Adresse Email",
+      form_msg: "Parlez-nous de votre projet...",
+      form_btn: "Envoyer le message"
+    }
+  };
+
+  const t = translations[language]; // 't' is now our shortcut to the current language
+  
 // --- NEW: Add this function here ---
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -481,6 +594,7 @@ const systemPrompt = prompts[language];
     </div>
   );
 }
+
 
 
 
