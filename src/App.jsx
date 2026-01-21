@@ -316,14 +316,12 @@ const systemPrompt = prompts[language];
           
           {/* Desktop Links */}
 <div className={`hidden md:flex items-center space-x-8 text-xs font-bold uppercase tracking-widest ${scrolled ? 'text-slate-600' : 'text-slate-200'}`}>
-  <a href="#portfolio" className="hover:text-evans-amber transition-colors">Portfolio</a>
-  <a href="#services" className="hover:text-evans-amber transition-colors">Services</a>
-  <a href="#workshop" className="flex items-center gap-2 hover:text-evans-amber transition-colors">
-    AI Workshop <Sparkles size={14} className="text-evans-amber" />
-  </a>
-  <a href="#contact" className={`px-6 py-3 rounded-md transition-all ${scrolled ? 'bg-slate-900 text-white hover:bg-slate-800' : 'bg-white text-slate-900 hover:bg-slate-100'}`}>
-    Contact Us
-  </a>
+ <a href="#portfolio" className="..."> {t.nav_portfolio} </a>
+<a href="#services" className="..."> {t.nav_services} </a>
+<a href="#workshop" className="...">
+  {t.nav_workshop} <Sparkles size={14} className="text-evans-amber" />
+</a>
+<a href="#contact" className="..."> {t.nav_contact} </a>
   
   {/* NEW: Language Button with Logo Transition */}
   <button 
@@ -356,27 +354,27 @@ const systemPrompt = prompts[language];
         
         {/* Hero Content */}
         <div className="relative z-20 text-center px-6 max-w-4xl mt-16">
-          <div className="inline-block px-4 py-1 mb-6 border border-white/20 rounded-full bg-white/5 backdrop-blur-sm text-amber-400 text-[10px] font-bold uppercase tracking-[0.2em] animate-in slide-in-from-bottom-4 duration-700">
-            Based in Charente & Dordogne
-          </div>
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-8 tracking-tight leading-[1.1] animate-in slide-in-from-bottom-8 duration-700 delay-100">
-            Breathing new <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500 italic pr-2">Life </span>
-            into old Stone.
-          </h1>
-          <p className="text-lg md:text-xl text-slate-300 mb-10 max-w-xl mx-auto font-light leading-relaxed animate-in slide-in-from-bottom-8 duration-700 delay-200">
-            Combining a deep understanding of local buildings with a friendly, can-do attitude to manage your renovation from the first challenge to the final finish.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-in slide-in-from-bottom-8 duration-700 delay-300">
-            <a href="#portfolio" className="bg-evans-amber text-slate-900 px-8 py-4 rounded-lg font-bold hover:bg-amber-400 transition-all flex items-center justify-center group">
-              View Our Work
-              <ChevronRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </a>
-            <a href="#workshop" className="bg-white/10 backdrop-blur-md text-white px-8 py-4 rounded-lg font-bold border border-white/10 hover:bg-white/20 transition-all">
-              Plan with AI
-            </a>
-          </div>
-        </div>
+  <div className="inline-block px-4 py-1 mb-6 border border-white/20 rounded-full bg-white/5 backdrop-blur-sm text-amber-400 text-[10px] font-bold uppercase tracking-[0.2em] animate-in slide-in-from-bottom-4 duration-700">
+    {t.hero_badge}
+  </div>
+  <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-8 tracking-tight leading-[1.1] animate-in slide-in-from-bottom-8 duration-700 delay-100">
+    {t.hero_title_1} <br/>
+    <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500 italic pr-2">{t.hero_title_2} </span>
+    {t.hero_title_3}
+  </h1>
+  <p className="text-lg md:text-xl text-slate-300 mb-10 max-w-xl mx-auto font-light leading-relaxed animate-in slide-in-from-bottom-8 duration-700 delay-200">
+    {t.hero_desc}
+  </p>
+  <div className="flex flex-col sm:flex-row gap-4 justify-center animate-in slide-in-from-bottom-8 duration-700 delay-300">
+    <a href="#portfolio" className="bg-evans-amber text-slate-900 px-8 py-4 rounded-lg font-bold hover:bg-amber-400 transition-all flex items-center justify-center group">
+      {t.hero_btn_work}
+      <ChevronRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+    </a>
+    <a href="#workshop" className="bg-white/10 backdrop-blur-md text-white px-8 py-4 rounded-lg font-bold border border-white/10 hover:bg-white/20 transition-all">
+      {t.hero_btn_ai}
+    </a>
+  </div>
+</div>
       </header>
 
       {/* AI Workshop Section */}
@@ -412,22 +410,21 @@ const systemPrompt = prompts[language];
 
             {/* Right Col: The Tool */}
             <div className="flex-1 w-full bg-slate-50 p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
-              <label className="block text-xs font-bold uppercase text-slate-400 mb-2">Describe your project idea</label>
-              <textarea 
-                value={projectInput}
-                onChange={(e) => setProjectInput(e.target.value)}
-                placeholder="e.g., I want to convert an old stone barn near Ribérac into a 3-bedroom gîte with a mezzanine..."
-                className="w-full h-32 p-4 rounded-xl border border-slate-200 focus:ring-2 focus:ring-amber-500 outline-none text-slate-700 mb-4 bg-white resize-none"
-              />
-              
-              <button 
-                onClick={handleGenerateRoadmap}
-                disabled={isAiLoading || !projectInput}
-                className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-slate-800 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isAiLoading ? <Loader2 className="animate-spin" /> : <Send size={18} />}
-                <span>{isAiLoading ? 'Analyzing Request...' : 'Generate Roadmap'}</span>
-              </button>
+             <label className="block text-xs font-bold uppercase text-slate-400 mb-2">{t.ai_input_label}</label>
+<textarea 
+  value={projectInput}
+  onChange={(e) => setProjectInput(e.target.value)}
+  placeholder={t.ai_placeholder}
+  className="w-full h-32 p-4 rounded-xl border border-slate-200 focus:ring-2 focus:ring-amber-500 outline-none text-slate-700 mb-4 bg-white resize-none"
+/>
+<button 
+  onClick={handleGenerateRoadmap}
+  disabled={isAiLoading || !projectInput}
+  className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-slate-800 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+>
+  {isAiLoading ? <Loader2 className="animate-spin" /> : <Send size={18} />}
+  <span>{isAiLoading ? t.ai_btn_loading : t.ai_btn_generate}</span>
+</button>
 
               {/* Output Area */}
               {aiError && (
@@ -534,50 +531,51 @@ const systemPrompt = prompts[language];
           </div>
 
           {/* Simple Form */}
-          <form 
+         <form 
   className="bg-white p-8 rounded-2xl text-slate-900 shadow-xl" 
   onSubmit={handleFormSubmit}
 >
   <div className="space-y-4">
     <div className="grid grid-cols-2 gap-4">
-      {/* 1. Added name="name" */}
+      {/* Name Input */}
       <input 
         type="text" 
         name="name" 
-        placeholder="Name" 
         required
+        placeholder={t.form_name} 
         className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none" 
       />
       
-      {/* 2. Added name="phone" */}
+      {/* Phone Input */}
       <input 
         type="text" 
-        name="phone" 
-        placeholder="Phone" 
+        name="phone"
+        placeholder={t.form_phone} 
         className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none" 
       />
     </div>
 
-    {/* 3. Added name="email" */}
+    {/* Email Input */}
     <input 
       type="email" 
       name="email" 
-      placeholder="Email Address" 
       required
+      placeholder={t.form_email} 
       className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none" 
     />
 
-    {/* 4. Added name="message" */}
+    {/* Message Input */}
     <textarea 
-      name="message"
-      rows="4" 
-      placeholder="Tell us about your project..." 
-      required
+      name="message" 
+      required 
+      rows="4"
+      placeholder={t.form_msg} 
       className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none"
     ></textarea>
     
+    {/* Submit Button */}
     <button className="w-full py-4 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 transition-all shadow-lg">
-      Send Message
+      {t.form_btn}
     </button>
   </div>
 </form>
@@ -594,6 +592,7 @@ const systemPrompt = prompts[language];
     </div>
   );
 }
+
 
 
 
