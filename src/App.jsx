@@ -511,11 +511,11 @@ const systemPrompt = prompts[language];
 
       {/* Services Grid */}
       <section id="services" className="py-24 px-6 bg-slate-50 scroll-mt-20">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-amber-600 mb-3">Our Expertise</h2>
-            <h3 className="text-3xl md:text-4xl font-serif text-slate-900">Twenty years of local building knowledge applied to every detail</h3>
-          </div>
+        <div className="text-center max-w-2xl mx-auto mb-16">
+  {/* Now uses the translation variables */}
+  <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-amber-600 mb-3">{t.serv_eyebrow}</h2>
+  <h3 className="text-3xl md:text-4xl font-serif text-slate-900">{t.serv_title}</h3>
+</div>
 
           <div className="grid md:grid-cols-3 gap-8">
             {services.map((s, i) => (
@@ -533,13 +533,15 @@ const systemPrompt = prompts[language];
 
       {/* Portfolio Grid */}
       <section id="portfolio" className="py-24 px-6 bg-white scroll-mt-20">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
-            <h2 className="text-3xl font-serif text-slate-900">Recent Projects</h2>
-            <a href="#" className="text-sm font-bold uppercase tracking-widest text-slate-500 hover:text-amber-600 border-b-2 border-transparent hover:border-amber-600 transition-all pb-1">
-              View Instagram
-            </a>
-          </div>
+        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+  {/* Translated Title */}
+  <h2 className="text-3xl font-serif text-slate-900">{t.port_title}</h2>
+  
+  {/* Translated Link */}
+  <a href="#" className="text-sm font-bold uppercase tracking-widest text-slate-500 hover:text-amber-600 border-b-2 border-transparent hover:border-amber-600 transition-all pb-1">
+    {t.port_link}
+  </a>
+</div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {projects.map((p) => (
@@ -564,32 +566,36 @@ const systemPrompt = prompts[language];
       </section>
 
       {/* Contact Footer */}
-      <section id="contact" className="bg-slate-900 text-white py-24 px-6">
-        <div className="max-w-4xl mx-auto text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-serif mb-6">Ready to discuss your project?</h2>
-          <p className="text-slate-400 text-lg max-w-xl mx-auto">
-            Whether it's a small repair or a full conversion, get in touch with Evans Renovation today.
-          </p>
-        </div>
+<section id="contact" className="bg-slate-900 text-white py-24 px-6">
+  {/* 1. The Big Header */}
+  <div className="max-w-4xl mx-auto text-center mb-16">
+    <h2 className="text-4xl md:text-5xl font-serif mb-6">{t.cont_title}</h2>
+    <p className="text-slate-400 text-lg max-w-xl mx-auto">
+      {t.cont_desc}
+    </p>
+  </div>
 
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-          {/* Contact Info */}
-          <div className="space-y-8 md:pl-12">
-            <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-white/5 transition-colors">
-              <Phone className="text-evans-amber shrink-0" />
-              <div>
-                <div className="text-sm text-slate-400 uppercase tracking-widest font-bold">Call Us</div>
-                <div className="text-2xl font-serif">+33 (0)6 52 93 97 52</div>
-              </div>
-            </div>
-            <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-white/5 transition-colors">
-              <Mail className="text-evans-amber shrink-0" />
-              <div>
-                <div className="text-sm text-slate-400 uppercase tracking-widest font-bold">Email Us</div>
-                <div className="text-2xl font-serif">cameron@evansrenovation.fr bradley@evansrenovation.fr</div>
-              </div>
-            </div>
-          </div>
+  <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+    {/* 2. Contact Info (Phone & Email) */}
+    <div className="space-y-8 md:pl-12">
+      {/* Phone Block */}
+      <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-white/5 transition-colors">
+        <Phone className="text-evans-amber shrink-0" />
+        <div>
+          <div className="text-sm text-slate-400 uppercase tracking-widest font-bold">{t.cont_call}</div>
+          <div className="text-2xl font-serif">+33 (0)6 52 93 97 52</div>
+        </div>
+      </div>
+      
+      {/* Email Block */}
+      <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-white/5 transition-colors">
+        <Mail className="text-evans-amber shrink-0" />
+        <div>
+          <div className="text-sm text-slate-400 uppercase tracking-widest font-bold">{t.cont_email}</div>
+          <div className="text-2xl font-serif">cameron@evansrenovation.fr bradley@evansrenovation.fr</div>
+        </div>
+      </div>
+    </div>
 
           {/* Simple Form */}
          <form 
@@ -653,6 +659,7 @@ const systemPrompt = prompts[language];
     </div>
   );
 }
+
 
 
 
