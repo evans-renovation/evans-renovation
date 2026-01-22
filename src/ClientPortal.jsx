@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, LogOut, Lock, ExternalLink, Loader2, User, PenTool, CheckCircle, Save, Eraser } from 'lucide-react';
+import { X, LogOut, Lock, ExternalLink, Loader2, User, PenTool, CheckCircle, Save, Eraser, Folder, ArrowLeft } from 'lucide-react';
 import { auth, db, loginWithGoogle, loginWithEmail, logout } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
@@ -12,9 +12,15 @@ export default function ClientPortal({ isOpen, onClose }) {
   const [loading, setLoading] = useState(true);
   
   // Database Fields
-  const [folderId, setFolderId] = useState(null);
-  const [signedData, setSignedData] = useState(null); // Stores signature info if signed
+  const [mainFolderId, setMainFolderId] = useState(null);
+  const [quoteFolderId, setQuoteFolderId] = useState(null); // NEW: Specific folder for quotes
+  const [signatureNeeded, setSignatureNeeded] = useState(false);
+  const [signedData, setSignedData] = useState(null);
   
+  // View State (Determines which folder is visible)
+  const [activeFolderId, setActiveFolderId] = useState(null);
+  const [isViewingQuote, setIsViewingQuote] = useState(false);
+
   // Signature UI States
   const [showSignModal, setShowSignModal] = useState(false);
   const sigPad = useRef({});
@@ -32,13 +38,21 @@ export default function ClientPortal({ isOpen, onClose }) {
       if (currentUser) {
         await fetchClientData(currentUser.email);
       } else {
-        setFolderId(null);
-        setSignedData(null);
+        resetState();
       }
       setLoading(false);
     });
     return () => unsubscribe();
   }, []);
+
+  const resetState = () => {
+    setMainFolderId(null);
+    setQuoteFolderId(null);
+    setActiveFolderId(null);
+    setSignedData(null);
+    setSignatureNeeded(false);
+    setIsViewingQuote(false);
+  };
 
   const fetchClientData = async (email) => {
     try {
@@ -46,10 +60,25 @@ export default function ClientPortal({ isOpen, onClose }) {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data();
-        setFolderId(data.folderId);
-        // Check if they already signed
+        setMainFolderId(data.folderId);
+        setQuoteFolderId(data.quoteFolderId || null); // Fetch optional quote folder
+        
+        // Handle Signed Status
         if (data.signature) {
           setSignedData(data.signature);
+        }
+        
+        // Handle Signature Request
+        const isNeeded = data.signatureNeeded === true;
+        setSignatureNeeded(isNeeded);
+
+        // LOGIC: If signature is needed AND we have a quote folder, default to that view
+        if (isNeeded && data.quoteFolderId) {
+          setIsViewingQuote(true);
+          setActiveFolderId(data.quoteFolderId);
+        } else {
+          setIsViewingQuote(false);
+          setActiveFolderId(data.folderId);
         }
       }
     } catch (err) {
@@ -89,20 +118,36 @@ export default function ClientPortal({ isOpen, onClose }) {
         signer: user.email
       };
 
-      // Save to Firestore
-      const docRef = doc(db, "clients", user.email);
-      await updateDoc(docRef, {
-        signature: signRecord
+      await updateDoc(docRef(db, "clients", user.email), {
+        signature: signRecord,
+        signatureNeeded: false
       });
 
       setSignedData(signRecord);
       setShowSignModal(false);
+      setSignatureNeeded(false);
+      // Optional: Switch back to main folder after signing
+      setActiveFolderId(mainFolderId);
+      setIsViewingQuote(false);
+      
       alert("Quote signed successfully!");
     } catch (error) {
       console.error("Error saving signature:", error);
-      alert("Error saving signature. Please try again.");
     } finally {
       setIsSavingSig(false);
+    }
+  };
+
+  // Switcher Functions
+  const switchToMain = () => {
+    setActiveFolderId(mainFolderId);
+    setIsViewingQuote(false);
+  };
+
+  const switchToQuote = () => {
+    if (quoteFolderId) {
+      setActiveFolderId(quoteFolderId);
+      setIsViewingQuote(true);
     }
   };
 
@@ -134,8 +179,8 @@ export default function ClientPortal({ isOpen, onClose }) {
           {loading ? (
             <div className="absolute inset-0 flex items-center justify-center text-slate-400"><Loader2 className="animate-spin w-8 h-8" /></div>
           ) : !user ? (
-            // --- LOGIN SCREEN (Same as before) ---
-            <div className="h-full flex flex-col items-center justify-center p-8">
+            // --- LOGIN SCREEN (Unchanged) ---
+             <div className="h-full flex flex-col items-center justify-center p-8">
               <div className="w-full max-w-sm">
                  <div className="text-center mb-8">
                   <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4 text-amber-600"><User size={32} /></div>
@@ -156,7 +201,7 @@ export default function ClientPortal({ isOpen, onClose }) {
                 <div className="flex justify-center"><button onClick={loginWithGoogle} className="text-sm text-slate-500 hover:text-slate-800 underline">Or sign in with Google</button></div>
               </div>
             </div>
-          ) : !folderId ? (
+          ) : !activeFolderId ? (
              <div className="h-full flex flex-col items-center justify-center p-8 text-center">
                <h3 className="text-xl font-bold text-slate-900 mb-2">Access Denied</h3>
                <p className="text-slate-500">User <strong>{user.email.replace(PORTAL_DOMAIN, '')}</strong> is not linked to a folder.</p>
@@ -167,33 +212,45 @@ export default function ClientPortal({ isOpen, onClose }) {
               
               {/* ACTION BAR */}
               <div className="bg-white p-4 px-6 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
-                 <p className="text-slate-600 text-sm">
-                  Project: <span className="font-bold text-slate-900 capitalize">{user.email.split('@')[0].replace('project-', '')}</span>
-                </p>
+                 
+                 <div className="flex items-center gap-4">
+                    {/* Folder Navigation Toggle */}
+                    {quoteFolderId && signatureNeeded && (
+                      isViewingQuote ? (
+                        <button onClick={switchToMain} className="text-slate-500 hover:text-slate-800 flex items-center gap-2 text-sm font-bold">
+                          <ArrowLeft size={16} /> Back to Project Files
+                        </button>
+                      ) : (
+                        <button onClick={switchToQuote} className="text-amber-600 hover:text-amber-700 flex items-center gap-2 text-sm font-bold">
+                          <Folder size={16} /> View Quote Folder
+                        </button>
+                      )
+                    )}
+                 </div>
 
-                {/* SIGNATURE STATUS */}
+                {/* SIGNATURE BUTTON: Only shows if we are VIEWING the quote folder */}
                 {signedData ? (
                   <div className="flex items-center gap-2 text-green-600 bg-green-50 px-4 py-2 rounded-full border border-green-100">
                     <CheckCircle size={18} />
-                    <span className="text-sm font-bold">Quote Signed on {new Date(signedData.signedAt).toLocaleDateString()}</span>
+                    <span className="text-sm font-bold">Quote Signed</span>
                   </div>
-                ) : (
+                ) : signatureNeeded && isViewingQuote ? (
                   <button 
                     onClick={() => setShowSignModal(true)}
                     className="bg-evans-amber text-slate-900 px-6 py-2 rounded-lg font-bold hover:bg-amber-400 transition-colors flex items-center gap-2 shadow-sm animate-pulse"
                   >
-                    <PenTool size={18} /> Review & Sign Quote
+                    <PenTool size={18} /> Sign this Quote
                   </button>
-                )}
+                ) : null}
               </div>
 
-              {/* FOLDER FRAME */}
-              <iframe src={`https://drive.google.com/embeddedfolderview?id=${folderId}#grid`} className="w-full flex-1 border-0 bg-slate-50" title="Client Files"></iframe>
+              {/* FOLDER FRAME (Dynamic Source) */}
+              <iframe src={`https://drive.google.com/embeddedfolderview?id=${activeFolderId}#grid`} className="w-full flex-1 border-0 bg-slate-50" title="Client Files"></iframe>
             </div>
           )}
         </div>
 
-        {/* --- SIGNATURE MODAL OVERLAY --- */}
+        {/* --- SIGNATURE MODAL --- */}
         {showSignModal && (
           <div className="absolute inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
             <div className="bg-white w-full max-w-lg rounded-xl shadow-2xl p-6 animate-in zoom-in-95 duration-200">
@@ -201,33 +258,14 @@ export default function ClientPortal({ isOpen, onClose }) {
                 <h3 className="text-xl font-serif text-slate-900">Sign Quote</h3>
                 <button onClick={() => setShowSignModal(false)} className="text-slate-400 hover:text-slate-600"><X /></button>
               </div>
-              
-              <p className="text-sm text-slate-500 mb-4">
-                By signing below, I confirm that I have read the quote in the folder and accept the terms (Bon pour accord).
-              </p>
-
-              <div className="border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 touch-none mb-4 overflow-hidden relative">
-                 <SignatureCanvas 
-                    ref={sigPad}
-                    penColor="black"
-                    canvasProps={{className: 'w-full h-full'}}
-                    backgroundColor="rgba(255,255,255,0)"
-                 />
+              <p className="text-sm text-slate-500 mb-4">By signing, I accept the terms of the quote located in this folder.</p>
+              <div className="border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 touch-none mb-4 overflow-hidden relative h-64">
+                 <SignatureCanvas ref={sigPad} penColor="black" canvasProps={{className: 'w-full h-full'}} backgroundColor="rgba(255,255,255,0)" />
                  <div className="absolute bottom-2 right-2 text-xs text-slate-300 pointer-events-none">Draw here</div>
               </div>
-
               <div className="flex gap-3">
-                <button 
-                  onClick={() => sigPad.current.clear()} 
-                  className="flex-1 py-3 border border-slate-200 text-slate-600 font-bold rounded-lg hover:bg-slate-50 flex justify-center items-center gap-2"
-                >
-                  <Eraser size={18} /> Clear
-                </button>
-                <button 
-                  onClick={saveSignature} 
-                  disabled={isSavingSig}
-                  className="flex-[2] py-3 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 flex justify-center items-center gap-2"
-                >
+                <button onClick={() => sigPad.current.clear()} className="flex-1 py-3 border border-slate-200 text-slate-600 font-bold rounded-lg hover:bg-slate-50 flex justify-center items-center gap-2"><Eraser size={18} /> Clear</button>
+                <button onClick={saveSignature} disabled={isSavingSig} className="flex-[2] py-3 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 flex justify-center items-center gap-2">
                   {isSavingSig ? <Loader2 className="animate-spin" /> : <><Save size={18} /> Confirm Signature</>}
                 </button>
               </div>
