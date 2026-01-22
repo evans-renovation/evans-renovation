@@ -8,7 +8,11 @@ import AdminDashboard from './AdminDashboard'; // <--- 1. Import Admin Dashboard
 
 // --- CONFIGURATION ---
 const PORTAL_DOMAIN = "@evans-portal.com"; 
-const ADMIN_EMAIL = "cameron@evansrenovation.fr", "bradley@evansrenovation.fr"; // <--- 2. Your Admin Email
+const ADMIN_EMAILS = [
+  "cameron@evansrenovation.fr", 
+  "admin@evansrenovation.fr",
+  "bradley@evansrenovation.fr" 
+];
 
 export default function ClientPortal({ isOpen, onClose }) {
   const [user, setUser] = useState(null);
@@ -159,7 +163,7 @@ export default function ClientPortal({ isOpen, onClose }) {
 
   // --- THE ADMIN CHECK IS HERE ---
   // If the user matches the Admin Email, we return the Dashboard immediately
-  if (isOpen && user && user.email === ADMIN_EMAIL) {
+ if (isOpen && user && ADMIN_EMAILS.includes(user.email)) {
     return <AdminDashboard user={user} onLogout={logout} />;
   }
   // ------------------------------
