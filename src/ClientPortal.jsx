@@ -4,10 +4,11 @@ import { auth, db, loginWithGoogle, loginWithEmail, logout } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import SignatureCanvas from 'react-signature-canvas';
-import AdminDashboard from './AdminDashboard';
+import AdminDashboard from './AdminDashboard'; // <--- 1. Import Admin Dashboard
 
+// --- CONFIGURATION ---
 const PORTAL_DOMAIN = "@evans-portal.com"; 
-const ADMIN_EMAIL = "cameron@evansrenovation.fr";
+const ADMIN_EMAIL = "cameron@evansrenovation.fr"; // <--- 2. Your Admin Email
 
 export default function ClientPortal({ isOpen, onClose }) {
   const [user, setUser] = useState(null);
@@ -15,11 +16,11 @@ export default function ClientPortal({ isOpen, onClose }) {
   
   // Database Fields
   const [mainFolderId, setMainFolderId] = useState(null);
-  const [quoteFolderId, setQuoteFolderId] = useState(null); // NEW: Specific folder for quotes
+  const [quoteFolderId, setQuoteFolderId] = useState(null);
   const [signatureNeeded, setSignatureNeeded] = useState(false);
   const [signedData, setSignedData] = useState(null);
   
-  // View State (Determines which folder is visible)
+  // View State
   const [activeFolderId, setActiveFolderId] = useState(null);
   const [isViewingQuote, setIsViewingQuote] = useState(false);
 
@@ -38,7 +39,10 @@ export default function ClientPortal({ isOpen, onClose }) {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        await fetchClientData(currentUser.email);
+        // Only fetch client data if NOT the admin
+        if (currentUser.email !== ADMIN_EMAIL) {
+          await fetchClientData(currentUser.email);
+        }
       } else {
         resetState();
       }
@@ -63,18 +67,15 @@ export default function ClientPortal({ isOpen, onClose }) {
       if (docSnap.exists()) {
         const data = docSnap.data();
         setMainFolderId(data.folderId);
-        setQuoteFolderId(data.quoteFolderId || null); // Fetch optional quote folder
+        setQuoteFolderId(data.quoteFolderId || null);
         
-        // Handle Signed Status
         if (data.signature) {
           setSignedData(data.signature);
         }
         
-        // Handle Signature Request
         const isNeeded = data.signatureNeeded === true;
         setSignatureNeeded(isNeeded);
 
-        // LOGIC: If signature is needed AND we have a quote folder, default to that view
         if (isNeeded && data.quoteFolderId) {
           setIsViewingQuote(true);
           setActiveFolderId(data.quoteFolderId);
@@ -104,6 +105,7 @@ export default function ClientPortal({ isOpen, onClose }) {
     }
   };
 
+  // --- FIXED SIGNATURE FUNCTION ---
   const saveSignature = async () => {
     if (sigPad.current.isEmpty()) {
       alert("Please draw your signature first.");
@@ -120,7 +122,7 @@ export default function ClientPortal({ isOpen, onClose }) {
         signer: user.email
       };
 
-      // --- FIX IS HERE: Changed 'docRef' to 'doc' ---
+      // FIXED: Using 'doc' correctly here
       const clientRef = doc(db, "clients", user.email);
       
       await updateDoc(clientRef, {
@@ -131,7 +133,6 @@ export default function ClientPortal({ isOpen, onClose }) {
       setSignedData(signRecord);
       setShowSignModal(false);
       setSignatureNeeded(false);
-      // Optional: Switch back to main folder after signing
       setActiveFolderId(mainFolderId);
       setIsViewingQuote(false);
       
@@ -144,7 +145,6 @@ export default function ClientPortal({ isOpen, onClose }) {
     }
   };
 
-  // Switcher Functions
   const switchToMain = () => {
     setActiveFolderId(mainFolderId);
     setIsViewingQuote(false);
@@ -157,11 +157,14 @@ export default function ClientPortal({ isOpen, onClose }) {
     }
   };
 
-  if (!isOpen) return null;
-
-  if (user && user.email === ADMIN_EMAIL) {
+  // --- THE ADMIN CHECK IS HERE ---
+  // If the user matches the Admin Email, we return the Dashboard immediately
+  if (isOpen && user && user.email === ADMIN_EMAIL) {
     return <AdminDashboard user={user} onLogout={logout} />;
   }
+  // ------------------------------
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
@@ -189,7 +192,7 @@ export default function ClientPortal({ isOpen, onClose }) {
           {loading ? (
             <div className="absolute inset-0 flex items-center justify-center text-slate-400"><Loader2 className="animate-spin w-8 h-8" /></div>
           ) : !user ? (
-            // --- LOGIN SCREEN (Unchanged) ---
+            // --- LOGIN SCREEN ---
              <div className="h-full flex flex-col items-center justify-center p-8">
               <div className="w-full max-w-sm">
                  <div className="text-center mb-8">
@@ -219,12 +222,8 @@ export default function ClientPortal({ isOpen, onClose }) {
           ) : (
             // --- MAIN DASHBOARD ---
             <div className="h-full flex flex-col">
-              
-              {/* ACTION BAR */}
               <div className="bg-white p-4 px-6 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
-                 
                  <div className="flex items-center gap-4">
-                    {/* Folder Navigation Toggle */}
                     {quoteFolderId && signatureNeeded && (
                       isViewingQuote ? (
                         <button onClick={switchToMain} className="text-slate-500 hover:text-slate-800 flex items-center gap-2 text-sm font-bold">
@@ -238,7 +237,6 @@ export default function ClientPortal({ isOpen, onClose }) {
                     )}
                  </div>
 
-                {/* SIGNATURE BUTTON: Only shows if we are VIEWING the quote folder */}
                 {signedData ? (
                   <div className="flex items-center gap-2 text-green-600 bg-green-50 px-4 py-2 rounded-full border border-green-100">
                     <CheckCircle size={18} />
@@ -253,8 +251,6 @@ export default function ClientPortal({ isOpen, onClose }) {
                   </button>
                 ) : null}
               </div>
-
-              {/* FOLDER FRAME (Dynamic Source) */}
               <iframe src={`https://drive.google.com/embeddedfolderview?id=${activeFolderId}#grid`} className="w-full flex-1 border-0 bg-slate-50" title="Client Files"></iframe>
             </div>
           )}
@@ -262,28 +258,4 @@ export default function ClientPortal({ isOpen, onClose }) {
 
         {/* --- SIGNATURE MODAL --- */}
         {showSignModal && (
-          <div className="absolute inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white w-full max-w-lg rounded-xl shadow-2xl p-6 animate-in zoom-in-95 duration-200">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-serif text-slate-900">Sign Quote</h3>
-                <button onClick={() => setShowSignModal(false)} className="text-slate-400 hover:text-slate-600"><X /></button>
-              </div>
-              <p className="text-sm text-slate-500 mb-4">By signing, I accept the terms of the quote located in this folder.</p>
-              <div className="border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 touch-none mb-4 overflow-hidden relative h-64">
-                 <SignatureCanvas ref={sigPad} penColor="black" canvasProps={{className: 'w-full h-full'}} backgroundColor="rgba(255,255,255,0)" />
-                 <div className="absolute bottom-2 right-2 text-xs text-slate-300 pointer-events-none">Draw here</div>
-              </div>
-              <div className="flex gap-3">
-                <button onClick={() => sigPad.current.clear()} className="flex-1 py-3 border border-slate-200 text-slate-600 font-bold rounded-lg hover:bg-slate-50 flex justify-center items-center gap-2"><Eraser size={18} /> Clear</button>
-                <button onClick={saveSignature} disabled={isSavingSig} className="flex-[2] py-3 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 flex justify-center items-center gap-2">
-                  {isSavingSig ? <Loader2 className="animate-spin" /> : <><Save size={18} /> Confirm Signature</>}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-      </div>
-    </div>
-  );
-}
+          <div className="absolute inset-0 z-50 bg-slate-90
