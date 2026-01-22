@@ -177,7 +177,7 @@ const systemPrompt = prompts[language];
       hero_badge: "Basé en Charente et Dordogne",
       hero_title_1: "Redonner",
       hero_title_2: "Vie",
-      hero_title_3: " à la vieille pierre.",
+      hero_title_3: "à la vieille pierre.",
       hero_desc: "Alliant une connaissance approfondie du bâti local à une attitude conviviale pour gérer votre rénovation, du premier défi à la finition finale.",
       hero_btn_work: "Voir nos réalisations",
       hero_btn_ai: "Planifier avec notre outil IA",
@@ -671,6 +671,7 @@ const systemPrompt = prompts[language];
     </div>
   );
 }
+
 
 
 
