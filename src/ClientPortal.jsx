@@ -12,7 +12,7 @@ const PORTAL_DOMAIN = "@evans-portal.com";
 // --- ADMIN LIST (Edit this to add more admins) ---
 const ADMIN_EMAILS = [
   "cameron@evansrenovation.fr",  // Your Google Account
-  "admin@evansrenovation.fr"     // Your Password Account
+  "admin@evansrenovation.fr",     // Your Password Account
   "bradley@evansrenovation.fr"
 ];
 
