@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, signOut, signInWithEmailAndPassword } from "firebase/auth";
 
 // --- PASTE YOUR FIREBASE KEYS HERE ---
 const firebaseConfig = {
@@ -28,4 +28,14 @@ export const loginWithGoogle = async () => {
 
 export const logout = async () => {
   await signOut(auth);
+};
+
+export const loginWithEmail = async (email, password) => {
+  try {
+    const result = await signInWithEmailAndPassword(auth, email, password);
+    return result.user;
+  } catch (error) {
+    console.error("Login failed", error);
+    throw error;
+  }
 };
