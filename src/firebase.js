@@ -13,12 +13,30 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+
+// EXPORT THE TOOLS SO YOUR APP CAN USE THEM
 export const auth = getAuth(app);
+export const db = getFirestore(app); // <--- This was likely missing
 export const googleProvider = new GoogleAuthProvider();
 
 export const loginWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, googleProvider);
+    return result.user;
+  } catch (error) {
+    if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user') {
+        await signInWithRedirect(auth, googleProvider);
+    } else {
+        console.error("Login failed", error);
+        throw error;
+    }
+  }
+};
+
+// This function was likely missing too
+export const loginWithEmail = async (email, password) => {
+  try {
+    const result = await signInWithEmailAndPassword(auth, email, password);
     return result.user;
   } catch (error) {
     console.error("Login failed", error);
@@ -28,14 +46,4 @@ export const loginWithGoogle = async () => {
 
 export const logout = async () => {
   await signOut(auth);
-};
-
-export const loginWithEmail = async (email, password) => {
-  try {
-    const result = await signInWithEmailAndPassword(auth, email, password);
-    return result.user;
-  } catch (error) {
-    console.error("Login failed", error);
-    throw error;
-  }
 };
