@@ -4,6 +4,7 @@ import {
   ChevronRight, Menu, X, Facebook, Instagram, 
   Sparkles, Send, Loader2, Construction, CheckCircle2
 } from 'lucide-react';
+import ClientPortal from './ClientPortal';
 
 /**
  * EVANS RÉNOVATION WEBSITE
@@ -23,6 +24,8 @@ export default function App() {
   
   // NEW: Language State ('en' for English, 'fr' for French)
 const [language, setLanguage] = useState('en');
+
+  const [isPortalOpen, setIsPortalOpen] = useState(false);
   
   // --- AI Feature State ---
   const [projectInput, setProjectInput] = useState('');
@@ -332,6 +335,13 @@ const systemPrompt = prompts[language];
   <a href="#contact" onClick={() => setIsMenuOpen(false)} className="text-2xl text-white font-serif font-light tracking-wide hover:text-evans-amber transition-colors">
     {t.nav_contact}
   </a>
+
+  <button 
+  onClick={() => { setIsPortalOpen(true); setIsMenuOpen(false); }} 
+  className="text-2xl text-white font-serif font-light tracking-wide hover:text-evans-amber transition-colors"
+>
+  Client Login
+</button>
 </div>
           {/* NEW: Mobile Language Toggle */}
 <button 
@@ -383,6 +393,13 @@ const systemPrompt = prompts[language];
   <a href="#contact" className={`px-6 py-3 rounded-md transition-all ${scrolled ? 'bg-slate-900 text-white hover:bg-slate-800' : 'bg-white text-slate-900 hover:bg-slate-100'}`}>
     {t.nav_contact}
   </a>
+
+<button 
+  onClick={() => setIsPortalOpen(true)}
+  className={`ml-4 px-4 py-2 rounded font-bold text-xs uppercase tracking-widest transition-all hover:bg-white/20 ${scrolled ? 'text-slate-900' : 'text-white'}`}
+>
+  Login
+</button>
   
   {/* Language Toggle */}
   <button 
@@ -668,9 +685,11 @@ const systemPrompt = prompts[language];
           <p>&copy; {new Date().getFullYear()} Evans Rénovation. All rights reserved.</p>
         </div>
       </section>
+      <ClientPortal isOpen={isPortalOpen} onClose={() => setIsPortalOpen(false)} />
     </div>
   );
 }
+
 
 
 
