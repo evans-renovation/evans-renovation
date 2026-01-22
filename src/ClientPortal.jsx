@@ -6,7 +6,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 // --- CLIENT LIST: Email -> Google Drive Folder ID ---
 const CLIENT_FOLDERS = {
   "cameron@evansrenovation.fr": "REPLACE_WITH_FOLDER_ID",
-  "client@gmail.com": "REPLACE_WITH_FOLDER_ID"
+  "camevans1905@gmail.com": "16PpFOdLY8tsuk4SuRqp-GY2w9pNFeDoo"
 };
 
 export default function ClientPortal({ isOpen, onClose }) {
