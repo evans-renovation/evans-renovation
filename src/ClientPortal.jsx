@@ -4,8 +4,10 @@ import { auth, db, loginWithGoogle, loginWithEmail, logout } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import SignatureCanvas from 'react-signature-canvas';
+import AdminDashboard from './AdminDashboard';
 
 const PORTAL_DOMAIN = "@evans-portal.com"; 
+const ADMIN_EMAIL = "cameron@evansrenovation.fr";
 
 export default function ClientPortal({ isOpen, onClose }) {
   const [user, setUser] = useState(null);
@@ -156,6 +158,10 @@ export default function ClientPortal({ isOpen, onClose }) {
   };
 
   if (!isOpen) return null;
+
+  if (user && user.email === ADMIN_EMAIL) {
+    return <AdminDashboard user={user} onLogout={logout} />;
+  }
 
   return (
     <div className="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
