@@ -258,4 +258,28 @@ export default function ClientPortal({ isOpen, onClose }) {
 
         {/* --- SIGNATURE MODAL --- */}
         {showSignModal && (
-          <div className="absolute inset-0 z-50 bg-slate-90
+          <div className="absolute inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white w-full max-w-lg rounded-xl shadow-2xl p-6 animate-in zoom-in-95 duration-200">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-serif text-slate-900">Sign Quote</h3>
+                <button onClick={() => setShowSignModal(false)} className="text-slate-400 hover:text-slate-600"><X /></button>
+              </div>
+              <p className="text-sm text-slate-500 mb-4">By signing, I accept the terms of the quote located in this folder.</p>
+              <div className="border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 touch-none mb-4 overflow-hidden relative h-64">
+                 <SignatureCanvas ref={sigPad} penColor="black" canvasProps={{className: 'w-full h-full'}} backgroundColor="rgba(255,255,255,0)" />
+                 <div className="absolute bottom-2 right-2 text-xs text-slate-300 pointer-events-none">Draw here</div>
+              </div>
+              <div className="flex gap-3">
+                <button onClick={() => sigPad.current.clear()} className="flex-1 py-3 border border-slate-200 text-slate-600 font-bold rounded-lg hover:bg-slate-50 flex justify-center items-center gap-2"><Eraser size={18} /> Clear</button>
+                <button onClick={saveSignature} disabled={isSavingSig} className="flex-[2] py-3 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 flex justify-center items-center gap-2">
+                  {isSavingSig ? <Loader2 className="animate-spin" /> : <><Save size={18} /> Confirm Signature</>}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+}
