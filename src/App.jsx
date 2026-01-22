@@ -383,6 +383,18 @@ const systemPrompt = prompts[language];
     {t.nav_contact}
   </a>
 
+{/* NEW: Mobile Language Toggle */}
+<button 
+  onClick={() => {
+    setLanguage(language === 'en' ? 'fr' : 'en');
+    setIsMenuOpen(false); // Optional: closes menu when you switch
+  }}
+  className="mt-8 px-6 py-2 border border-white/30 rounded-full text-white text-sm font-bold uppercase tracking-widest hover:bg-white/10 transition-all"
+>
+  {/* Shows target language: "PASSER EN FRANÇAIS" or "SWITCH TO ENGLISH" */}
+  {language === 'en' ? 'Passer en Français' : 'Switch to English'}
+</button>
+  
   {/* Language Toggle */}
   <button 
     onClick={() => setLanguage(language === 'en' ? 'fr' : 'en')}
@@ -670,6 +682,7 @@ const systemPrompt = prompts[language];
     </div>
   );
 }
+
 
 
 
