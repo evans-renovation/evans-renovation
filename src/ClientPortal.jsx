@@ -8,8 +8,7 @@ import AdminDashboard from './AdminDashboard'; // <--- 1. Import Admin Dashboard
 
 // --- CONFIGURATION ---
 const PORTAL_DOMAIN = "@evans-portal.com"; 
-const ADMIN_EMAIL = "cameron@evansrenovation.fr"; // <--- 2. Your Admin Email
-const ADMIN_EMAIL = "bradley@evansrenovation.fr";
+const ADMIN_EMAIL = "cameron@evansrenovation.fr", "bradley@evansrenovation.fr"; // <--- 2. Your Admin Email
 
 export default function ClientPortal({ isOpen, onClose }) {
   const [user, setUser] = useState(null);
