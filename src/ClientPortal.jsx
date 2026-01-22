@@ -118,7 +118,10 @@ export default function ClientPortal({ isOpen, onClose }) {
         signer: user.email
       };
 
-      await updateDoc(docRef(db, "clients", user.email), {
+      // --- FIX IS HERE: Changed 'docRef' to 'doc' ---
+      const clientRef = doc(db, "clients", user.email);
+      
+      await updateDoc(clientRef, {
         signature: signRecord,
         signatureNeeded: false
       });
@@ -133,6 +136,7 @@ export default function ClientPortal({ isOpen, onClose }) {
       alert("Quote signed successfully!");
     } catch (error) {
       console.error("Error saving signature:", error);
+      alert("Error saving signature. Please try again.");
     } finally {
       setIsSavingSig(false);
     }
