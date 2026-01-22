@@ -4,14 +4,16 @@ import { auth, db, loginWithGoogle, loginWithEmail, logout } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import SignatureCanvas from 'react-signature-canvas';
-import AdminDashboard from './AdminDashboard'; // <--- 1. Import Admin Dashboard
+import AdminDashboard from './AdminDashboard'; 
 
 // --- CONFIGURATION ---
 const PORTAL_DOMAIN = "@evans-portal.com"; 
+
+// --- ADMIN LIST (Edit this to add more admins) ---
 const ADMIN_EMAILS = [
-  "cameron@evansrenovation.fr", 
-  "admin@evansrenovation.fr",
-  "bradley@evansrenovation.fr" 
+  "cameron@evansrenovation.fr",  // Your Google Account
+  "admin@evansrenovation.fr"     // Your Password Account
+  "bradley@evansrenovation.fr"
 ];
 
 export default function ClientPortal({ isOpen, onClose }) {
@@ -43,8 +45,8 @@ export default function ClientPortal({ isOpen, onClose }) {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        // Only fetch client data if NOT the admin
-        if (currentUser.email !== ADMIN_EMAIL) {
+        // Only fetch client data if the user is NOT an admin
+        if (!ADMIN_EMAILS.includes(currentUser.email)) {
           await fetchClientData(currentUser.email);
         }
       } else {
@@ -98,7 +100,12 @@ export default function ClientPortal({ isOpen, onClose }) {
     setError('');
     setIsSubmitting(true);
     let finalEmail = usernameInput.trim();
-    if (!finalEmail.includes('@')) finalEmail = finalEmail + PORTAL_DOMAIN;
+    
+    // Logic: If they typed a full email (like admin@evansrenovation.fr), use it.
+    // If they typed just "smith", add the portal domain.
+    if (!finalEmail.includes('@')) {
+      finalEmail = finalEmail + PORTAL_DOMAIN;
+    }
 
     try {
       await loginWithEmail(finalEmail, password);
@@ -109,7 +116,6 @@ export default function ClientPortal({ isOpen, onClose }) {
     }
   };
 
-  // --- FIXED SIGNATURE FUNCTION ---
   const saveSignature = async () => {
     if (sigPad.current.isEmpty()) {
       alert("Please draw your signature first.");
@@ -126,7 +132,6 @@ export default function ClientPortal({ isOpen, onClose }) {
         signer: user.email
       };
 
-      // FIXED: Using 'doc' correctly here
       const clientRef = doc(db, "clients", user.email);
       
       await updateDoc(clientRef, {
@@ -161,12 +166,12 @@ export default function ClientPortal({ isOpen, onClose }) {
     }
   };
 
-  // --- THE ADMIN CHECK IS HERE ---
-  // If the user matches the Admin Email, we return the Dashboard immediately
- if (isOpen && user && ADMIN_EMAILS.includes(user.email)) {
+  // --- ADMIN CHECK (UPDATED) ---
+  // If the user's email is found in the ADMIN_EMAILS list, show Dashboard
+  if (isOpen && user && ADMIN_EMAILS.includes(user.email)) {
     return <AdminDashboard user={user} onLogout={logout} />;
   }
-  // ------------------------------
+  // -----------------------------
 
   if (!isOpen) return null;
 
