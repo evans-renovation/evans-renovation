@@ -114,7 +114,7 @@ export default function ClientPortal({ isOpen, onClose }) {
         <X size={32} />
       </button>
 
-      <div className="bg-white w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl min-h-[500px] flex flex-col relative">
+      <div className="bg-white w-full max-w-6xl rounded-2xl overflow-hidden shadow-2xl h-[85vh] flex flex-col relative">
         
         {/* Header */}
         <div className="bg-slate-900 p-6 flex justify-between items-center border-b border-slate-800">
@@ -210,7 +210,7 @@ export default function ClientPortal({ isOpen, onClose }) {
                  <SignatureCanvas 
                     ref={sigPad}
                     penColor="black"
-                    canvasProps={{className: 'w-full h-48'}}
+                    canvasProps={{className: 'w-full h-full'}}
                     backgroundColor="rgba(255,255,255,0)"
                  />
                  <div className="absolute bottom-2 right-2 text-xs text-slate-300 pointer-events-none">Draw here</div>
