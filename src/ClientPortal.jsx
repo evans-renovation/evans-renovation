@@ -1,18 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { X, LogOut, FolderOpen, Lock, ExternalLink, Loader2 } from 'lucide-react';
-import { auth, loginWithGoogle, logout } from './firebase';
+import { X, LogOut, FolderOpen, Lock, ExternalLink, Loader2, User, Key } from 'lucide-react';
+import { auth, loginWithGoogle, loginWithEmail, logout } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 
-// --- CLIENT LIST: Email -> Google Drive Folder ID ---
+// --- CONFIGURATION ---
 const CLIENT_FOLDERS = {
-  "cameron@evansrenovation.fr": "REPLACE_WITH_FOLDER_ID",
-  "camevans1905@gmail.com": "16PpFOdLY8tsuk4SuRqp-GY2w9pNFeDoo"
+  // Option A: Real Google Accounts
+  "cameron@evansrenovation.fr": "YOUR_FOLDER_ID",
+  
+  // Option B: Custom "Usernames" (Must be email format)
+  "smith@evans.fr": "THE_FOLDER_ID_FOR_SMITH" 
 };
 
 export default function ClientPortal({ isOpen, onClose }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [folderId, setFolderId] = useState(null);
+  
+  // Login Form States
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -27,20 +36,34 @@ export default function ClientPortal({ isOpen, onClose }) {
     return () => unsubscribe();
   }, []);
 
+  const handleEmailLogin = async (e) => {
+    e.preventDefault();
+    setError('');
+    setIsSubmitting(true);
+    try {
+      await loginWithEmail(email, password);
+    } catch (err) {
+      setError("Incorrect email or password.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-sm flex items-center justify-center p-4">
-      <button onClick={onClose} className="absolute top-6 right-6 text-white/50 hover:text-white">
+      <button onClick={onClose} className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors">
         <X size={32} />
       </button>
 
       <div className="bg-white w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl min-h-[500px] flex flex-col">
+        
         {/* Header */}
         <div className="bg-slate-900 p-6 flex justify-between items-center border-b border-slate-800">
           <div className="flex items-center gap-3 text-white">
             <Lock className="text-evans-amber" size={24} />
-            <h2 className="font-serif text-xl">Client Portal</h2>
+            <h2 className="font-serif text-xl">Espace Client</h2>
           </div>
           {user && (
             <button onClick={logout} className="text-xs font-bold text-slate-400 hover:text-white uppercase tracking-widest flex items-center gap-2">
@@ -49,40 +72,93 @@ export default function ClientPortal({ isOpen, onClose }) {
           )}
         </div>
 
-        {/* Body */}
+        {/* Content */}
         <div className="flex-1 bg-slate-50 relative">
           {loading ? (
             <div className="absolute inset-0 flex items-center justify-center text-slate-400">
               <Loader2 className="animate-spin w-8 h-8" />
             </div>
           ) : !user ? (
-            // Not Logged In
-            <div className="h-full flex flex-col items-center justify-center p-8 text-center">
-              <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-6 text-amber-600">
-                <FolderOpen size={32} />
+            // --- LOGIN SCREEN ---
+            <div className="h-full flex flex-col items-center justify-center p-8">
+              <div className="w-full max-w-sm">
+                <div className="text-center mb-8">
+                  <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4 text-amber-600">
+                    <User size={32} />
+                  </div>
+                  <h3 className="text-2xl font-serif text-slate-900">Client Login</h3>
+                </div>
+
+                {/* Email/Password Form */}
+                <form onSubmit={handleEmailLogin} className="space-y-4 mb-8">
+                  <div>
+                    <input 
+                      type="email" 
+                      placeholder="Username (Email)"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <input 
+                      type="password" 
+                      placeholder="Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none"
+                      required
+                    />
+                  </div>
+                  
+                  {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+
+                  <button 
+                    type="submit" 
+                    disabled={isSubmitting}
+                    className="w-full bg-slate-900 text-white py-3 rounded-lg font-bold hover:bg-slate-800 transition-all flex justify-center items-center gap-2"
+                  >
+                    {isSubmitting ? <Loader2 className="animate-spin" /> : "Log In"}
+                  </button>
+                </form>
+
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-300"></div></div>
+                  <div className="relative flex justify-center text-sm"><span className="px-2 bg-slate-50 text-slate-500">Or continue with</span></div>
+                </div>
+
+                <div className="mt-6">
+                  <button onClick={loginWithGoogle} className="w-full bg-white border border-slate-300 text-slate-700 py-3 rounded-lg font-bold hover:bg-slate-50 transition-all flex justify-center items-center gap-2">
+                    <img src="https://www.google.com/favicon.ico" alt="G" className="w-5 h-5" />
+                    Google Account
+                  </button>
+                </div>
               </div>
-              <h3 className="text-2xl font-serif text-slate-900 mb-2">Access Project Files</h3>
-              <p className="text-slate-500 mb-8 max-w-md">Sign in with your Google Account to view plans and photos.</p>
-              <button onClick={loginWithGoogle} className="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-6 py-3 rounded-lg font-bold flex items-center gap-3 shadow-sm">
-                Sign in with Google
-              </button>
             </div>
           ) : !folderId ? (
-             // Logged In, No Folder
+             // --- NO FOLDER FOUND ---
              <div className="h-full flex flex-col items-center justify-center p-8 text-center">
                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-6 text-red-500">
                  <Lock size={32} />
                </div>
-               <h3 className="text-xl font-bold text-slate-900 mb-2">No Project Found</h3>
-               <p className="text-slate-500">We couldn't find a folder linked to <strong>{user.email}</strong>.</p>
+               <h3 className="text-xl font-bold text-slate-900 mb-2">No Project Linked</h3>
+               <p className="text-slate-500 mb-6">User: <strong>{user.email}</strong></p>
              </div>
           ) : (
-            // Success
-            <iframe 
-              src={`https://drive.google.com/embeddedfolderview?id=${folderId}#grid`}
-              className="w-full h-full min-h-[500px] border-0"
-              title="Client Files"
-            ></iframe>
+            // --- FOLDER VIEW ---
+            <div className="h-full flex flex-col">
+              <div className="bg-amber-50 p-4 px-6 flex justify-between items-center border-b border-amber-100">
+                <p className="text-amber-900 text-sm font-medium">Project: <span className="font-bold">{user.email}</span></p>
+                <a href={`https://drive.google.com/drive/folders/${folderId}`} target="_blank" rel="noreferrer" className="text-amber-700 hover:text-amber-900 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                  Open in Drive <ExternalLink size={14} />
+                </a>
+              </div>
+              <iframe src={`https://drive.google.com/embeddedfolderview?id=${folderId}#grid`} className="w-full flex-1 border-0" title="Client Files"></iframe>
+              <p className="text-center text-xs text-slate-400 py-2 bg-slate-50">
+                If the folder is blank, please ensure you have enabled "Anyone with the link" in Google Drive.
+              </p>
+            </div>
           )}
         </div>
       </div>
