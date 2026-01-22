@@ -9,12 +9,12 @@ const PORTAL_DOMAIN = "@evans-portal.com";
 
 const CLIENT_FOLDERS = {
   // GOOGLE LOGINS (Full Emails)
-  "cameron@evansrenovation.fr": "YOUR_FOLDER_ID",
+  "cameron@evansrenovation.fr": "16PpFOdLY8tsuk4SuRqp-GY2w9pNFeDoo",
 
   // USERNAME LOGINS (Must end with the PORTAL_DOMAIN above)
   // If username is "smith", map key is "smith@evans-portal.com"
-  [`smith${PORTAL_DOMAIN}`]: "FOLDER_ID_FOR_SMITH",
-  [`jones${PORTAL_DOMAIN}`]: "FOLDER_ID_FOR_JONES"
+  [`blackburn${PORTAL_DOMAIN}`]: "11EY7IMSo2z1nhf5fSn_d6UycpZtgQOp5",
+  [`jannaway${PORTAL_DOMAIN}`]: "1O2lkKbpv0v1cVxaidQF66fPqpwropVSr"
 };
 
 export default function ClientPortal({ isOpen, onClose }) {
