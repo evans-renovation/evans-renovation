@@ -315,16 +315,24 @@ const systemPrompt = prompts[language];
           <button onClick={() => setIsMenuOpen(false)} className="absolute top-6 right-6 text-white p-2 hover:bg-white/10 rounded-full">
             <X size={32} />
           </button>
-          {['Portfolio', 'Services', 'Workshop', 'Contact'].map((item) => (
-            <a 
-              key={item}
-              href={`#${item.toLowerCase()}`} 
-              onClick={() => setIsMenuOpen(false)}
-              className="text-2xl text-white font-serif font-light tracking-wide hover:text-evans-amber transition-colors"
-            >
-              {item}
-            </a>
-          ))}
+          {/* New Mobile Menu with Translations */}
+<div className="flex flex-col items-center space-y-8">
+  <a href="#services" onClick={() => setIsMenuOpen(false)} className="text-2xl text-white font-serif font-light tracking-wide hover:text-evans-amber transition-colors">
+    {t.nav_services}
+  </a>
+  
+  <a href="#workshop" onClick={() => setIsMenuOpen(false)} className="text-2xl text-white font-serif font-light tracking-wide hover:text-evans-amber transition-colors">
+    {t.nav_workshop}
+  </a>
+
+  <a href="#portfolio" onClick={() => setIsMenuOpen(false)} className="text-2xl text-white font-serif font-light tracking-wide hover:text-evans-amber transition-colors">
+    {t.nav_portfolio}
+  </a>
+
+  <a href="#contact" onClick={() => setIsMenuOpen(false)} className="text-2xl text-white font-serif font-light tracking-wide hover:text-evans-amber transition-colors">
+    {t.nav_contact}
+  </a>
+</div>
           {/* --- NEW: Add this Mobile Language Button here --- */}
 <button 
   onClick={() => {
@@ -355,28 +363,27 @@ const systemPrompt = prompts[language];
           {/* Desktop Links */}
 <div className={`hidden md:flex items-center space-x-8 text-xs font-bold uppercase tracking-widest ${scrolled ? 'text-slate-600' : 'text-slate-200'}`}>
   
-  {/* 1. Portfolio Link */}
-  <a href="#portfolio" className="hover:text-evans-amber transition-colors">
-    {t.nav_portfolio}
-  </a>
-
-  {/* 2. Services Link */}
+  {/* 1. Services */}
   <a href="#services" className="hover:text-evans-amber transition-colors">
     {t.nav_services}
   </a>
 
-  {/* 3. AI Workshop Link (Fixed Layout) */}
+  {/* 2. AI Workshop */}
   <a href="#workshop" className="flex items-center gap-2 hover:text-evans-amber transition-colors whitespace-nowrap">
-    {t.nav_workshop} 
-    <Sparkles size={14} className="text-evans-amber" />
+    {t.nav_workshop} <Sparkles size={14} className="text-evans-amber" />
   </a>
 
-  {/* 4. Contact Link */}
+  {/* 3. Portfolio */}
+  <a href="#portfolio" className="hover:text-evans-amber transition-colors">
+    {t.nav_portfolio}
+  </a>
+
+  {/* 4. Contact */}
   <a href="#contact" className={`px-6 py-3 rounded-md transition-all ${scrolled ? 'bg-slate-900 text-white hover:bg-slate-800' : 'bg-white text-slate-900 hover:bg-slate-100'}`}>
     {t.nav_contact}
   </a>
 
-  {/* 5. Language Toggle */}
+  {/* Language Toggle */}
   <button 
     onClick={() => setLanguage(language === 'en' ? 'fr' : 'en')}
     className={`
@@ -439,6 +446,30 @@ const systemPrompt = prompts[language];
 </div>
       </header>
 
+      {/* Services Grid */}
+      <section id="services" className="py-24 px-6 bg-slate-50 scroll-mt-20">
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-amber-600 mb-3">{t.serv_eyebrow}</h2>
+            <h3 className="text-3xl md:text-4xl font-serif text-slate-900">{t.serv_title}</h3>
+          </div>
+
+          {/* Grid */}
+          <div className="grid md:grid-cols-3 gap-8">
+            {services.map((s, i) => (
+              <div key={i} className="group p-8 bg-white rounded-2xl border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <div className="w-14 h-14 bg-amber-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-amber-100 transition-colors">
+                  {s.icon}
+                </div>
+                <h4 className="text-xl font-bold text-slate-900 mb-3">{s.title}</h4>
+                <p className="text-slate-500 leading-relaxed">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      
       {/* AI Workshop Section */}
       <section id="workshop" className="py-24 px-6 bg-white border-b border-slate-100 scroll-mt-20">
         <div className="max-w-5xl mx-auto">
@@ -509,29 +540,7 @@ const systemPrompt = prompts[language];
         </div>
       </section>
 
-      {/* Services Grid */}
-      <section id="services" className="py-24 px-6 bg-slate-50 scroll-mt-20">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-amber-600 mb-3">{t.serv_eyebrow}</h2>
-            <h3 className="text-3xl md:text-4xl font-serif text-slate-900">{t.serv_title}</h3>
-          </div>
-
-          {/* Grid */}
-          <div className="grid md:grid-cols-3 gap-8">
-            {services.map((s, i) => (
-              <div key={i} className="group p-8 bg-white rounded-2xl border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                <div className="w-14 h-14 bg-amber-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-amber-100 transition-colors">
-                  {s.icon}
-                </div>
-                <h4 className="text-xl font-bold text-slate-900 mb-3">{s.title}</h4>
-                <p className="text-slate-500 leading-relaxed">{s.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      
 
       {/* Portfolio Grid */}
       <section id="portfolio" className="py-24 px-6 bg-white scroll-mt-20">
@@ -661,6 +670,7 @@ const systemPrompt = prompts[language];
     </div>
   );
 }
+
 
 
 
