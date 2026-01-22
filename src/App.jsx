@@ -333,15 +333,16 @@ const systemPrompt = prompts[language];
     {t.nav_contact}
   </a>
 </div>
-          {/* --- NEW: Add this Mobile Language Button here --- */}
+          {/* NEW: Mobile Language Toggle */}
 <button 
   onClick={() => {
     setLanguage(language === 'en' ? 'fr' : 'en');
-    setIsMenuOpen(false); // Close menu after switching
+    setIsMenuOpen(false); // Optional: closes menu when you switch
   }}
-  className="mt-8 px-6 py-2 border border-white/20 rounded-full text-sm font-bold uppercase tracking-widest text-slate-400 hover:text-white hover:border-white transition-all"
+  className="mt-8 px-6 py-2 border border-white/30 rounded-full text-white text-sm font-bold uppercase tracking-widest hover:bg-white/10 transition-all"
 >
-  {language === 'en' ? 'Switch to French' : 'Switch to English'}
+  {/* Shows target language: "PASSER EN FRANÇAIS" or "SWITCH TO ENGLISH" */}
+  {language === 'en' ? 'Passer en Français' : 'Switch to English'}
 </button>
           
         </div>
@@ -382,18 +383,6 @@ const systemPrompt = prompts[language];
   <a href="#contact" className={`px-6 py-3 rounded-md transition-all ${scrolled ? 'bg-slate-900 text-white hover:bg-slate-800' : 'bg-white text-slate-900 hover:bg-slate-100'}`}>
     {t.nav_contact}
   </a>
-
-{/* NEW: Mobile Language Toggle */}
-<button 
-  onClick={() => {
-    setLanguage(language === 'en' ? 'fr' : 'en');
-    setIsMenuOpen(false); // Optional: closes menu when you switch
-  }}
-  className="mt-8 px-6 py-2 border border-white/30 rounded-full text-white text-sm font-bold uppercase tracking-widest hover:bg-white/10 transition-all"
->
-  {/* Shows target language: "PASSER EN FRANÇAIS" or "SWITCH TO ENGLISH" */}
-  {language === 'en' ? 'Passer en Français' : 'Switch to English'}
-</button>
   
   {/* Language Toggle */}
   <button 
@@ -682,6 +671,7 @@ const systemPrompt = prompts[language];
     </div>
   );
 }
+
 
 
 
