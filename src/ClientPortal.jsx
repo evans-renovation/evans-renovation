@@ -177,10 +177,7 @@ export default function ClientPortal({ isOpen, onClose, initialLang = 'en' }) {
           
           <div className="flex items-center gap-4">
             {/* Language Toggle (Syncs with homepage but can be overridden) */}
-            <div className="flex bg-slate-800 rounded-lg p-1">
-              <button onClick={() => setLang('en')} className={`px-3 py-1 rounded text-xs font-bold transition-colors ${lang === 'en' ? 'bg-slate-600 text-white' : 'text-slate-400 hover:text-white'}`}>🇬🇧 EN</button>
-              <button onClick={() => setLang('fr')} className={`px-3 py-1 rounded text-xs font-bold transition-colors ${lang === 'fr' ? 'bg-slate-600 text-white' : 'text-slate-400 hover:text-white'}`}>🇫🇷 FR</button>
-            </div>
+            
             {user && <button onClick={logout} className="text-xs font-bold text-slate-400 hover:text-white uppercase tracking-widest flex items-center gap-2">{t.signOut} <LogOut size={14} /></button>}
           </div>
         </div>
