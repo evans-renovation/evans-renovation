@@ -311,7 +311,6 @@ const systemPrompt = prompts[language];
   // --- UI Components ---
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-amber-100 selection:text-amber-900">
-<div className="hero-background"></div>
       
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
@@ -694,6 +693,7 @@ const systemPrompt = prompts[language];
     </div>
   );
 }
+
 
 
 
