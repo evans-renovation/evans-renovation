@@ -424,9 +424,13 @@ const systemPrompt = prompts[language];
       <header className="relative h-screen flex items-center justify-center bg-slate-900 overflow-hidden">
         {/* Background Image Layer */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-slate-900/60 z-10" />
+          {/* Dark overlay to make text readable - adjusted to 0.5 opacity */}
+          <div className="absolute inset-0 bg-slate-900/50 z-10" />
+          
+          {/* YOUR IMAGE */}
           <div 
-            className="w-full h-full bg-[url('https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center opacity-50 scale-105 animate-in fade-in duration-1000"
+            className="w-full h-full bg-cover bg-center animate-in fade-in duration-1000"
+            style={{ backgroundImage: "url('/hero-bg.jpg')" }}
           />
         </div>
         
@@ -693,6 +697,7 @@ const systemPrompt = prompts[language];
     </div>
   );
 }
+
 
 
 
