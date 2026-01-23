@@ -685,10 +685,15 @@ const systemPrompt = prompts[language];
           <p>&copy; {new Date().getFullYear()} Evans Rénovation. All rights reserved.</p>
         </div>
       </section>
-      <ClientPortal isOpen={isPortalOpen} onClose={() => setIsPortalOpen(false)} />
+      <ClientPortal 
+        isOpen={isPortalOpen} 
+        onClose={() => setIsPortalOpen(false)} 
+        initialLang={language}
+        />
     </div>
   );
 }
+
 
 
 
