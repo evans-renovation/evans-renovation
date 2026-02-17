@@ -110,22 +110,22 @@ const systemPrompt = prompts[language];
       // Navbar
       nav_portfolio: "Portfolio",
       nav_services: "Services",
-      nav_workshop: "AI Workshop",
+      nav_workshop: "Project Planner",
       nav_contact: "Contact Us",
       
       // Hero Section
-      hero_badge: "Based in Charente & Dordogne",
+      hero_badge: "Covering Charente & Dordogne Since 2016",
       hero_title_1: "Breathing new",
       hero_title_2: "Life",
       hero_title_3: "into old Stone.",
       hero_desc: "Combining a deep understanding of local buildings with a friendly, can-do attitude to manage your renovation from the first challenge to the final finish.",
       hero_btn_work: "View Our Work",
-      hero_btn_ai: "Plan with AI",
+      hero_btn_ai: "Start Your Plan",
 
       // AI Workshop
-      ai_label: "Digital Consultant",
+      ai_label: "Interactive Tool",
       ai_title: "Visualize your project before we break ground.",
-      ai_desc: "Renovating in France involves specific regulations and stages. Describe your rough idea here, and our AI tool will generate a structured, professional roadmap to help you understand the scope.",
+      ai_desc: "Renovating in France involves specific regulations and stages. Describe your rough idea here, and and we will generate a structured, professional roadmap to help you understand the scope.",
       ai_point_1: "Receive a 5-step breakdown",
       ai_point_2: "Understand French terminology",
       ai_point_3: "Instant, free preliminary advice",
@@ -173,22 +173,22 @@ const systemPrompt = prompts[language];
       // Navbar
       nav_portfolio: "Portfolio",
       nav_services: "Services",
-      nav_workshop: "Atelier IA",
+      nav_workshop: "Planificateur",
       nav_contact: "Contactez-nous",
       
       // Hero Section
-      hero_badge: "Basé en Charente et Dordogne",
+      hero_badge: "Nous couvrons la Charente et la Dordogne depuis 2016",
       hero_title_1: "Redonner",
       hero_title_2: "Vie",
       hero_title_3: "à la vieille pierre.",
       hero_desc: "Alliant une connaissance approfondie du bâti local à une attitude conviviale pour gérer votre rénovation, du premier défi à la finition finale.",
       hero_btn_work: "Voir nos réalisations",
-      hero_btn_ai: "Planifier avec notre outil IA",
+      hero_btn_ai: "Démarrer un Plan",
 
       // AI Workshop
-      ai_label: "Consultant Numérique",
+      ai_label: "Outil Interactif",
       ai_title: "Visualisez votre projet avant de commencer.",
-      ai_desc: "Rénover en France implique des règles spécifiques. Décrivez votre idée, et notre outil IA générera une feuille de route professionnelle pour vous aider à comprendre l'ampleur des travaux.",
+      ai_desc: "Rénover en France implique des règles spécifiques. Décrivez votre idée, et nous générerons une feuille de route professionnelle pour vous aider à comprendre l'ampleur des travaux.",
       ai_point_1: "Recevez un plan en 5 étapes",
       ai_point_2: "Comprendre la terminologie",
       ai_point_3: "Conseils préliminaires gratuits",
@@ -441,10 +441,11 @@ const systemPrompt = prompts[language];
     {t.hero_badge}
   </div>
   
-  {/* Main Headline */}
+{/* Main Headline */}
   <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-8 tracking-tight leading-[1.1] animate-in slide-in-from-bottom-8 duration-700 delay-100">
     {t.hero_title_1} <br/>
-    <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500 italic pr-2">
+    <span className="text-evans-amber italic pr-2 font-medium">
+      {/* Removed the gradient, just pure Gold color now for classier look */}
       {t.hero_title_2}
     </span>
     {t.hero_title_3}
@@ -697,6 +698,7 @@ const systemPrompt = prompts[language];
     </div>
   );
 }
+
 
 
 
