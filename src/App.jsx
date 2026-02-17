@@ -626,7 +626,7 @@ const systemPrompt = prompts[language];
         <Mail className="text-evans-amber shrink-0" />
         <div>
           <div className="text-sm text-slate-400 uppercase tracking-widest font-bold">{t.cont_email}</div>
-          <div className="text-2xl font-serif">cameron@evansrenovation.fr bradley@evansrenovation.fr</div>
+          <div className="text-2xl font-serif">info@evansrenovation.fr</div>
         </div>
       </div>
     </div>
@@ -698,6 +698,7 @@ const systemPrompt = prompts[language];
     </div>
   );
 }
+
 
 
 
