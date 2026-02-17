@@ -115,11 +115,11 @@ const systemPrompt = prompts[language];
       
       // Hero Section
       hero_badge: "Covering Charente & Dordogne Since 2016",
-      hero_title_1: "Breathing new",
-      hero_title_2: "Life",
-      hero_title_3: "into old Stone.",
-      hero_desc: "Combining a deep understanding of local buildings with a friendly, can-do attitude to manage your renovation from the first challenge to the final finish.",
-      hero_btn_work: "View Our Work",
+      hero_title_1: "Transforming",
+      hero_title_2: "Old Buildings", // This will be Gold/Bronze
+      hero_title_3: "Into beautiful homes.",
+      hero_desc: "We specialize in adapting traditional stone properties. Honest pricing, clear communication, and quality workmanship from start to finish.",
+      hero_btn_work: "See Our Work",
       hero_btn_ai: "Start Your Plan",
 
       // AI Workshop
@@ -178,11 +178,11 @@ const systemPrompt = prompts[language];
       
       // Hero Section
       hero_badge: "Nous couvrons la Charente et la Dordogne depuis 2016",
-      hero_title_1: "Redonner",
-      hero_title_2: "Vie",
-      hero_title_3: "à la vieille pierre.",
-      hero_desc: "Alliant une connaissance approfondie du bâti local à une attitude conviviale pour gérer votre rénovation, du premier défi à la finition finale.",
-      hero_btn_work: "Voir nos réalisations",
+      hero_title_1: "Transformer",
+      hero_title_2: "Le Bâti Ancien", // This will be Gold/Bronze
+      hero_title_3: "En maisons de caractère",
+      hero_desc: "Nous adaptons les bâtiments en pierre traditionnels. Prix honnêtes, communication claire et travail de qualité du début à la fin.",
+      hero_btn_work: "Voir nos Projets",
       hero_btn_ai: "Démarrer un Plan",
 
       // AI Workshop
@@ -698,6 +698,7 @@ const systemPrompt = prompts[language];
     </div>
   );
 }
+
 
 
 
