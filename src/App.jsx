@@ -114,13 +114,13 @@ const systemPrompt = prompts[language];
       nav_contact: "Contact Us",
       
       // Hero Section
-      hero_badge: "Covering Charente & Dordogne Since 2016",
-      hero_title_1: "Transforming",
-      hero_title_2: "Old Buildings", // This will be Gold/Bronze
-      hero_title_3: "Into Beautiful Homes.",
-      hero_desc: "We specialize in adapting traditional stone properties. Honest pricing, clear communication, and quality workmanship from start to finish.",
+     hero_badge: "Est. 2016 • Charente & Dordogne",
+      hero_title_1: "Quality Renovations &",
+      hero_title_2: "Expert Masonry.",
+      hero_title_3: "", // We can leave this blank now
+      hero_desc: "A family-run business built on clear communication, creative problem-solving, and quality workmanship. From traditional stone houses to new builds, we always find a way to deliver outstanding results.",
       hero_btn_work: "See Our Work",
-      hero_btn_ai: "Start Your Plan",
+      hero_btn_ai: "Discuss Your Project",
 
       // AI Workshop
       ai_label: "Interactive Tool",
@@ -137,7 +137,7 @@ const systemPrompt = prompts[language];
 
       // Services
       serv_eyebrow: "Our Expertise",
-      serv_title: "Twenty years of local building knowledge applied to every detail",
+      serv_title: "Years of local building knowledge applied to every detail",
       serv_1_title: "Total Renovation",
       serv_1_desc: "We manage your entire project from start to finish, applying local insight to navigate regulations and restore your property.",
       serv_2_title: "Kitchens & Bathrooms",
@@ -177,13 +177,13 @@ const systemPrompt = prompts[language];
       nav_contact: "Contactez-nous",
       
       // Hero Section
-      hero_badge: "Nous couvrons la Charente et la Dordogne depuis 2016",
-      hero_title_1: "Transformer",
-      hero_title_2: "Le Bâti Ancien", // This will be Gold/Bronze
-      hero_title_3: "En Maisons de Caractère",
-      hero_desc: "Nous adaptons les bâtiments en pierre traditionnels. Prix honnêtes, communication claire et travail de qualité du début à la fin.",
+      hero_badge: "Établi en 2016 • Charente & Dordogne",
+      hero_title_1: "Rénovations de Qualité &",
+      hero_title_2: "Maçonnerie Experte.", 
+      hero_title_3: "",
+      hero_desc: "Une entreprise familiale fondée sur une communication claire, la recherche de solutions et un savoir-faire exceptionnel. De la pierre traditionnelle aux constructions modernes, nous trouvons toujours le moyen d'offrir des résultats remarquables.",
       hero_btn_work: "Voir nos Projets",
-      hero_btn_ai: "Démarrer un Plan",
+      hero_btn_ai: "Discuter de votre projet",
 
       // AI Workshop
       ai_label: "Outil Interactif",
@@ -421,13 +421,12 @@ const systemPrompt = prompts[language];
       </nav>
 
       {/* Hero Section */}
-      <header className="relative h-screen flex items-center justify-center bg-slate-900 overflow-hidden">
+      <header className="relative h-screen flex items-center justify-center bg-evans-earth overflow-hidden">
         {/* Background Image Layer */}
         <div className="absolute inset-0 z-0">
-          {/* Dark overlay to make text readable - adjusted to 0.5 opacity */}
-          <div className="absolute inset-0 bg-slate-900/50 z-10" />
+          {/* Dark, earthy overlay to make white text readable without flashy accents */}
+          <div className="absolute inset-0 bg-evans-earth/70 z-10" />
           
-          {/* YOUR IMAGE */}
           <div 
             className="w-full h-full bg-cover bg-center animate-in fade-in duration-1000"
             style={{ backgroundImage: "url('/hero-bg.jpg')" }}
@@ -436,37 +435,35 @@ const systemPrompt = prompts[language];
         
         {/* Hero Content */}
         <div className="relative z-20 text-center px-6 max-w-4xl mt-16">
-  {/* Badge */}
-  <div className="inline-block px-4 py-1 mb-6 border border-white/20 rounded-full bg-white/5 backdrop-blur-sm text-amber-400 text-[10px] font-bold uppercase tracking-[0.2em] animate-in slide-in-from-bottom-4 duration-700">
-    {t.hero_badge}
-  </div>
-  
-{/* Main Headline */}
-  <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-8 tracking-tight leading-[1.1] animate-in slide-in-from-bottom-8 duration-700 delay-100">
-    {t.hero_title_1} <br/>
-    <span className="text-evans-amber italic pr-2 font-medium">
-      {/* Removed the gradient, just pure Gold color now for classier look */}
-      {t.hero_title_2}
-    </span>
-    {t.hero_title_3}
-  </h1>
-  
-  {/* Description Paragraph */}
-  <p className="text-lg md:text-xl text-slate-300 mb-10 max-w-xl mx-auto font-light leading-relaxed animate-in slide-in-from-bottom-8 duration-700 delay-200">
-    {t.hero_desc}
-  </p>
-  
-  {/* Buttons */}
-  <div className="flex flex-col sm:flex-row gap-4 justify-center animate-in slide-in-from-bottom-8 duration-700 delay-300">
-    <a href="#portfolio" className="bg-evans-amber text-slate-900 px-8 py-4 rounded-lg font-bold hover:bg-amber-400 transition-all flex items-center justify-center group">
-      {t.hero_btn_work}
-      <ChevronRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-    </a>
-    <a href="#workshop" className="bg-white/10 backdrop-blur-md text-white px-8 py-4 rounded-lg font-bold border border-white/10 hover:bg-white/20 transition-all">
-      {t.hero_btn_ai}
-    </a>
-  </div>
-</div>
+          {/* Subtle Badge */}
+          <p className="text-evans-heritage font-semibold tracking-[0.2em] uppercase text-sm mb-6 animate-in slide-in-from-bottom-4 duration-700">
+            {t.hero_badge}
+          </p>
+          
+          {/* Main Headline - No flashy colors, just elegant font weights */}
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white mb-8 tracking-tight leading-[1.2] animate-in slide-in-from-bottom-8 duration-700 delay-100">
+            {t.hero_title_1} <br/>
+            <span className="font-semibold text-evans-stone">
+              {t.hero_title_2}
+            </span>
+          </h1>
+          
+          {/* Description Paragraph */}
+          <p className="text-lg md:text-xl text-white/80 mb-10 max-w-2xl mx-auto font-light leading-relaxed animate-in slide-in-from-bottom-8 duration-700 delay-200">
+            {t.hero_desc}
+          </p>
+          
+          {/* Buttons - Squared off slightly for a more "architectural/builder" feel */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-in slide-in-from-bottom-8 duration-700 delay-300">
+            <a href="#portfolio" className="bg-evans-heritage text-white px-8 py-4 rounded font-semibold hover:bg-[#586751] transition-all flex items-center justify-center group">
+              {t.hero_btn_work}
+              <ChevronRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </a>
+            <a href="#contact" className="bg-transparent text-white px-8 py-4 rounded font-semibold border border-white/30 hover:bg-white/10 transition-all">
+              {t.hero_btn_ai}
+            </a>
+          </div>
+        </div>
       </header>
 
       {/* Services Grid */}
