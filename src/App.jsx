@@ -720,6 +720,7 @@ const systemPrompt = prompts[language];
               <div>
                 <div className="text-sm text-white/50 uppercase tracking-widest font-bold">{t.cont_call}</div>
                 <div className="text-2xl font-serif">+33 (0)6 52 93 97 52</div>
+                <div className="text-2xl font-serif">+33 (0)7 49 65 20 89</div>
               </div>
             </div>
             
