@@ -113,10 +113,16 @@ export default function ClientPortal({ isOpen, onClose, initialLang = 'en' }) {
         const data = docSnap.data();
         setClientData(data);
         
-        // Default to the first Specific Job folder if it exists, else fallback to the legacy folder
-        if (data.folders && data.folders.length > 0) {
+        // 1. Try to load their manually set Default Folder first
+        if (data.defaultFolderId) {
+          setActiveFolderId(data.defaultFolderId);
+        } 
+        // 2. If no default is set, load the first job folder in the list
+        else if (data.folders && data.folders.length > 0) {
           setActiveFolderId(data.folders[0].folderId);
-        } else {
+        } 
+        // 3. Fallback to legacy folder
+        else {
           setActiveFolderId(data.folderId);
         }
 
@@ -142,14 +148,14 @@ export default function ClientPortal({ isOpen, onClose, initialLang = 'en' }) {
   
   const backToMain = () => { 
     setCurrentRequest(null); 
-    // Return to the first job folder
-    if (clientData.folders && clientData.folders.length > 0) {
+    if (clientData.defaultFolderId) {
+      setActiveFolderId(clientData.defaultFolderId);
+    } else if (clientData.folders && clientData.folders.length > 0) {
       setActiveFolderId(clientData.folders[0].folderId);
     } else {
       setActiveFolderId(clientData.folderId); 
     }
   };
-
   const saveSignature = async () => {
     if (sigPad.current.isEmpty()) { alert(t.drawError); return; }
     setIsSavingSig(true);
