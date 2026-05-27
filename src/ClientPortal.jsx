@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, LogOut, Lock, Loader2, User, PenTool, CheckCircle, Save, Eraser, Folder, ArrowLeft, FileText, ChevronRight } from 'lucide-react';
+import { X, LogOut, Lock, Loader2, User, PenTool, CheckCircle, Save, Eraser, Folder, ArrowLeft, FileText, ChevronRight, MessageSquare, XCircle } from 'lucide-react';
 import { auth, db, loginWithGoogle, loginWithEmail, logout } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
@@ -84,6 +84,7 @@ export default function ClientPortal({ isOpen, onClose, initialLang = 'en' }) {
   const [showSignModal, setShowSignModal] = useState(false);
   const sigPad = useRef({});
   const [isSavingSig, setIsSavingSig] = useState(false);
+  const [clientNoteInput, setClientNoteInput] = useState('');
 
   // Login
   const [usernameInput, setUsernameInput] = useState('');
@@ -156,6 +157,18 @@ export default function ClientPortal({ isOpen, onClose, initialLang = 'en' }) {
       setActiveFolderId(clientData.folderId); 
     }
   };
+
+  const updateActiveFolder = async (updates) => {
+    if (!clientData || !activeFolderId) return;
+    const updatedFolders = clientData.folders.map(f => 
+      f.folderId === activeFolderId ? { ...f, ...updates } : f
+    );
+    try {
+      await updateDoc(doc(db, "clients", user.email), { folders: updatedFolders });
+      setClientData({ ...clientData, folders: updatedFolders }); // Refresh UI instantly
+    } catch (error) { alert("Error saving."); }
+  };
+
   const saveSignature = async () => {
     if (sigPad.current.isEmpty()) { alert(t.drawError); return; }
     setIsSavingSig(true);
@@ -257,6 +270,78 @@ export default function ClientPortal({ isOpen, onClose, initialLang = 'en' }) {
                 </div>
               )}
 
+{/* --- PROJECT DASHBOARD BAR --- */}
+              {(() => {
+                const activeFolderObj = clientData?.folders?.find(f => f.folderId === activeFolderId);
+                if (!activeFolderObj && !currentRequest) return null;
+                
+                return activeFolderObj && !currentRequest && (
+                  <div className="bg-white p-6 border-b border-black/5 flex flex-col lg:flex-row gap-6 justify-between items-start">
+                     
+                     {/* Left: Status & Admin Note */}
+                     <div className="flex flex-col gap-4 flex-1 w-full">
+                        <div className="flex items-center gap-3">
+                           <span className="text-xs font-bold uppercase tracking-widest text-black/40">Phase:</span>
+                           <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm ${
+                             activeFolderObj.status === 'Accepted' || activeFolderObj.status === 'Completed' ? 'bg-green-100 text-green-800 border border-green-200' :
+                             activeFolderObj.status === 'Pending Approval' ? 'bg-amber-100 text-amber-800 border border-amber-200 animate-pulse' :
+                             'bg-evans-stone text-evans-earth border border-black/10'
+                           }`}>
+                             {activeFolderObj.status || 'Planning'}
+                           </span>
+                        </div>
+                        
+                        {activeFolderObj.adminNote && (
+                           <div className="text-sm text-evans-earth bg-evans-stone/50 p-3.5 rounded border border-black/10 flex items-start gap-3 shadow-sm">
+                             <MessageSquare size={16} className="mt-0.5 text-evans-heritage shrink-0" />
+                             <span className="font-medium leading-relaxed">{activeFolderObj.adminNote}</span>
+                           </div>
+                        )}
+                     </div>
+
+                     {/* Right: Approvals & Client Notes */}
+                     <div className="flex flex-col gap-3 w-full lg:w-[45%] shrink-0">
+                        
+                        {/* Approval Box */}
+                        {activeFolderObj.status === 'Pending Approval' && !activeFolderObj.approvedAt && (
+                            <div className="bg-white p-4 rounded border-2 border-amber-200 shadow-md">
+                               <p className="text-xs font-bold mb-3 uppercase text-amber-800">Action Required: Quote Approval</p>
+                               <div className="flex gap-2">
+                                  <button onClick={() => updateActiveFolder({ approvedAt: new Date().toISOString(), status: 'Accepted' })} className="flex-1 bg-evans-heritage text-white text-sm font-bold py-2.5 rounded hover:bg-[#586751] transition-all flex justify-center items-center gap-2"><CheckCircle size={16}/> Accept</button>
+                                  <button onClick={() => updateActiveFolder({ declinedAt: new Date().toISOString() })} className="flex-1 bg-white border border-black/20 text-black/60 text-sm font-bold py-2.5 rounded hover:bg-slate-50 transition-all flex justify-center items-center gap-2"><XCircle size={16}/> Decline</button>
+                               </div>
+                            </div>
+                        )}
+                        
+                        {/* Approval Receipt */}
+                        {activeFolderObj.approvedAt && (
+                            <div className="bg-green-50 p-3 rounded border border-green-200 text-green-800 text-xs font-bold flex items-center gap-2 shadow-sm">
+                              <CheckCircle size={16} /> Quote Accepted on {new Date(activeFolderObj.approvedAt).toLocaleDateString()}
+                            </div>
+                        )}
+
+                        {/* Note to Builder */}
+                        <div className="flex gap-2">
+                            <input 
+                              type="text" 
+                              placeholder={activeFolderObj.clientNote || "Send a note to Evans Rénovation..."} 
+                              className="flex-1 text-sm p-3 border border-black/10 rounded focus:ring-2 focus:ring-evans-heritage outline-none bg-evans-stone/30"
+                              value={clientNoteInput}
+                              onChange={(e) => setClientNoteInput(e.target.value)}
+                            />
+                            <button 
+                              onClick={() => { updateActiveFolder({ clientNote: clientNoteInput }); setClientNoteInput(''); }}
+                              disabled={!clientNoteInput}
+                              className="bg-evans-earth text-white px-5 rounded text-sm font-bold hover:bg-black/80 transition-all disabled:opacity-50"
+                            >
+                              Save Note
+                            </button>
+                        </div>
+                     </div>
+                  </div>
+                );
+              })()}
+              
               {/* The Iframe */}
               <iframe src={`https://drive.google.com/embeddedfolderview?id=${activeFolderId}#grid`} className="w-full flex-1 border-0 bg-slate-50" title="Files"></iframe>
             </div>
