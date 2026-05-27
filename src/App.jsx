@@ -467,23 +467,26 @@ const systemPrompt = prompts[language];
       </header>
 
       {/* Services Grid */}
-      <section id="services" className="py-24 px-6 bg-slate-50 scroll-mt-20">
+      <section id="services" className="py-24 px-6 bg-evans-stone scroll-mt-20">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-amber-600 mb-3">{t.serv_eyebrow}</h2>
-            <h3 className="text-3xl md:text-4xl font-serif text-slate-900">{t.serv_title}</h3>
+            {/* Changed from amber-600 to your new sage green */}
+            <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-evans-heritage mb-3">{t.serv_eyebrow}</h2>
+            {/* Changed from slate-900 to your new rich earthy brown */}
+            <h3 className="text-3xl md:text-4xl font-serif text-evans-earth">{t.serv_title}</h3>
           </div>
 
           {/* Grid */}
           <div className="grid md:grid-cols-3 gap-8">
             {services.map((s, i) => (
-              <div key={i} className="group p-8 bg-white rounded-2xl border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                <div className="w-14 h-14 bg-amber-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-amber-100 transition-colors">
-                  {s.icon}
+              <div key={i} className="group p-8 bg-white rounded shadow-sm border border-black/5 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                <div className="w-14 h-14 bg-evans-stone rounded flex items-center justify-center mb-6 transition-colors">
+                  {/* The icon itself should also use the sage green or earthy brown */}
+                  <span className="text-evans-heritage">{s.icon}</span>
                 </div>
-                <h4 className="text-xl font-bold text-slate-900 mb-3">{s.title}</h4>
-                <p className="text-slate-500 leading-relaxed">{s.desc}</p>
+                <h4 className="text-xl font-bold text-evans-earth mb-3">{s.title}</h4>
+                <p className="text-black/60 leading-relaxed">{s.desc}</p>
               </div>
             ))}
           </div>
@@ -582,7 +585,7 @@ const systemPrompt = prompts[language];
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent opacity-80" />
                 
                 <div className="absolute bottom-0 left-0 p-6 w-full transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                  <span className="inline-block px-2 py-1 mb-2 bg-amber-500/20 text-amber-300 text-[10px] font-bold uppercase tracking-wider rounded backdrop-blur-md border border-amber-500/30">
+                  <span className="inline-block px-2 py-1 mb-2 bg-evans-heritage/90 text-evans-stone text-[10px] font-bold uppercase tracking-wider rounded backdrop-blur-md border border-evans-heritage">
                     {p.type}
                   </span>
                   <h3 className="text-xl font-bold text-white mb-1">{p.title}</h3>
@@ -597,89 +600,89 @@ const systemPrompt = prompts[language];
       </section>
 
       {/* Contact Footer */}
-<section id="contact" className="bg-slate-900 text-white py-24 px-6">
-  {/* 1. The Big Header */}
-  <div className="max-w-4xl mx-auto text-center mb-16">
-    <h2 className="text-4xl md:text-5xl font-serif mb-6">{t.cont_title}</h2>
-    <p className="text-slate-400 text-lg max-w-xl mx-auto">
-      {t.cont_desc}
-    </p>
-  </div>
+      <section id="contact" className="bg-evans-earth text-white py-24 px-6">
+        {/* 1. The Big Header */}
+        <div className="max-w-4xl mx-auto text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-serif mb-6">{t.cont_title}</h2>
+          <p className="text-white/70 text-lg max-w-xl mx-auto">
+            {t.cont_desc}
+          </p>
+        </div>
 
-  <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-    {/* 2. Contact Info (Phone & Email) */}
-    <div className="space-y-8 md:pl-12">
-      {/* Phone Block */}
-      <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-white/5 transition-colors">
-        <Phone className="text-evans-amber shrink-0" />
-        <div>
-          <div className="text-sm text-slate-400 uppercase tracking-widest font-bold">{t.cont_call}</div>
-          <div className="text-2xl font-serif">+33 (0)6 52 93 97 52</div>
-        </div>
-      </div>
-      
-      {/* Email Block */}
-      <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-white/5 transition-colors">
-        <Mail className="text-evans-amber shrink-0" />
-        <div>
-          <div className="text-sm text-slate-400 uppercase tracking-widest font-bold">{t.cont_email}</div>
-          <div className="text-2xl font-serif">info@evansrenovation.fr</div>
-        </div>
-      </div>
-    </div>
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+          {/* 2. Contact Info (Phone & Email) */}
+          <div className="space-y-8 md:pl-12">
+            {/* Phone Block */}
+            <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-white/5 transition-colors">
+              <Phone className="text-evans-heritage shrink-0" />
+              <div>
+                <div className="text-sm text-white/50 uppercase tracking-widest font-bold">{t.cont_call}</div>
+                <div className="text-2xl font-serif">+33 (0)6 52 93 97 52</div>
+              </div>
+            </div>
+            
+            {/* Email Block */}
+            <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-white/5 transition-colors">
+              <Mail className="text-evans-heritage shrink-0" />
+              <div>
+                <div className="text-sm text-white/50 uppercase tracking-widest font-bold">{t.cont_email}</div>
+                <div className="text-2xl font-serif">info@evansrenovation.fr</div>
+              </div>
+            </div>
+          </div>
 
           {/* Simple Form */}
-         <form 
-  className="bg-white p-8 rounded-2xl text-slate-900 shadow-xl" 
-  onSubmit={handleFormSubmit}
->
-  <div className="space-y-4">
-    <div className="grid grid-cols-2 gap-4">
-      {/* Name Input */}
-      <input 
-        type="text" 
-        name="name" 
-        required
-        placeholder={t.form_name} 
-        className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none" 
-      />
-      
-      {/* Phone Input */}
-      <input 
-        type="text" 
-        name="phone"
-        placeholder={t.form_phone} 
-        className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none" 
-      />
-    </div>
+          <form 
+            className="bg-white p-8 rounded text-evans-earth shadow-xl" 
+            onSubmit={handleFormSubmit}
+          >
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                {/* Name Input */}
+                <input 
+                  type="text" 
+                  name="name" 
+                  required
+                  placeholder={t.form_name} 
+                  className="w-full p-3 bg-evans-stone border border-black/10 rounded focus:ring-2 focus:ring-evans-heritage outline-none transition-all" 
+                />
+                
+                {/* Phone Input */}
+                <input 
+                  type="text" 
+                  name="phone"
+                  placeholder={t.form_phone} 
+                  className="w-full p-3 bg-evans-stone border border-black/10 rounded focus:ring-2 focus:ring-evans-heritage outline-none transition-all" 
+                />
+              </div>
 
-    {/* Email Input */}
-    <input 
-      type="email" 
-      name="email" 
-      required
-      placeholder={t.form_email} 
-      className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none" 
-    />
+              {/* Email Input */}
+              <input 
+                type="email" 
+                name="email" 
+                required
+                placeholder={t.form_email} 
+                className="w-full p-3 bg-evans-stone border border-black/10 rounded focus:ring-2 focus:ring-evans-heritage outline-none transition-all" 
+              />
 
-    {/* Message Input */}
-    <textarea 
-      name="message" 
-      required 
-      rows="4"
-      placeholder={t.form_msg} 
-      className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none"
-    ></textarea>
-    
-    {/* Submit Button */}
-    <button className="w-full py-4 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 transition-all shadow-lg">
-      {t.form_btn}
-    </button>
-  </div>
-</form>
+              {/* Message Input */}
+              <textarea 
+                name="message" 
+                required 
+                rows="4"
+                placeholder={t.form_msg} 
+                className="w-full p-3 bg-evans-stone border border-black/10 rounded focus:ring-2 focus:ring-evans-heritage outline-none transition-all resize-none"
+              ></textarea>
+              
+              {/* Submit Button */}
+              <button className="w-full py-4 bg-evans-heritage text-white font-bold rounded hover:bg-[#586751] transition-all shadow-md">
+                {t.form_btn}
+              </button>
+            </div>
+          </form>
         </div>
 
-        <div className="border-t border-white/10 mt-24 pt-8 text-center text-slate-500 text-sm flex flex-col items-center gap-4">
+        <div className="border-t border-white/10 mt-24 pt-8 text-center text-white/50 text-sm flex flex-col items-center gap-4">
           <div className="flex gap-4">
             <a href="#" className="hover:text-white transition-colors"><Facebook size={20} /></a>
             <a href="#" className="hover:text-white transition-colors"><Instagram size={20} /></a>
