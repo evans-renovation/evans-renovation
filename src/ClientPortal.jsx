@@ -320,7 +320,7 @@ export default function ClientPortal({ isOpen, onClose, initialLang = 'en' }) {
 
                      <div className="p-6 flex flex-col lg:flex-row gap-8 justify-between items-start">
                        {/* Left Column: Status, Admin Note & Site Diary */}
-                       <div className="flex flex-col gap-6 flex-1 w-full lg:w-3/5">
+                       <div className="flex flex-col gap-6 flex-1 w-full lg:w-3/5 min-h-0">
                           
                           <div className="flex items-center gap-3">
                              <span className="text-xs font-bold uppercase tracking-widest text-black/40">Phase:</span>
@@ -340,36 +340,39 @@ export default function ClientPortal({ isOpen, onClose, initialLang = 'en' }) {
                              </div>
                           )}
 
-                          {/* Site Diary Timeline (SAFE VERSION) */}
+                          {/* Site Diary Timeline (SCROLLABLE VERSION) */}
                           {activeFolderObj?.diary?.length > 0 && (
-                            <div className="mt-2">
-                              <h4 className="text-xs font-bold uppercase tracking-widest text-black/40 mb-4 border-b border-black/5 pb-2">Site Diary</h4>
-                              <div className="space-y-4 relative before:absolute before:inset-0 before:ml-2 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-black/10 before:to-transparent">
-                                {activeFolderObj.diary.map((entry) => (
-                                  <div key={entry.id} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                                    <div className="flex items-center justify-center w-4 h-4 rounded-full border-2 border-white bg-evans-heritage shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-sm relative z-10 ml-0 md:ml-auto md:mr-auto"></div>
-                                    <div className="w-[calc(100%-2rem)] md:w-[calc(50%-1.5rem)] p-4 rounded border border-black/5 bg-white shadow-sm hover:shadow-md transition-shadow">
-                                      <div className="text-[10px] font-bold uppercase text-evans-heritage mb-2">{new Date(entry.date).toLocaleDateString()}</div>
-                                      
-                                      {/* Image Fallback - will hide itself if Google blocks it instead of showing a broken icon */}
-                                      {entry.imgUrl && (
-                                        <div className="mb-3 rounded overflow-hidden border border-black/5 shadow-sm">
-                                          <img 
-                                            src={entry.imgUrl} 
-                                            alt="Site Progress" 
-                                            className="w-full h-auto object-cover max-h-48" 
-                                            onError={(e) => { e.target.style.display = 'none'; }}
-                                          />
-                                          {/* Backup link in case image is blocked */}
-                                          <a href={entry.imgUrl} target="_blank" rel="noreferrer" className="text-[10px] font-bold text-blue-500 hover:underline mt-1 block uppercase">Open Photo in Drive &rarr;</a>
-                                        </div>
-                                      )}
-                                      
-                                      <p className="text-sm text-evans-earth leading-relaxed">{entry.text}</p>
+                            <div className="mt-2 flex flex-col min-h-0">
+                              <h4 className="text-xs font-bold uppercase tracking-widest text-black/40 mb-4 border-b border-black/5 pb-2 shrink-0">Site Diary</h4>
+                              
+                              {/* --- THIS DIV ADDS THE SCROLLING --- */}
+                              <div className="max-h-[400px] overflow-y-auto pr-4">
+                                <div className="space-y-4 relative before:absolute before:inset-0 before:ml-2 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-black/10 before:to-transparent">
+                                  {activeFolderObj.diary.map((entry) => (
+                                    <div key={entry.id} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                                      <div className="flex items-center justify-center w-4 h-4 rounded-full border-2 border-white bg-evans-heritage shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-sm relative z-10 ml-0 md:ml-auto md:mr-auto"></div>
+                                      <div className="w-[calc(100%-2rem)] md:w-[calc(50%-1.5rem)] p-4 rounded border border-black/5 bg-white shadow-sm hover:shadow-md transition-shadow">
+                                        <div className="text-[10px] font-bold uppercase text-evans-heritage mb-2">{new Date(entry.date).toLocaleDateString()}</div>
+                                        
+                                        {entry.imgUrl && (
+                                          <div className="mb-3 rounded overflow-hidden border border-black/5 shadow-sm">
+                                            <img 
+                                              src={entry.imgUrl} 
+                                              alt="Site Progress" 
+                                              className="w-full h-auto object-cover max-h-48" 
+                                              onError={(e) => { e.target.style.display = 'none'; }}
+                                            />
+                                            <a href={entry.imgUrl} target="_blank" rel="noreferrer" className="text-[10px] font-bold text-blue-500 hover:underline mt-1 block uppercase">Open Photo in Drive &rarr;</a>
+                                          </div>
+                                        )}
+                                        
+                                        <p className="text-sm text-evans-earth leading-relaxed">{entry.text}</p>
+                                      </div>
                                     </div>
-                                  </div>
-                                ))}
+                                  ))}
+                                </div>
                               </div>
+
                             </div>
                           )}
                        </div>
@@ -393,11 +396,13 @@ export default function ClientPortal({ isOpen, onClose, initialLang = 'en' }) {
                               </div>
                           )}
 
-                          {/* Action Required Checklist (SAFE VERSION) */}
+                          {/* Action Required Checklist (SCROLLABLE VERSION) */}
                           {activeFolderObj?.todos?.length > 0 && (
-                            <div>
-                              <h4 className="text-xs font-bold uppercase tracking-widest text-black/40 mb-3 flex items-center gap-2"><ListTodo size={14}/> Action Required</h4>
-                              <div className="flex flex-col gap-2">
+                            <div className="flex flex-col min-h-0">
+                              <h4 className="text-xs font-bold uppercase tracking-widest text-black/40 mb-3 flex items-center gap-2 shrink-0"><ListTodo size={14}/> Action Required</h4>
+                              
+                              {/* --- THIS DIV ADDS THE SCROLLING --- */}
+                              <div className="flex flex-col gap-2 max-h-[250px] overflow-y-auto pr-2">
                                 {activeFolderObj.todos.map(todo => (
                                   <div key={todo.id} onClick={() => toggleTodo(todo.id)} className={`flex items-start gap-3 p-3 rounded border cursor-pointer transition-all ${todo.done ? 'bg-white border-black/5 opacity-60' : 'bg-white border-black/10 shadow-sm hover:border-evans-heritage'}`}>
                                     {todo.done ? <CheckSquare size={18} className="text-evans-heritage mt-0.5 shrink-0" /> : <Square size={18} className="text-black/30 mt-0.5 shrink-0" />}
@@ -405,12 +410,13 @@ export default function ClientPortal({ isOpen, onClose, initialLang = 'en' }) {
                                   </div>
                                 ))}
                               </div>
+
                             </div>
                           )}
 
                           {/* Note to Builder */}
-                          <div>
-                            <h4 className="text-xs font-bold uppercase tracking-widest text-black/40 mb-2 mt-2">Send a Message</h4>
+                          <div className="mt-auto pt-2">
+                            <h4 className="text-xs font-bold uppercase tracking-widest text-black/40 mb-2">Send a Message</h4>
                             <div className="flex gap-2">
                                 <input type="text" placeholder={activeFolderObj.clientNote || "Type note here..."} className="flex-1 text-sm p-3 border border-black/10 rounded focus:ring-2 focus:ring-evans-heritage outline-none bg-white" value={clientNoteInput} onChange={(e) => setClientNoteInput(e.target.value)} />
                                 <button onClick={() => { updateActiveFolder({ clientNote: clientNoteInput }); setClientNoteInput(''); }} disabled={!clientNoteInput} className="bg-evans-earth text-white px-4 rounded text-sm font-bold hover:bg-black/80 disabled:opacity-50">Send</button>
