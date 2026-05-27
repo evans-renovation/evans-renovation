@@ -216,12 +216,11 @@ export default function AdminDashboard({ user, onLogout }) {
     navigator.clipboard.writeText(text); setCopySuccess(client.id); setTimeout(() => setCopySuccess(null), 2000);
   };
 
- // Bypasses strict Google Drive embedding rules using the Thumbnail API
+ // Uses the standard universal content link
   const formatDriveImgLink = (url) => {
     if (!url) return '';
-    // Extracts the ID from either a /d/ID/view link or an ?id=ID link
     const match = url.match(/\/d\/(.+?)\//) || url.match(/[?&]id=([^&]+)/);
-    return match && match[1] ? `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000` : url;
+    return match && match[1] ? `https://drive.google.com/uc?id=${match[1]}` : url;
   };
 
   const handleAddTodo = () => {
