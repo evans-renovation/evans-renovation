@@ -38,6 +38,12 @@ export default function AdminDashboard({ user, onLogout }) {
   const [newFolderName, setNewFolderName] = useState('');
   const [newFolderLink, setNewFolderLink] = useState('');
 
+  // --- PROJECT HUB MODAL STATE ---
+  const [managingHub, setManagingHub] = useState(null); // Will hold { client, folder }
+  const [newTodoText, setNewTodoText] = useState('');
+  const [newDiaryText, setNewDiaryText] = useState('');
+  const [newDiaryImg, setNewDiaryImg] = useState('');
+
   useEffect(() => {
     fetchClients();
     fetchSettings();
@@ -210,6 +216,42 @@ export default function AdminDashboard({ user, onLogout }) {
     navigator.clipboard.writeText(text); setCopySuccess(client.id); setTimeout(() => setCopySuccess(null), 2000);
   };
 
+  // Converts standard Drive links into direct image links for the timeline
+  const formatDriveImgLink = (url) => {
+    if (!url) return '';
+    const match = url.match(/\/d\/(.+?)\//);
+    return match ? `https://drive.google.com/uc?export=view&id=${match[1]}` : url;
+  };
+
+  const handleAddTodo = () => {
+    if (!newTodoText || !managingHub) return;
+    const updatedTodos = [...(managingHub.folder.todos || []), { id: Date.now(), text: newTodoText, done: false }];
+    updateFolder(managingHub.client, managingHub.folder.id, { todos: updatedTodos });
+    setManagingHub({ ...managingHub, folder: { ...managingHub.folder, todos: updatedTodos } });
+    setNewTodoText('');
+  };
+
+  const handleRemoveTodo = (todoId) => {
+    const updatedTodos = managingHub.folder.todos.filter(t => t.id !== todoId);
+    updateFolder(managingHub.client, managingHub.folder.id, { todos: updatedTodos });
+    setManagingHub({ ...managingHub, folder: { ...managingHub.folder, todos: updatedTodos } });
+  };
+
+  const handleAddDiary = () => {
+    if (!newDiaryText || !managingHub) return;
+    const updatedDiary = [{ id: Date.now(), date: new Date().toISOString(), text: newDiaryText, imgUrl: formatDriveImgLink(newDiaryImg) }, ...(managingHub.folder.diary || [])];
+    updateFolder(managingHub.client, managingHub.folder.id, { diary: updatedDiary });
+    setManagingHub({ ...managingHub, folder: { ...managingHub.folder, diary: updatedDiary } });
+    setNewDiaryText('');
+    setNewDiaryImg('');
+  };
+
+  const handleRemoveDiary = (entryId) => {
+    const updatedDiary = managingHub.folder.diary.filter(d => d.id !== entryId);
+    updateFolder(managingHub.client, managingHub.folder.id, { diary: updatedDiary });
+    setManagingHub({ ...managingHub, folder: { ...managingHub.folder, diary: updatedDiary } });
+  };
+
   const startEdit = (client) => { setEditingId(client.id); setEditForm({ ...client }); };
   const filteredClients = clients.filter(c => c.id.toLowerCase().includes(searchTerm.toLowerCase()));
 
@@ -371,15 +413,9 @@ export default function AdminDashboard({ user, onLogout }) {
                                     </div>
 
                                     <div className="flex gap-3 ml-auto">
-                                      <button onClick={() => {
-                                        const task = window.prompt("Enter new Action Required for client:");
-                                        if (task) updateFolder(client, f.id, { todos: [...(f.todos || []), { id: Date.now(), text: task, done: false }] });
-                                      }} className="flex items-center gap-1 text-evans-heritage hover:underline font-bold text-[11px] uppercase"><PlusCircle size={12}/> Add To-Do</button>
-                                      
-                                      <button onClick={() => {
-                                        const update = window.prompt("Enter Site Diary Update:");
-                                        if (update) updateFolder(client, f.id, { diary: [{ id: Date.now(), date: new Date().toISOString(), text: update }, ...(f.diary || [])] });
-                                      }} className="flex items-center gap-1 text-evans-earth hover:underline font-bold text-[11px] uppercase"><PlusCircle size={12}/> Add Diary Entry</button>
+                                      <button onClick={() => setManagingHub({ client, folder: f })} className="flex items-center gap-1 bg-evans-earth text-white px-3 py-1.5 rounded hover:bg-black/80 font-bold text-[11px] uppercase transition-all shadow-sm">
+                                        Manage Project Hub
+                                      </button>
                                     </div>
                                  </div>
 
@@ -509,7 +545,78 @@ export default function AdminDashboard({ user, onLogout }) {
           </div>
         </div>
       )}
+{/* --- MANAGE PROJECT HUB MODAL --- */}
+      {managingHub && (
+        <div className="fixed inset-0 z-[200] bg-evans-earth/90 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-evans-stone w-full max-w-5xl rounded shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            
+            {/* Modal Header */}
+            <div className="bg-white p-6 border-b border-black/5 flex justify-between items-center shrink-0">
+              <div>
+                <h3 className="text-xl font-serif text-evans-earth mb-1">Project Hub: {managingHub.folder.name}</h3>
+                <p className="text-xs font-bold uppercase text-black/40">Manage To-Dos and Site Diary</p>
+              </div>
+              <button onClick={() => setManagingHub(null)} className="bg-black/5 hover:bg-black/10 text-evans-earth rounded-full p-2 transition-colors"><X size={20} /></button>
+            </div>
 
+            {/* Modal Body (Scrollable) */}
+            <div className="p-6 flex flex-col md:flex-row gap-8 overflow-y-auto">
+               
+               {/* LEFT COL: Action Required (To-Dos) */}
+               <div className="flex-1 bg-white p-5 rounded border border-black/5">
+                 <h4 className="text-sm font-bold uppercase tracking-widest text-black/40 mb-4 flex items-center gap-2"><ListTodo size={16}/> Client To-Do List</h4>
+                 
+                 {/* Add To-Do */}
+                 <div className="flex gap-2 mb-6">
+                   <input type="text" placeholder="e.g. Choose tile grout color" value={newTodoText} onChange={e => setNewTodoText(e.target.value)} className="flex-1 text-sm p-2.5 border border-black/10 rounded focus:border-evans-heritage outline-none" />
+                   <button onClick={handleAddTodo} disabled={!newTodoText} className="bg-evans-heritage text-white px-4 rounded text-xs font-bold uppercase disabled:opacity-50 hover:bg-[#586751]">Add</button>
+                 </div>
+
+                 {/* List To-Dos */}
+                 <div className="flex flex-col gap-2">
+                   {managingHub.folder.todos?.map(todo => (
+                     <div key={todo.id} className="flex justify-between items-start gap-3 p-3 rounded border border-black/5 bg-slate-50 text-sm">
+                       <span className={todo.done ? 'line-through text-black/40' : 'text-evans-earth font-medium'}>{todo.text}</span>
+                       <button onClick={() => handleRemoveTodo(todo.id)} className="text-red-500 hover:text-red-700 shrink-0"><Trash2 size={14}/></button>
+                     </div>
+                   ))}
+                   {(!managingHub.folder.todos || managingHub.folder.todos.length === 0) && <p className="text-xs text-black/40 italic">No tasks assigned.</p>}
+                 </div>
+               </div>
+
+               {/* RIGHT COL: Site Diary */}
+               <div className="flex-1 bg-white p-5 rounded border border-black/5">
+                 <h4 className="text-sm font-bold uppercase tracking-widest text-black/40 mb-4 flex items-center gap-2"><FileText size={16}/> Site Diary Updates</h4>
+                 
+                 {/* Add Diary */}
+                 <div className="flex flex-col gap-2 mb-6 bg-slate-50 p-3 rounded border border-black/5">
+                   <textarea placeholder="Write a progress update..." value={newDiaryText} onChange={e => setNewDiaryText(e.target.value)} className="w-full text-sm p-2.5 border border-black/10 rounded focus:border-evans-heritage outline-none resize-none h-20" />
+                   <input type="text" placeholder="Google Drive Image Link (Optional)" value={newDiaryImg} onChange={e => setNewDiaryImg(e.target.value)} className="w-full text-xs p-2 border border-black/10 rounded outline-none" />
+                   <button onClick={handleAddDiary} disabled={!newDiaryText} className="w-full mt-1 bg-evans-earth text-white py-2 rounded text-xs font-bold uppercase disabled:opacity-50 hover:bg-black/80">Post Update</button>
+                 </div>
+
+                 {/* List Diary */}
+                 <div className="flex flex-col gap-4">
+                   {managingHub.folder.diary?.map(entry => (
+                     <div key={entry.id} className="p-4 rounded border border-black/5 bg-white shadow-sm relative">
+                       <button onClick={() => handleRemoveDiary(entry.id)} className="absolute top-2 right-2 text-black/20 hover:text-red-500"><X size={14}/></button>
+                       <div className="text-[10px] font-bold uppercase text-evans-heritage mb-2">{new Date(entry.date).toLocaleDateString()}</div>
+                       {entry.imgUrl && (
+                         <div className="mb-3 rounded overflow-hidden border border-black/10">
+                           <img src={entry.imgUrl} alt="Progress" className="w-full h-auto object-cover max-h-32" />
+                         </div>
+                       )}
+                       <p className="text-sm text-evans-earth">{entry.text}</p>
+                     </div>
+                   ))}
+                   {(!managingHub.folder.diary || managingHub.folder.diary.length === 0) && <p className="text-xs text-black/40 italic">No diary entries yet.</p>}
+                 </div>
+               </div>
+               
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
