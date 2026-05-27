@@ -424,8 +424,8 @@ const systemPrompt = prompts[language];
       <header className="relative h-screen flex items-center justify-center bg-evans-earth overflow-hidden">
         {/* Background Image Layer */}
         <div className="absolute inset-0 z-0">
-          {/* Dark, earthy overlay to make white text readable without flashy accents */}
-          <div className="absolute inset-0 bg-evans-earth/70 z-10" />
+          {/* UPDATED OVERLAY: A gradient that gets darker where the text is */}
+          <div className="absolute inset-0 bg-gradient-to-b from-evans-earth/30 via-evans-earth/60 to-evans-earth/90 z-10" />
           
           <div 
             className="w-full h-full bg-cover bg-center animate-in fade-in duration-1000"
@@ -435,31 +435,31 @@ const systemPrompt = prompts[language];
         
         {/* Hero Content */}
         <div className="relative z-20 text-center px-6 max-w-4xl mt-16">
-          {/* Subtle Badge */}
-          <p className="text-evans-heritage font-semibold tracking-[0.2em] uppercase text-sm mb-6 animate-in slide-in-from-bottom-4 duration-700">
+          {/* Subtle Badge with text shadow */}
+          <p className="text-evans-stone font-semibold tracking-[0.2em] uppercase text-sm mb-6 animate-in slide-in-from-bottom-4 duration-700 drop-shadow-md">
             {t.hero_badge}
           </p>
           
-          {/* Main Headline - No flashy colors, just elegant font weights */}
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white mb-8 tracking-tight leading-[1.2] animate-in slide-in-from-bottom-8 duration-700 delay-100">
+          {/* Main Headline - Added drop-shadow-lg so it pops off the background */}
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white mb-8 tracking-tight leading-[1.2] animate-in slide-in-from-bottom-8 duration-700 delay-100 drop-shadow-lg">
             {t.hero_title_1} <br/>
             <span className="font-semibold text-evans-stone">
               {t.hero_title_2}
             </span>
           </h1>
           
-          {/* Description Paragraph */}
-          <p className="text-lg md:text-xl text-white/80 mb-10 max-w-2xl mx-auto font-light leading-relaxed animate-in slide-in-from-bottom-8 duration-700 delay-200">
+          {/* Description Paragraph - Added text-shadow */}
+          <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto font-light leading-relaxed animate-in slide-in-from-bottom-8 duration-700 delay-200 drop-shadow-md">
             {t.hero_desc}
           </p>
           
-          {/* Buttons - Squared off slightly for a more "architectural/builder" feel */}
+          {/* Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-in slide-in-from-bottom-8 duration-700 delay-300">
-            <a href="#portfolio" className="bg-evans-heritage text-white px-8 py-4 rounded font-semibold hover:bg-[#586751] transition-all flex items-center justify-center group">
+            <a href="#portfolio" className="bg-evans-heritage text-white px-8 py-4 rounded font-semibold hover:bg-[#586751] transition-all flex items-center justify-center group shadow-lg">
               {t.hero_btn_work}
               <ChevronRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </a>
-            <a href="#contact" className="bg-transparent text-white px-8 py-4 rounded font-semibold border border-white/30 hover:bg-white/10 transition-all">
+            <a href="#contact" className="bg-evans-earth/50 backdrop-blur-sm text-white px-8 py-4 rounded font-semibold border border-white/30 hover:bg-evans-earth/80 transition-all shadow-lg">
               {t.hero_btn_ai}
             </a>
           </div>
