@@ -608,9 +608,6 @@ const systemPrompt = prompts[language];
               <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-evans-heritage mb-3">Our Expertise</h2>
               <h3 className="text-3xl md:text-4xl font-serif text-evans-earth">Recent Projects</h3>
             </div>
-            <a href="#" className="text-sm font-bold uppercase tracking-widest text-black/40 hover:text-evans-heritage border-b-2 border-transparent hover:border-evans-heritage transition-all pb-1">
-              {t.port_link}
-            </a>
           </div>
           
           {/* Projects Grid */}
