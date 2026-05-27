@@ -666,7 +666,7 @@ const systemPrompt = prompts[language];
             </div>
           </div>
           
-          {/* Projects Grid */}
+         {/* Projects Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {projects.map((p) => (
               <div 
@@ -674,16 +674,16 @@ const systemPrompt = prompts[language];
                 onClick={() => setSelectedProject(p)}
                 className="group relative aspect-[4/3] overflow-hidden rounded bg-evans-earth cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300"
               >
-                <img src={p.img} alt={p.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100" />
+                <img src={p.img} alt={p[language].altText || p[language].title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100" />
                 <div className="absolute inset-0 bg-gradient-to-t from-evans-earth/90 via-evans-earth/20 to-transparent opacity-90 group-hover:opacity-100 transition-opacity" />
                 
                 <div className="absolute bottom-0 left-0 p-6 w-full transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
                   <span className="inline-block px-2 py-1 mb-2 bg-evans-heritage/90 text-evans-stone text-[10px] font-bold uppercase tracking-wider rounded backdrop-blur-md border border-evans-heritage">
-                    {p.type}
+                    {p[language].type}
                   </span>
-                  <h3 className="text-xl font-serif text-white mb-1">{p.title}</h3>
+                  <h3 className="text-xl font-serif text-white mb-1">{p[language].title}</h3>
                   <p className="text-sm text-white/70 flex items-center gap-1 font-sans">
-                    <MapPin size={14} /> {p.loc}
+                    <MapPin size={14} /> {p[language].loc}
                   </p>
                 </div>
               </div>
@@ -701,8 +701,8 @@ const systemPrompt = prompts[language];
             onClick={() => setSelectedProject(null)}
           ></div>
           
-          {/* Modal Content */}
-          <div className="relative bg-evans-stone w-full max-w-6xl rounded shadow-2xl overflow-hidden flex flex-col md:flex-row animate-in zoom-in-95 duration-200 max-h-[90vh]">
+          {/* Modal Content - Added overflow-hidden to main wrapper */}
+          <div className="relative bg-evans-stone w-full max-w-6xl rounded shadow-2xl flex flex-col md:flex-row animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-hidden">
             
             {/* Close Button */}
             <button 
@@ -712,25 +712,27 @@ const systemPrompt = prompts[language];
               <X size={20} />
             </button>
 
-            {/* Modal Image Area (Handles 1 or 2 images depending on if beforeImg exists) */}
-            <div className={`flex flex-col sm:flex-row h-64 md:h-auto relative bg-evans-earth ${selectedProject.beforeImg ? 'md:w-2/3' : 'md:w-3/5'}`}>
+            {/* Modal Image Area */}
+            {/* Mobile Fix: 'shrink-0' added so images don't get crushed by text */}
+            <div className={`flex flex-col sm:flex-row shrink-0 relative bg-evans-earth ${selectedProject.beforeImg ? 'md:w-2/3' : 'md:w-3/5'}`}>
               
-              {/* BEFORE IMAGE (Only shows if beforeImg is in your projects data) */}
+              {/* BEFORE IMAGE */}
               {selectedProject.beforeImg && (
-                <div className="relative w-full h-full border-b sm:border-b-0 sm:border-r border-black/20">
-                  <img src={selectedProject.beforeImg} alt={`Before ${selectedProject.title}`} className="w-full h-full object-cover" />
+                // Mobile Fix: Set strict h-48 on mobile, but absolute stretch on desktop
+                <div className="relative w-full h-48 md:h-auto md:w-1/2 border-b sm:border-b-0 sm:border-r border-black/20">
+                  <img src={selectedProject.beforeImg} alt={`Before ${selectedProject[language].title}`} className="w-full h-full object-cover md:absolute md:inset-0" />
                   <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded uppercase tracking-wider">
-                    Before
+                    {language === 'en' ? 'Before' : 'Avant'}
                   </div>
                 </div>
               )}
 
               {/* AFTER IMAGE */}
-              <div className="relative w-full h-full">
-                <img src={selectedProject.img} alt={`After ${selectedProject.title}`} className="w-full h-full object-cover" />
+              <div className={`relative w-full h-48 md:h-auto ${selectedProject.beforeImg ? 'md:w-1/2' : ''}`}>
+                <img src={selectedProject.img} alt={`After ${selectedProject[language].title}`} className="w-full h-full object-cover md:absolute md:inset-0" />
                 {selectedProject.beforeImg && (
                    <div className="absolute top-4 left-4 bg-evans-heritage/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded uppercase tracking-wider">
-                     After
+                     {language === 'en' ? 'After' : 'Après'}
                    </div>
                 )}
               </div>
@@ -738,17 +740,18 @@ const systemPrompt = prompts[language];
             </div>
 
             {/* Modal Text */}
-            <div className={`p-8 flex flex-col justify-center bg-white overflow-y-auto ${selectedProject.beforeImg ? 'md:w-1/3' : 'md:w-2/5'}`}>
+            {/* Mobile Fix: 'flex-1 min-h-0' forces this area to scroll instead of pushing images out of the way */}
+            <div className={`p-8 flex flex-col justify-center bg-white overflow-y-auto flex-1 min-h-0 ${selectedProject.beforeImg ? 'md:w-1/3' : 'md:w-2/5'}`}>
               <span className="inline-block w-max px-2 py-1 mb-4 bg-evans-heritage/10 text-evans-heritage text-[10px] font-bold uppercase tracking-wider rounded border border-evans-heritage/20">
-                {selectedProject.type}
+                {selectedProject[language].type}
               </span>
-              <h3 className="text-3xl font-serif text-evans-earth mb-2">{selectedProject.title}</h3>
+              <h3 className="text-3xl font-serif text-evans-earth mb-2">{selectedProject[language].title}</h3>
               <p className="text-sm text-black/50 mb-6 font-semibold flex items-center gap-1">
                 <MapPin size={16} />
-                {selectedProject.loc}
+                {selectedProject[language].loc}
               </p>
               <p className="text-black/70 leading-relaxed">
-                {selectedProject.desc}
+                {selectedProject[language].desc}
               </p>
             </div>
           </div>
