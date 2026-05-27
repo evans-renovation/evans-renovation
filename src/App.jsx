@@ -525,23 +525,23 @@ const systemPrompt = prompts[language];
         </div>
       </section>
       
-      {/* AI Workshop Section */}
-      <section id="workshop" className="py-24 px-6 bg-white border-b border-black/5 scroll-mt-20">
+      {/* AI Workshop Section (Now a Dark Section) */}
+      <section id="workshop" className="py-24 px-6 bg-evans-earth border-b border-white/5 scroll-mt-20">
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col md:flex-row gap-12 items-start">
             
             {/* Left Col: Explainer */}
             <div className="flex-1 md:sticky md:top-32">
-              {/* Removed the Sparkles icon and changed amber to heritage green */}
               <div className="flex items-center gap-2 text-evans-heritage font-semibold text-xs uppercase tracking-widest mb-4">
                 {t.ai_label}
               </div>
-              <h2 className="text-4xl font-serif text-evans-earth mb-6">{t.ai_title}</h2>
-              <p className="text-black/60 leading-relaxed mb-8">
+              {/* Changed text to white */}
+              <h2 className="text-4xl font-serif text-white mb-6">{t.ai_title}</h2>
+              {/* Softened text to light grey/stone */}
+              <p className="text-evans-stone/70 leading-relaxed mb-8">
                 {t.ai_desc}
               </p>
-              <div className="flex flex-col gap-4 text-sm text-evans-earth/80 font-medium">
-                {/* Changed the green checkmarks to heritage green */}
+              <div className="flex flex-col gap-4 text-sm text-evans-stone/90 font-medium">
                 <div className="flex items-center gap-3">
                   <CheckCircle2 size={18} className="text-evans-heritage" />
                   <span>{t.ai_point_1}</span>
@@ -558,13 +558,14 @@ const systemPrompt = prompts[language];
             </div>
 
             {/* Right Col: The Tool */}
-            <div className="flex-1 w-full bg-evans-stone p-6 md:p-8 rounded border border-black/5 shadow-sm">
-             <label className="block text-xs font-semibold uppercase text-evans-earth/70 mb-2">{t.ai_input_label}</label>
+            {/* Made the box a semi-transparent dark overlay with white accents */}
+            <div className="flex-1 w-full bg-white/5 p-6 md:p-8 rounded border border-white/10 shadow-sm">
+             <label className="block text-xs font-semibold uppercase text-evans-stone/50 mb-2">{t.ai_input_label}</label>
               <textarea 
                 value={projectInput}
                 onChange={(e) => setProjectInput(e.target.value)}
                 placeholder={t.ai_placeholder}
-                className="w-full h-32 p-4 rounded bg-white border border-black/10 focus:ring-2 focus:ring-evans-heritage outline-none text-evans-earth mb-4 resize-none transition-all"
+                className="w-full h-32 p-4 rounded bg-black/20 border border-white/10 focus:ring-2 focus:ring-evans-heritage outline-none text-white placeholder-white/30 mb-4 resize-none transition-all"
               />
               <button 
                 onClick={handleGenerateRoadmap}
@@ -577,17 +578,17 @@ const systemPrompt = prompts[language];
 
               {/* Output Area */}
               {aiError && (
-                <div className="mt-4 p-4 bg-red-50 text-red-700 text-sm rounded border border-red-200">
+                <div className="mt-4 p-4 bg-red-900/30 text-red-200 text-sm rounded border border-red-800">
                   {aiError}
                 </div>
               )}
 
               {aiOutput && (
-                <div className="mt-6 pt-6 border-t border-black/10 animate-in fade-in slide-in-from-bottom-2">
+                <div className="mt-6 pt-6 border-t border-white/10 animate-in fade-in slide-in-from-bottom-2">
                   <div className="flex items-center gap-2 text-evans-heritage font-semibold text-xs uppercase tracking-widest mb-3">
                     <Construction size={14} /> Recommended Roadmap
                   </div>
-                  <div className="prose prose-sm max-w-none text-evans-earth/80 leading-relaxed whitespace-pre-line font-medium">
+                  <div className="prose prose-sm max-w-none text-evans-stone/80 leading-relaxed whitespace-pre-line font-medium">
                     {aiOutput}
                   </div>
                 </div>
