@@ -330,16 +330,20 @@ export default function ClientPortal({ isOpen, onClose, initialLang = 'en' }) {
                           )}
 
                           {/* Site Diary Timeline */}
-                          {activeFolderObj.diary && activeFolderObj.diary.length > 0 && (
-                            <div className="mt-2">
-                              <h4 className="text-xs font-bold uppercase tracking-widest text-black/40 mb-4 border-b border-black/5 pb-2">Site Diary</h4>
-                              <div className="space-y-4 relative before:absolute before:inset-0 before:ml-2 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-black/10 before:to-transparent">
-                                {activeFolderObj.diary.map((entry) => (
+                          {activeFolderObj.diary.map((entry) => (
                                   <div key={entry.id} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
                                     <div className="flex items-center justify-center w-4 h-4 rounded-full border-2 border-white bg-evans-heritage shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-sm relative z-10 ml-0 md:ml-auto md:mr-auto"></div>
-                                    <div className="w-[calc(100%-2rem)] md:w-[calc(50%-1.5rem)] p-3 rounded border border-black/5 bg-slate-50 shadow-sm">
-                                      <div className="text-[10px] font-bold uppercase text-evans-heritage mb-1">{new Date(entry.date).toLocaleDateString()}</div>
-                                      <p className="text-sm text-evans-earth">{entry.text}</p>
+                                    <div className="w-[calc(100%-2rem)] md:w-[calc(50%-1.5rem)] p-4 rounded border border-black/5 bg-white shadow-sm hover:shadow-md transition-shadow">
+                                      <div className="text-[10px] font-bold uppercase text-evans-heritage mb-2">{new Date(entry.date).toLocaleDateString()}</div>
+                                      
+                                      {/* Render Image if it exists */}
+                                      {entry.imgUrl && (
+                                        <div className="mb-3 rounded overflow-hidden border border-black/5 shadow-sm">
+                                          <img src={entry.imgUrl} alt="Site Progress" className="w-full h-auto object-cover max-h-48" />
+                                        </div>
+                                      )}
+                                      
+                                      <p className="text-sm text-evans-earth leading-relaxed">{entry.text}</p>
                                     </div>
                                   </div>
                                 ))}
