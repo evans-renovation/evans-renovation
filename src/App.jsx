@@ -379,9 +379,9 @@ const systemPrompt = prompts[language];
     {t.nav_services}
   </a>
 
-  {/* 2. AI Workshop */}
-  <a href="#workshop" className="flex items-center gap-2 hover:text-evans-amber transition-colors whitespace-nowrap">
-    {t.nav_workshop} <Sparkles size={14} className="text-evans-amber" />
+ {/* 2. Project Planner */}
+  <a href="#workshop" className="hover:text-evans-heritage transition-colors">
+    {t.nav_workshop}
   </a>
 
   {/* 3. Portfolio */}
