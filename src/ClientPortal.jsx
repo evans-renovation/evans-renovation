@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, LogOut, Lock, Loader2, User, PenTool, CheckCircle, Save, Eraser, Folder, ArrowLeft, FileText, ChevronRight, MessageSquare, XCircle } from 'lucide-react';
+import { X, LogOut, Lock, Loader2, User, PenTool, CheckCircle, Save, Eraser, Folder, ArrowLeft, FileText, ChevronRight, MessageSquare, XCircle, CheckSquare, Square, ListTodo, Wallet } from 'lucide-react';
 import { auth, db, loginWithGoogle, loginWithEmail, logout } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
@@ -168,6 +168,13 @@ export default function ClientPortal({ isOpen, onClose, initialLang = 'en' }) {
       setClientData({ ...clientData, folders: updatedFolders }); // Refresh UI instantly
     } catch (error) { alert("Error saving."); }
   };
+  
+  const toggleTodo = (todoId) => {
+    const activeFolderObj = clientData?.folders?.find(f => f.folderId === activeFolderId);
+    if (!activeFolderObj || !activeFolderObj.todos) return;
+    const updatedTodos = activeFolderObj.todos.map(t => t.id === todoId ? { ...t, done: !t.done } : t);
+    updateActiveFolder({ todos: updatedTodos });
+  };
 
   const saveSignature = async () => {
     if (sigPad.current.isEmpty()) { alert(t.drawError); return; }
@@ -270,73 +277,121 @@ export default function ClientPortal({ isOpen, onClose, initialLang = 'en' }) {
                 </div>
               )}
 
-{/* --- PROJECT DASHBOARD BAR --- */}
+{/* --- PROJECT DASHBOARD MASTER --- */}
               {(() => {
                 const activeFolderObj = clientData?.folders?.find(f => f.folderId === activeFolderId);
                 if (!activeFolderObj && !currentRequest) return null;
                 
+                // Calculate Financials
+                const budget = Number(activeFolderObj?.budgetTotal) || 0;
+                const paid = Number(activeFolderObj?.budgetPaid) || 0;
+                const progressPercent = budget > 0 ? Math.min(Math.round((paid / budget) * 100), 100) : 0;
+
                 return activeFolderObj && !currentRequest && (
-                  <div className="bg-white p-6 border-b border-black/5 flex flex-col lg:flex-row gap-6 justify-between items-start">
+                  <div className="bg-white border-b border-black/5 flex flex-col">
                      
-                     {/* Left: Status & Admin Note */}
-                     <div className="flex flex-col gap-4 flex-1 w-full">
-                        <div className="flex items-center gap-3">
-                           <span className="text-xs font-bold uppercase tracking-widest text-black/40">Phase:</span>
-                           <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm ${
-                             activeFolderObj.status === 'Accepted' || activeFolderObj.status === 'Completed' ? 'bg-green-100 text-green-800 border border-green-200' :
-                             activeFolderObj.status === 'Pending Approval' ? 'bg-amber-100 text-amber-800 border border-amber-200 animate-pulse' :
-                             'bg-evans-stone text-evans-earth border border-black/10'
-                           }`}>
-                             {activeFolderObj.status || 'Planning'}
-                           </span>
-                        </div>
-                        
-                        {activeFolderObj.adminNote && (
-                           <div className="text-sm text-evans-earth bg-evans-stone/50 p-3.5 rounded border border-black/10 flex items-start gap-3 shadow-sm">
-                             <MessageSquare size={16} className="mt-0.5 text-evans-heritage shrink-0" />
-                             <span className="font-medium leading-relaxed">{activeFolderObj.adminNote}</span>
+                     {/* Financial Progress Bar */}
+                     {budget > 0 && (
+                       <div className="px-6 py-4 bg-slate-50 border-b border-black/5">
+                         <div className="flex justify-between items-end mb-2">
+                           <div className="flex items-center gap-2 text-evans-earth font-bold text-sm uppercase tracking-wider">
+                             <Wallet size={16} className="text-evans-heritage" /> Project Funding
                            </div>
-                        )}
-                     </div>
+                           <div className="text-sm font-semibold text-black/60">
+                             €{paid.toLocaleString()} <span className="font-normal text-black/40">/ €{budget.toLocaleString()}</span>
+                           </div>
+                         </div>
+                         <div className="w-full bg-black/10 rounded-full h-2.5 overflow-hidden">
+                           <div className="bg-evans-heritage h-2.5 rounded-full transition-all duration-1000" style={{ width: `${progressPercent}%` }}></div>
+                         </div>
+                       </div>
+                     )}
 
-                     {/* Right: Approvals & Client Notes */}
-                     <div className="flex flex-col gap-3 w-full lg:w-[45%] shrink-0">
-                        
-                        {/* Approval Box */}
-                        {activeFolderObj.status === 'Pending Approval' && !activeFolderObj.approvedAt && (
-                            <div className="bg-white p-4 rounded border-2 border-amber-200 shadow-md">
-                               <p className="text-xs font-bold mb-3 uppercase text-amber-800">Action Required: Quote Approval</p>
-                               <div className="flex gap-2">
-                                  <button onClick={() => updateActiveFolder({ approvedAt: new Date().toISOString(), status: 'Accepted' })} className="flex-1 bg-evans-heritage text-white text-sm font-bold py-2.5 rounded hover:bg-[#586751] transition-all flex justify-center items-center gap-2"><CheckCircle size={16}/> Accept</button>
-                                  <button onClick={() => updateActiveFolder({ declinedAt: new Date().toISOString() })} className="flex-1 bg-white border border-black/20 text-black/60 text-sm font-bold py-2.5 rounded hover:bg-slate-50 transition-all flex justify-center items-center gap-2"><XCircle size={16}/> Decline</button>
-                               </div>
-                            </div>
-                        )}
-                        
-                        {/* Approval Receipt */}
-                        {activeFolderObj.approvedAt && (
-                            <div className="bg-green-50 p-3 rounded border border-green-200 text-green-800 text-xs font-bold flex items-center gap-2 shadow-sm">
-                              <CheckCircle size={16} /> Quote Accepted on {new Date(activeFolderObj.approvedAt).toLocaleDateString()}
-                            </div>
-                        )}
+                     <div className="p-6 flex flex-col lg:flex-row gap-8 justify-between items-start">
+                       {/* Left Column: Status, Admin Note & Site Diary */}
+                       <div className="flex flex-col gap-6 flex-1 w-full lg:w-3/5">
+                          
+                          <div className="flex items-center gap-3">
+                             <span className="text-xs font-bold uppercase tracking-widest text-black/40">Phase:</span>
+                             <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm ${
+                               activeFolderObj.status === 'Accepted' || activeFolderObj.status === 'Completed' ? 'bg-green-100 text-green-800 border border-green-200' :
+                               activeFolderObj.status === 'Pending Approval' ? 'bg-amber-100 text-amber-800 border border-amber-200 animate-pulse' :
+                               'bg-evans-stone text-evans-earth border border-black/10'
+                             }`}>
+                               {activeFolderObj.status || 'Planning'}
+                             </span>
+                          </div>
+                          
+                          {activeFolderObj.adminNote && (
+                             <div className="text-sm text-evans-earth bg-evans-stone/50 p-4 rounded border border-black/10 flex items-start gap-3 shadow-sm">
+                               <MessageSquare size={18} className="mt-0.5 text-evans-heritage shrink-0" />
+                               <span className="font-medium leading-relaxed">{activeFolderObj.adminNote}</span>
+                             </div>
+                          )}
 
-                        {/* Note to Builder */}
-                        <div className="flex gap-2">
-                            <input 
-                              type="text" 
-                              placeholder={activeFolderObj.clientNote || "Send a note to Evans Rénovation..."} 
-                              className="flex-1 text-sm p-3 border border-black/10 rounded focus:ring-2 focus:ring-evans-heritage outline-none bg-evans-stone/30"
-                              value={clientNoteInput}
-                              onChange={(e) => setClientNoteInput(e.target.value)}
-                            />
-                            <button 
-                              onClick={() => { updateActiveFolder({ clientNote: clientNoteInput }); setClientNoteInput(''); }}
-                              disabled={!clientNoteInput}
-                              className="bg-evans-earth text-white px-5 rounded text-sm font-bold hover:bg-black/80 transition-all disabled:opacity-50"
-                            >
-                              Save Note
-                            </button>
-                        </div>
+                          {/* Site Diary Timeline */}
+                          {activeFolderObj.diary && activeFolderObj.diary.length > 0 && (
+                            <div className="mt-2">
+                              <h4 className="text-xs font-bold uppercase tracking-widest text-black/40 mb-4 border-b border-black/5 pb-2">Site Diary</h4>
+                              <div className="space-y-4 relative before:absolute before:inset-0 before:ml-2 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-black/10 before:to-transparent">
+                                {activeFolderObj.diary.map((entry) => (
+                                  <div key={entry.id} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                                    <div className="flex items-center justify-center w-4 h-4 rounded-full border-2 border-white bg-evans-heritage shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-sm relative z-10 ml-0 md:ml-auto md:mr-auto"></div>
+                                    <div className="w-[calc(100%-2rem)] md:w-[calc(50%-1.5rem)] p-3 rounded border border-black/5 bg-slate-50 shadow-sm">
+                                      <div className="text-[10px] font-bold uppercase text-evans-heritage mb-1">{new Date(entry.date).toLocaleDateString()}</div>
+                                      <p className="text-sm text-evans-earth">{entry.text}</p>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                       </div>
+
+                       {/* Right Column: Approvals, Checklists & Client Notes */}
+                       <div className="flex flex-col gap-5 w-full lg:w-2/5 shrink-0 bg-evans-stone/30 p-5 rounded-lg border border-black/5">
+                          
+                          {/* Approval Box */}
+                          {activeFolderObj.status === 'Pending Approval' && !activeFolderObj.approvedAt && (
+                              <div className="bg-white p-4 rounded border-2 border-amber-200 shadow-sm">
+                                 <p className="text-xs font-bold mb-3 uppercase text-amber-800">Action Required: Quote Approval</p>
+                                 <div className="flex gap-2">
+                                    <button onClick={() => updateActiveFolder({ approvedAt: new Date().toISOString(), status: 'Accepted' })} className="flex-1 bg-evans-heritage text-white text-sm font-bold py-2.5 rounded hover:bg-[#586751] transition-all"><CheckCircle size={16} className="inline mr-1 mb-0.5"/> Accept</button>
+                                    <button onClick={() => updateActiveFolder({ declinedAt: new Date().toISOString() })} className="flex-1 bg-white border border-black/20 text-black/60 text-sm font-bold py-2.5 rounded hover:bg-slate-50 transition-all"><XCircle size={16} className="inline mr-1 mb-0.5"/> Decline</button>
+                                 </div>
+                              </div>
+                          )}
+                          {activeFolderObj.approvedAt && (
+                              <div className="bg-green-50 p-3 rounded border border-green-200 text-green-800 text-xs font-bold flex items-center gap-2 shadow-sm">
+                                <CheckCircle size={16} /> Quote Accepted ({new Date(activeFolderObj.approvedAt).toLocaleDateString()})
+                              </div>
+                          )}
+
+                          {/* Action Required Checklist */}
+                          {activeFolderObj.todos && activeFolderObj.todos.length > 0 && (
+                            <div>
+                              <h4 className="text-xs font-bold uppercase tracking-widest text-black/40 mb-3 flex items-center gap-2"><ListTodo size={14}/> Action Required</h4>
+                              <div className="flex flex-col gap-2">
+                                {activeFolderObj.todos.map(todo => (
+                                  <div key={todo.id} onClick={() => toggleTodo(todo.id)} className={`flex items-start gap-3 p-3 rounded border cursor-pointer transition-all ${todo.done ? 'bg-white border-black/5 opacity-60' : 'bg-white border-black/10 shadow-sm hover:border-evans-heritage'}`}>
+                                    {todo.done ? <CheckSquare size={18} className="text-evans-heritage mt-0.5 shrink-0" /> : <Square size={18} className="text-black/30 mt-0.5 shrink-0" />}
+                                    <span className={`text-sm font-medium ${todo.done ? 'line-through text-black/40' : 'text-evans-earth'}`}>{todo.text}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Note to Builder */}
+                          <div>
+                            <h4 className="text-xs font-bold uppercase tracking-widest text-black/40 mb-2 mt-2">Send a Message</h4>
+                            <div className="flex gap-2">
+                                <input type="text" placeholder={activeFolderObj.clientNote || "Type note here..."} className="flex-1 text-sm p-3 border border-black/10 rounded focus:ring-2 focus:ring-evans-heritage outline-none bg-white" value={clientNoteInput} onChange={(e) => setClientNoteInput(e.target.value)} />
+                                <button onClick={() => { updateActiveFolder({ clientNote: clientNoteInput }); setClientNoteInput(''); }} disabled={!clientNoteInput} className="bg-evans-earth text-white px-4 rounded text-sm font-bold hover:bg-black/80 disabled:opacity-50">Send</button>
+                            </div>
+                          </div>
+
+                       </div>
                      </div>
                   </div>
                 );
