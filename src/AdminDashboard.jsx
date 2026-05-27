@@ -216,11 +216,12 @@ export default function AdminDashboard({ user, onLogout }) {
     navigator.clipboard.writeText(text); setCopySuccess(client.id); setTimeout(() => setCopySuccess(null), 2000);
   };
 
-  // Converts standard Drive links into direct image links for the timeline
+ // Bypasses strict Google Drive embedding rules using the Thumbnail API
   const formatDriveImgLink = (url) => {
     if (!url) return '';
-    const match = url.match(/\/d\/(.+?)\//);
-    return match ? `https://drive.google.com/uc?export=view&id=${match[1]}` : url;
+    // Extracts the ID from either a /d/ID/view link or an ?id=ID link
+    const match = url.match(/\/d\/(.+?)\//) || url.match(/[?&]id=([^&]+)/);
+    return match && match[1] ? `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000` : url;
   };
 
   const handleAddTodo = () => {
