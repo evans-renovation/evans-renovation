@@ -261,20 +261,30 @@ export default function ClientPortal({ isOpen, onClose, initialLang = 'en' }) {
                  )}
               </div>
 
-              {/* Job Folder Navigation Tabs */}
-              {!currentRequest && clientData.folders && clientData.folders.length > 0 && (
-                <div className="flex gap-3 p-4 bg-evans-stone border-b border-black/5 overflow-x-auto">
-                   {clientData.folders.map(f => (
-                      <button 
-                         key={f.id}
-                         onClick={() => setActiveFolderId(f.folderId)}
-                         className={`px-5 py-2.5 rounded font-bold text-sm whitespace-nowrap transition-all flex items-center gap-2 border shadow-sm ${activeFolderId === f.folderId ? 'bg-evans-earth text-white border-evans-earth' : 'bg-white text-evans-earth border-black/10 hover:bg-slate-50'}`}
-                      >
-                         <Folder size={16} className={activeFolderId === f.folderId ? 'text-evans-heritage' : 'text-black/30'} /> 
-                         {f.name}
-                      </button>
-                   ))}
+              {/* --- LOADING SAFETY NET --- */}
+              {!clientData ? (
+                <div className="flex flex-col items-center justify-center p-24">
+                  <Loader2 className="animate-spin w-10 h-10 text-evans-heritage mb-4" />
+                  <p className="text-black/40 font-bold uppercase tracking-widest text-xs">Loading Project Hub...</p>
                 </div>
+              ) : (
+                <>
+                  {/* Job Folder Navigation Tabs */}
+                  {!currentRequest && clientData?.folders && clientData.folders.length > 0 && (
+                    <div className="flex gap-3 p-4 bg-evans-stone border-b border-black/5 overflow-x-auto">
+                       {clientData.folders.map(f => (
+                          <button 
+                             key={f.id}
+                             onClick={() => setActiveFolderId(f.folderId)}
+                             className={`px-5 py-2.5 rounded font-bold text-sm whitespace-nowrap transition-all flex items-center gap-2 border shadow-sm ${activeFolderId === f.folderId ? 'bg-evans-earth text-white border-evans-earth' : 'bg-white text-evans-earth border-black/10 hover:bg-slate-50'}`}
+                          >
+                             <Folder size={16} className={activeFolderId === f.folderId ? 'text-evans-heritage' : 'text-black/30'} /> 
+                             {f.name}
+                          </button>
+                       ))}
+                    </div>
+                  )}
+                </>
               )}
 
 {/* --- PROJECT DASHBOARD MASTER --- */}
