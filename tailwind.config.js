@@ -7,19 +7,15 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        // "Playfair Display" is excellent for headings (looks like Vogue/Architecture Digest)
-        serif: ['"Playfair Display"', 'serif'],
-        // "Lato" is clean and easy to read for body text
-        sans: ['Lato', 'sans-serif'],
+        serif: ['Lora', 'serif'],
+        sans: ['Inter', 'sans-serif'],
       },
       colors: {
-        // New Premium Palette
-        'evans-slate': '#1e293b', // Richer Charcoal
-        'evans-amber': '#D4AF37', // "Metallic Gold" (instead of bright orange)
-        'evans-cream': '#F9F7F2', // Warm white for backgrounds
+        'evans-stone': '#F5F4F0', 
+        'evans-earth': '#2A2825', 
+        'evans-heritage': '#6A7B62', // Muted Sage Green
       }
     },
   },
   plugins: [],
 }
-
