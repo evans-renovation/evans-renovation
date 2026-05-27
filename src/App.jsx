@@ -494,66 +494,68 @@ const systemPrompt = prompts[language];
       </section>
       
       {/* AI Workshop Section */}
-      <section id="workshop" className="py-24 px-6 bg-white border-b border-slate-100 scroll-mt-20">
+      <section id="workshop" className="py-24 px-6 bg-white border-b border-black/5 scroll-mt-20">
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col md:flex-row gap-12 items-start">
             
             {/* Left Col: Explainer */}
             <div className="flex-1 md:sticky md:top-32">
-  <div className="flex items-center gap-2 text-amber-600 font-bold text-xs uppercase tracking-widest mb-4">
-    <Sparkles size={16} /> {t.ai_label}
-  </div>
-  <h2 className="text-4xl font-serif text-slate-900 mb-6">{t.ai_title}</h2>
-  <p className="text-slate-500 leading-relaxed mb-8">
-    {t.ai_desc}
-  </p>
-  <div className="flex flex-col gap-4 text-sm text-slate-600">
-    <div className="flex items-center gap-3">
-      <CheckCircle2 size={18} className="text-green-500" />
-      <span>{t.ai_point_1}</span>
-    </div>
-    <div className="flex items-center gap-3">
-      <CheckCircle2 size={18} className="text-green-500" />
-      <span>{t.ai_point_2}</span>
-    </div>
-    <div className="flex items-center gap-3">
-      <CheckCircle2 size={18} className="text-green-500" />
-      <span>{t.ai_point_3}</span>
-    </div>
-  </div>
-</div>
+              {/* Removed the Sparkles icon and changed amber to heritage green */}
+              <div className="flex items-center gap-2 text-evans-heritage font-semibold text-xs uppercase tracking-widest mb-4">
+                {t.ai_label}
+              </div>
+              <h2 className="text-4xl font-serif text-evans-earth mb-6">{t.ai_title}</h2>
+              <p className="text-black/60 leading-relaxed mb-8">
+                {t.ai_desc}
+              </p>
+              <div className="flex flex-col gap-4 text-sm text-evans-earth/80 font-medium">
+                {/* Changed the green checkmarks to heritage green */}
+                <div className="flex items-center gap-3">
+                  <CheckCircle2 size={18} className="text-evans-heritage" />
+                  <span>{t.ai_point_1}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <CheckCircle2 size={18} className="text-evans-heritage" />
+                  <span>{t.ai_point_2}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <CheckCircle2 size={18} className="text-evans-heritage" />
+                  <span>{t.ai_point_3}</span>
+                </div>
+              </div>
+            </div>
 
             {/* Right Col: The Tool */}
-            <div className="flex-1 w-full bg-slate-50 p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
-             <label className="block text-xs font-bold uppercase text-slate-400 mb-2">{t.ai_input_label}</label>
-<textarea 
-  value={projectInput}
-  onChange={(e) => setProjectInput(e.target.value)}
-  placeholder={t.ai_placeholder}
-  className="w-full h-32 p-4 rounded-xl border border-slate-200 focus:ring-2 focus:ring-amber-500 outline-none text-slate-700 mb-4 bg-white resize-none"
-/>
-<button 
-  onClick={handleGenerateRoadmap}
-  disabled={isAiLoading || !projectInput}
-  className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-slate-800 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
->
-  {isAiLoading ? <Loader2 className="animate-spin" /> : <Send size={18} />}
-  <span>{isAiLoading ? t.ai_btn_loading : t.ai_btn_generate}</span>
-</button>
+            <div className="flex-1 w-full bg-evans-stone p-6 md:p-8 rounded border border-black/5 shadow-sm">
+             <label className="block text-xs font-semibold uppercase text-evans-earth/70 mb-2">{t.ai_input_label}</label>
+              <textarea 
+                value={projectInput}
+                onChange={(e) => setProjectInput(e.target.value)}
+                placeholder={t.ai_placeholder}
+                className="w-full h-32 p-4 rounded bg-white border border-black/10 focus:ring-2 focus:ring-evans-heritage outline-none text-evans-earth mb-4 resize-none transition-all"
+              />
+              <button 
+                onClick={handleGenerateRoadmap}
+                disabled={isAiLoading || !projectInput}
+                className="w-full bg-evans-heritage text-white py-4 rounded font-bold hover:bg-[#586751] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+              >
+                {isAiLoading ? <Loader2 className="animate-spin" /> : <Send size={18} />}
+                <span>{isAiLoading ? t.ai_btn_loading : t.ai_btn_generate}</span>
+              </button>
 
               {/* Output Area */}
               {aiError && (
-                <div className="mt-4 p-4 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100">
+                <div className="mt-4 p-4 bg-red-50 text-red-700 text-sm rounded border border-red-200">
                   {aiError}
                 </div>
               )}
 
               {aiOutput && (
-                <div className="mt-6 pt-6 border-t border-slate-200 animate-in fade-in slide-in-from-bottom-2">
-                  <div className="flex items-center gap-2 text-amber-600 font-bold text-xs uppercase tracking-widest mb-3">
+                <div className="mt-6 pt-6 border-t border-black/10 animate-in fade-in slide-in-from-bottom-2">
+                  <div className="flex items-center gap-2 text-evans-heritage font-semibold text-xs uppercase tracking-widest mb-3">
                     <Construction size={14} /> Recommended Roadmap
                   </div>
-                  <div className="prose prose-sm prose-slate max-w-none text-slate-600 leading-relaxed whitespace-pre-line font-medium">
+                  <div className="prose prose-sm max-w-none text-evans-earth/80 leading-relaxed whitespace-pre-line font-medium">
                     {aiOutput}
                   </div>
                 </div>
