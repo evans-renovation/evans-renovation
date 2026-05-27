@@ -26,6 +26,8 @@ export default function App() {
 const [language, setLanguage] = useState('en');
 
   const [isPortalOpen, setIsPortalOpen] = useState(false);
+
+  const [selectedProject, setSelectedProject] = useState(null);
   
   // --- AI Feature State ---
   const [projectInput, setProjectInput] = useState('');
@@ -284,28 +286,44 @@ const systemPrompt = prompts[language];
   const projects = [
     { 
       id: 1, 
-      title: t.proj_1_title, 
-      loc: "Verteillac", 
-      type: t.proj_1_type 
+      title: "Heritage Bathroom Refit", 
+      loc: "Montboyer", 
+      type: "Interior Refit",
+      img: "/PXL_20240425_090355513 (2).jpg",
+      desc: "A full bathroom refit that balances modern luxury with heritage preservation. We integrated high-end fixtures and elegant gold trim while carefully maintaining and highlighting the beautiful, original rustic beams."
     },
     { 
       id: 2, 
-      title: t.proj_2_title, 
-      loc: "Aubeterre", 
-      type: t.proj_2_type 
+      title: "Contemporary En-Suite", 
+      loc: "Nanteuil-Auriac-de-Bourzac", 
+      type: "Modern Interior",
+      img: "/PXL_20240705_101036459.MP.jpg",
+      desc: "A complete bathroom overhaul featuring a sleek, modern aesthetic. We utilized a dark, sophisticated color palette, custom vanity units, and strategic lighting to create a premium, contemporary space."
     },
     { 
       id: 3, 
-      title: t.proj_3_title, 
-      loc: "Ribérac", 
-      type: t.proj_3_type 
+      title: "Travertine Terrace", 
+      loc: "Juignac", 
+      type: "Exterior Masonry",
+      img: "/IMG_20210702_155510.jpg",
+      desc: "We completely transformed an unusable gravel area into a pristine outdoor living space. The project involved pouring a solid concrete base and expertly tiling it with premium 60x40 travertine."
     },
     { 
       id: 4, 
-      title: t.proj_4_title, 
-      loc: "Angoulême", 
-      type: t.proj_4_type 
+      title: "Pool Terrace Extension", 
+      loc: "Charente Region", 
+      type: "Exterior Build",
+      img: "/IMG_20220706_121637 (1).jpg",
+      desc: "A major exterior structural upgrade. We installed a full fibre-reinforced levelling screed and slab extension with perimeter drainage, finished seamlessly in travertine opus tiles and custom margelles."
     },
+    { 
+      id: 5, 
+      title: "Lintel & Masonry Repair", 
+      loc: "Orival", 
+      type: "Restoration",
+      img: "/PXL_20250730_133720074.jpg",
+      desc: "A precision like-for-like lintel replacement on a traditional stone property. The job included targeted masonry repairs and a full window replacement to ensure long-term structural integrity and weatherproofing."
+    }
   ];
 
   // --- UI Components ---
@@ -572,27 +590,33 @@ const systemPrompt = prompts[language];
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
-            <h2 className="text-3xl font-serif text-slate-900">{t.port_title}</h2>
-            <a href="#" className="text-sm font-bold uppercase tracking-widest text-slate-500 hover:text-amber-600 border-b-2 border-transparent hover:border-amber-600 transition-all pb-1">
+            <div>
+              <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-evans-heritage mb-3">Our Expertise</h2>
+              <h3 className="text-3xl md:text-4xl font-serif text-evans-earth">Recent Projects</h3>
+            </div>
+            <a href="#" className="text-sm font-bold uppercase tracking-widest text-black/40 hover:text-evans-heritage border-b-2 border-transparent hover:border-evans-heritage transition-all pb-1">
               {t.port_link}
             </a>
           </div>
           
           {/* Projects Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {projects.map((p) => (
-              <div key={p.id} className="group relative aspect-[3/4] overflow-hidden rounded-xl bg-slate-200 cursor-pointer">
-                {/* Image Logic */}
-                <div className="absolute inset-0 bg-slate-300 group-hover:scale-105 transition-transform duration-700" />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent opacity-80" />
+              <div 
+                key={p.id} 
+                onClick={() => setSelectedProject(p)}
+                className="group relative aspect-[4/3] overflow-hidden rounded bg-evans-earth cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300"
+              >
+                <img src={p.img} alt={p.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100" />
+                <div className="absolute inset-0 bg-gradient-to-t from-evans-earth/90 via-evans-earth/20 to-transparent opacity-90 group-hover:opacity-100 transition-opacity" />
                 
                 <div className="absolute bottom-0 left-0 p-6 w-full transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
                   <span className="inline-block px-2 py-1 mb-2 bg-evans-heritage/90 text-evans-stone text-[10px] font-bold uppercase tracking-wider rounded backdrop-blur-md border border-evans-heritage">
                     {p.type}
                   </span>
-                  <h3 className="text-xl font-bold text-white mb-1">{p.title}</h3>
-                  <p className="text-sm text-slate-300 flex items-center gap-1">
-                    <MapPin size={12} /> {p.loc}
+                  <h3 className="text-xl font-serif text-white mb-1">{p.title}</h3>
+                  <p className="text-sm text-white/70 flex items-center gap-1 font-sans">
+                    <MapPin size={14} /> {p.loc}
                   </p>
                 </div>
               </div>
@@ -600,6 +624,49 @@ const systemPrompt = prompts[language];
           </div>
         </div>
       </section>
+
+      {/* --- PROJECT MODAL OVERLAY --- */}
+      {selectedProject && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          {/* Dark Background (Click to close) */}
+          <div 
+            className="absolute inset-0 bg-evans-earth/90 backdrop-blur-sm cursor-pointer transition-opacity"
+            onClick={() => setSelectedProject(null)}
+          ></div>
+          
+          {/* Modal Content */}
+          <div className="relative bg-evans-stone w-full max-w-4xl rounded shadow-2xl overflow-hidden flex flex-col md:flex-row animate-in zoom-in-95 duration-200">
+            
+            {/* Close Button */}
+            <button 
+              onClick={() => setSelectedProject(null)} 
+              className="absolute top-4 right-4 z-10 bg-white/20 hover:bg-white/40 text-evans-earth rounded-full p-2 backdrop-blur-md transition-colors"
+            >
+              <X size={20} />
+            </button>
+
+            {/* Modal Image */}
+            <div className="md:w-3/5 h-64 md:h-auto relative bg-evans-earth">
+              <img src={selectedProject.img} alt={selectedProject.title} className="w-full h-full object-cover" />
+            </div>
+
+            {/* Modal Text */}
+            <div className="md:w-2/5 p-8 flex flex-col justify-center bg-white">
+              <span className="inline-block w-max px-2 py-1 mb-4 bg-evans-heritage/10 text-evans-heritage text-[10px] font-bold uppercase tracking-wider rounded border border-evans-heritage/20">
+                {selectedProject.type}
+              </span>
+              <h3 className="text-3xl font-serif text-evans-earth mb-2">{selectedProject.title}</h3>
+              <p className="text-sm text-black/50 mb-6 font-semibold flex items-center gap-1">
+                <MapPin size={16} />
+                {selectedProject.loc}
+              </p>
+              <p className="text-black/70 leading-relaxed">
+                {selectedProject.desc}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Contact Footer */}
       <section id="contact" className="bg-evans-earth text-white py-24 px-6">
