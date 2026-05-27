@@ -639,7 +639,7 @@ const systemPrompt = prompts[language];
         </div>
       </section>
 
-      {/* --- PROJECT MODAL OVERLAY --- */}
+     {/* --- PROJECT MODAL OVERLAY --- */}
       {selectedProject && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           {/* Dark Background (Click to close) */}
@@ -649,23 +649,43 @@ const systemPrompt = prompts[language];
           ></div>
           
           {/* Modal Content */}
-          <div className="relative bg-evans-stone w-full max-w-4xl rounded shadow-2xl overflow-hidden flex flex-col md:flex-row animate-in zoom-in-95 duration-200">
+          <div className="relative bg-evans-stone w-full max-w-6xl rounded shadow-2xl overflow-hidden flex flex-col md:flex-row animate-in zoom-in-95 duration-200 max-h-[90vh]">
             
             {/* Close Button */}
             <button 
               onClick={() => setSelectedProject(null)} 
-              className="absolute top-4 right-4 z-10 bg-white/20 hover:bg-white/40 text-evans-earth rounded-full p-2 backdrop-blur-md transition-colors"
+              className="absolute top-4 right-4 z-20 bg-black/40 hover:bg-black/60 text-white rounded-full p-2 backdrop-blur-md transition-colors"
             >
               <X size={20} />
             </button>
 
-            {/* Modal Image */}
-            <div className="md:w-3/5 h-64 md:h-auto relative bg-evans-earth">
-              <img src={selectedProject.img} alt={selectedProject.title} className="w-full h-full object-cover" />
+            {/* Modal Image Area (Handles 1 or 2 images depending on if beforeImg exists) */}
+            <div className={`flex flex-col sm:flex-row h-64 md:h-auto relative bg-evans-earth ${selectedProject.beforeImg ? 'md:w-2/3' : 'md:w-3/5'}`}>
+              
+              {/* BEFORE IMAGE (Only shows if beforeImg is in your projects data) */}
+              {selectedProject.beforeImg && (
+                <div className="relative w-full h-full border-b sm:border-b-0 sm:border-r border-black/20">
+                  <img src={selectedProject.beforeImg} alt={`Before ${selectedProject.title}`} className="w-full h-full object-cover" />
+                  <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded uppercase tracking-wider">
+                    Before
+                  </div>
+                </div>
+              )}
+
+              {/* AFTER IMAGE */}
+              <div className="relative w-full h-full">
+                <img src={selectedProject.img} alt={`After ${selectedProject.title}`} className="w-full h-full object-cover" />
+                {selectedProject.beforeImg && (
+                   <div className="absolute top-4 left-4 bg-evans-heritage/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded uppercase tracking-wider">
+                     After
+                   </div>
+                )}
+              </div>
+
             </div>
 
             {/* Modal Text */}
-            <div className="md:w-2/5 p-8 flex flex-col justify-center bg-white">
+            <div className={`p-8 flex flex-col justify-center bg-white overflow-y-auto ${selectedProject.beforeImg ? 'md:w-1/3' : 'md:w-2/5'}`}>
               <span className="inline-block w-max px-2 py-1 mb-4 bg-evans-heritage/10 text-evans-heritage text-[10px] font-bold uppercase tracking-wider rounded border border-evans-heritage/20">
                 {selectedProject.type}
               </span>
@@ -681,7 +701,6 @@ const systemPrompt = prompts[language];
           </div>
         </div>
       )}
-
       {/* Contact Footer */}
       <section id="contact" className="bg-evans-earth text-white py-24 px-6">
         {/* 1. The Big Header */}
