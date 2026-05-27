@@ -289,10 +289,11 @@ export default function ClientPortal({ isOpen, onClose, initialLang = 'en' }) {
 
 {/* --- PROJECT DASHBOARD MASTER --- */}
               {(() => {
+                // Notice the ?. safety nets here
                 const activeFolderObj = clientData?.folders?.find(f => f.folderId === activeFolderId);
                 if (!activeFolderObj && !currentRequest) return null;
                 
-                // Calculate Financials
+                // Calculate Financials safely
                 const budget = Number(activeFolderObj?.budgetTotal) || 0;
                 const paid = Number(activeFolderObj?.budgetPaid) || 0;
                 const progressPercent = budget > 0 ? Math.min(Math.round((paid / budget) * 100), 100) : 0;
@@ -339,17 +340,28 @@ export default function ClientPortal({ isOpen, onClose, initialLang = 'en' }) {
                              </div>
                           )}
 
-                          {/* Site Diary Timeline */}
-                          {activeFolderObj.diary.map((entry) => (
+                          {/* Site Diary Timeline (SAFE VERSION) */}
+                          {activeFolderObj?.diary?.length > 0 && (
+                            <div className="mt-2">
+                              <h4 className="text-xs font-bold uppercase tracking-widest text-black/40 mb-4 border-b border-black/5 pb-2">Site Diary</h4>
+                              <div className="space-y-4 relative before:absolute before:inset-0 before:ml-2 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-black/10 before:to-transparent">
+                                {activeFolderObj.diary.map((entry) => (
                                   <div key={entry.id} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
                                     <div className="flex items-center justify-center w-4 h-4 rounded-full border-2 border-white bg-evans-heritage shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-sm relative z-10 ml-0 md:ml-auto md:mr-auto"></div>
                                     <div className="w-[calc(100%-2rem)] md:w-[calc(50%-1.5rem)] p-4 rounded border border-black/5 bg-white shadow-sm hover:shadow-md transition-shadow">
                                       <div className="text-[10px] font-bold uppercase text-evans-heritage mb-2">{new Date(entry.date).toLocaleDateString()}</div>
                                       
-                                      {/* Render Image if it exists */}
+                                      {/* Image Fallback - will hide itself if Google blocks it instead of showing a broken icon */}
                                       {entry.imgUrl && (
                                         <div className="mb-3 rounded overflow-hidden border border-black/5 shadow-sm">
-                                          <img src={entry.imgUrl} alt="Site Progress" className="w-full h-auto object-cover max-h-48" />
+                                          <img 
+                                            src={entry.imgUrl} 
+                                            alt="Site Progress" 
+                                            className="w-full h-auto object-cover max-h-48" 
+                                            onError={(e) => { e.target.style.display = 'none'; }}
+                                          />
+                                          {/* Backup link in case image is blocked */}
+                                          <a href={entry.imgUrl} target="_blank" rel="noreferrer" className="text-[10px] font-bold text-blue-500 hover:underline mt-1 block uppercase">Open Photo in Drive &rarr;</a>
                                         </div>
                                       )}
                                       
@@ -381,8 +393,8 @@ export default function ClientPortal({ isOpen, onClose, initialLang = 'en' }) {
                               </div>
                           )}
 
-                          {/* Action Required Checklist */}
-                          {activeFolderObj.todos && activeFolderObj.todos.length > 0 && (
+                          {/* Action Required Checklist (SAFE VERSION) */}
+                          {activeFolderObj?.todos?.length > 0 && (
                             <div>
                               <h4 className="text-xs font-bold uppercase tracking-widest text-black/40 mb-3 flex items-center gap-2"><ListTodo size={14}/> Action Required</h4>
                               <div className="flex flex-col gap-2">
