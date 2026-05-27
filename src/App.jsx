@@ -283,61 +283,116 @@ const systemPrompt = prompts[language];
     }
   ];
 
-  const projects = [
+ const projects = [
     { 
       id: 1, 
-      title: "Heritage Bathroom Refit", 
-      loc: "Montboyer", 
-      type: "Interior Refit",
-      img: "/PXL_20231208_170400359.MP.jpg",
-      beforeImg: "/PXL_20231110_155403522.MP.jpg",
-      desc: "A full bathroom refit that balances modern luxury with heritage preservation. We integrated high-end fixtures and elegant gold trim while carefully maintaining and highlighting the beautiful, original rustic beams."
+      img: "/PXL_20240425_090355513 (2).jpg",
+      en: {
+        title: "Heritage Bathroom Refit", 
+        loc: "Montboyer", 
+        type: "Interior Refit",
+        altText: "Complete heritage bathroom renovation with exposed traditional stone and rustic beams in Montboyer, Charente",
+        desc: "A full bathroom refit that balances modern luxury with heritage preservation. We integrated high-end fixtures and elegant gold trim while carefully maintaining and highlighting the beautiful, original rustic beams."
+      },
+      fr: {
+        title: "Rénovation Salle de Bain", 
+        loc: "Montboyer", 
+        type: "Aménagement Intérieur",
+        altText: "Rénovation complète de salle de bain avec pierres apparentes et poutres rustiques à Montboyer, Charente",
+        desc: "Une rénovation complète qui équilibre le luxe moderne et la préservation du patrimoine. Nous avons intégré des équipements haut de gamme et d'élégantes finitions dorées tout en conservant et en mettant en valeur les magnifiques poutres rustiques d'origine."
+      }
     },
     { 
       id: 2, 
-      title: "Contemporary En-Suite", 
-      loc: "Nanteuil-Auriac-de-Bourzac", 
-      type: "Modern Interior",
       img: "/PXL_20240705_101036459.MP.jpg",
-      beforeImg: "/PXL_20230821_073138080 (1).jpg",
-      desc: "A complete bathroom overhaul featuring a sleek, modern aesthetic. We utilized a dark, sophisticated color palette, custom vanity units, and strategic lighting to create a premium, contemporary space."
+      en: {
+        title: "Contemporary En-Suite", 
+        loc: "Nanteuil-Auriac-de-Bourzac", 
+        type: "Modern Interior",
+        altText: "Sleek contemporary en-suite bathroom with dark walls and modern vanity in Nanteuil-Auriac",
+        desc: "A complete bathroom overhaul featuring a sleek, modern aesthetic. We utilized a dark, sophisticated color palette, custom vanity units, and strategic lighting to create a premium, contemporary space."
+      },
+      fr: {
+        title: "Suite Parentale Contemporaine", 
+        loc: "Nanteuil-Auriac", 
+        type: "Intérieur Moderne",
+        altText: "Suite parentale contemporaine épurée avec murs sombres et meuble-lavabo moderne à Nanteuil-Auriac-de-Bourzac",
+        desc: "Une refonte complète de la salle de bain offrant une esthétique moderne et épurée. Nous avons utilisé une palette de couleurs sombres et sophistiquées, des meubles sur mesure et un éclairage stratégique pour créer un espace contemporain haut de gamme."
+      }
     },
     { 
       id: 3, 
-      title: "Travertine Terrace", 
-      loc: "Juignac", 
-      type: "Exterior Masonry",
       img: "/IMG_20210702_155510.jpg",
-      // EXAMPLE OF A BEFORE PICTURE:
-      beforeImg: "/IMG_20210330_120722.jpg", 
-      desc: "We completely transformed an unusable gravel area into a pristine outdoor living space. The project involved pouring a solid concrete base and expertly tiling it with premium 60x40 travertine."
+      beforeImg: "/placeholder-before-terrace.jpg", 
+      en: {
+        title: "Travertine Terrace", 
+        loc: "Juignac", 
+        type: "Exterior Masonry",
+        altText: "Premium 60x40 travertine terrace installation over concrete base in Juignac, Charente",
+        desc: "We completely transformed an unusable gravel area into a pristine outdoor living space. The project involved pouring a solid concrete base and expertly tiling it with premium 60x40 travertine."
+      },
+      fr: {
+        title: "Terrasse en Travertin", 
+        loc: "Juignac", 
+        type: "Maçonnerie Extérieure",
+        altText: "Installation de terrasse en travertin 60x40 sur base béton à Juignac, Charente",
+        desc: "Nous avons entièrement transformé une zone de gravier inutilisable en un magnifique espace de vie extérieur. Le projet a nécessité le coulage d'une dalle en béton solide et la pose experte de travertin 60x40 de première qualité."
+      }
     },
     { 
       id: 4, 
-      title: "Pool Terrace Extension", 
-      loc: "Saint Antoine Cumond", 
-      type: "Exterior Build",
       img: "/IMG_20220706_121637 (1).jpg",
-      beforeImg: "/IMG_20220527_172415.jpg",
-      desc: "A major exterior structural upgrade. We installed a full fibre-reinforced levelling screed and slab extension with perimeter drainage, finished seamlessly in travertine opus tiles and custom margelles."
+      en: {
+        title: "Pool Terrace Extension", 
+        loc: "Charente Region", 
+        type: "Exterior Build",
+        altText: "Fibre-reinforced levelling screed and pool terrace extension with travertine opus tiles in Charente",
+        desc: "A major exterior structural upgrade. We installed a full fibre-reinforced levelling screed and slab extension with perimeter drainage, finished seamlessly in travertine opus tiles and custom margelles."
+      },
+      fr: {
+        title: "Extension Plage de Piscine", 
+        loc: "Charente", 
+        type: "Construction Extérieure",
+        altText: "Chape de nivellement renforcée de fibres et extension de terrasse de piscine avec travertin opus en Charente",
+        desc: "Une rénovation structurelle extérieure majeure. Nous avons installé une chape de nivellement renforcée de fibres et une extension de dalle avec drainage périphérique, finies avec des dalles de travertin opus et des margelles sur mesure."
+      }
     },
     { 
       id: 5, 
-      title: "Lintel & Masonry Repair", 
-      loc: "Orival", 
-      type: "Restoration",
       img: "/PXL_20250730_133720074.jpg",
-      beforeImg: "/IMG-20241011-WA0007.jpg",
-      desc: "A precision like-for-like lintel replacement on a traditional stone property. The job included targeted masonry repairs and a full window replacement to ensure long-term structural integrity and weatherproofing."
+      en: {
+        title: "Lintel & Masonry Repair", 
+        loc: "Orival", 
+        type: "Restoration",
+        altText: "Precision like-for-like lintel replacement and masonry repair on a traditional stone house in Orival",
+        desc: "A precision like-for-like lintel replacement on a traditional stone property. The job included targeted masonry repairs and a full window replacement to ensure long-term structural integrity and weatherproofing."
+      },
+      fr: {
+        title: "Réparation de Linteau", 
+        loc: "Orival", 
+        type: "Restauration",
+        altText: "Remplacement de linteau à l'identique et réparation de maçonnerie sur une maison traditionnelle en pierre à Orival",
+        desc: "Un remplacement de linteau à l'identique avec une grande précision sur une propriété traditionnelle en pierre. Le travail comprenait des réparations de maçonnerie ciblées et un remplacement complet de la fenêtre pour assurer l'intégrité structurelle à long terme et l'étanchéité."
+      }
     },
     { 
       id: 6, 
-      title: "Stone Cladding & Exterior Refresh", 
-      loc: "Aubeterre-sur-Dronne", 
-      type: "Exterior Restoration",
-      img: "/PXL_20260325_101608894.jpg", // PUT YOUR NEW AFTER PHOTO NAME HERE
-      beforeImg: "/PXL_20260106_114854688.jpg", // PUT YOUR NEW BEFORE PHOTO NAME HERE
-      desc: "Complete exterior preparation and installation of natural stone cladding (pierre de parement) with traditional pointing. The project also included the full preparation and painting of the adjacent exterior facade to bring the property back to life."
+      img: "/aubeterre-parement.jpg", 
+      beforeImg: "/aubeterre-before.jpg", 
+      en: {
+        title: "Stone Cladding Refresh", 
+        loc: "Aubeterre-sur-Dronne", 
+        type: "Exterior Restoration",
+        altText: "Preparation and installation of natural stone cladding (pierre de parement) with traditional pointing in Aubeterre-sur-Dronne",
+        desc: "Complete exterior preparation and installation of natural stone cladding (pierre de parement) with traditional pointing. The project also included the full preparation and painting of the adjacent exterior facade to bring the property back to life."
+      },
+      fr: {
+        title: "Pose de Pierre de Parement", 
+        loc: "Aubeterre-sur-Dronne", 
+        type: "Restauration Extérieure",
+        altText: "Préparation et pose de pierre de parement naturelle avec jointoiement traditionnel à Aubeterre-sur-Dronne",
+        desc: "Préparation complète de l'extérieur et pose de pierre de parement naturelle avec jointoiement traditionnel. Le projet comprenait également la préparation complète et la peinture de la façade extérieure adjacente pour redonner vie à la propriété."
+      }
     }
   ];
   // --- UI Components ---
