@@ -112,7 +112,14 @@ export default function ClientPortal({ isOpen, onClose, initialLang = 'en' }) {
       if (docSnap.exists()) {
         const data = docSnap.data();
         setClientData(data);
-        setActiveFolderId(data.folderId);
+        
+        // Default to the first Specific Job folder if it exists, else fallback to the legacy folder
+        if (data.folders && data.folders.length > 0) {
+          setActiveFolderId(data.folders[0].folderId);
+        } else {
+          setActiveFolderId(data.folderId);
+        }
+
         if (data.signatureRequests && data.signatureRequests.length > 0) {
           setRequests(data.signatureRequests);
         } else {
@@ -132,7 +139,16 @@ export default function ClientPortal({ isOpen, onClose, initialLang = 'en' }) {
   };
 
   const openRequest = (req) => { setCurrentRequest(req); setActiveFolderId(req.folderId); };
-  const backToMain = () => { setCurrentRequest(null); setActiveFolderId(clientData.folderId); };
+  
+  const backToMain = () => { 
+    setCurrentRequest(null); 
+    // Return to the first job folder
+    if (clientData.folders && clientData.folders.length > 0) {
+      setActiveFolderId(clientData.folders[0].folderId);
+    } else {
+      setActiveFolderId(clientData.folderId); 
+    }
+  };
 
   const saveSignature = async () => {
     if (sigPad.current.isEmpty()) { alert(t.drawError); return; }
@@ -209,7 +225,7 @@ export default function ClientPortal({ isOpen, onClose, initialLang = 'en' }) {
                       <button onClick={backToMain} className="text-slate-500 hover:text-slate-800 flex items-center gap-2 text-sm font-bold"><ArrowLeft size={16} /> {t.backToAll}</button>
                     ) : <span className="text-slate-400 text-sm font-bold">{t.projectFiles}</span>}
                  </div>
-                 {currentRequest ? (
+                {currentRequest ? (
                     <div className="flex items-center gap-4">
                       <span className="text-sm font-bold text-slate-700 hidden sm:inline">{t.reviewing}: {currentRequest.name}</span>
                       <button onClick={() => setShowSignModal(true)} className="bg-evans-amber text-slate-900 px-6 py-2 rounded-lg font-bold hover:bg-amber-400 transition-colors flex items-center gap-2 shadow-sm animate-pulse"><PenTool size={18} /> {t.sign} "{currentRequest.name}"</button>
@@ -218,6 +234,24 @@ export default function ClientPortal({ isOpen, onClose, initialLang = 'en' }) {
                     requests.length > 0 && <div className="flex gap-2">{requests.map(req => (<button key={req.id} onClick={() => openRequest(req)} className="bg-red-50 text-red-600 border border-red-100 px-4 py-2 rounded-lg font-bold hover:bg-red-100 transition-colors flex items-center gap-2 text-sm"><FileText size={16} /> {t.review}: {req.name} <ChevronRight size={14}/></button>))}</div>
                  )}
               </div>
+
+              {/* Job Folder Navigation Tabs */}
+              {!currentRequest && clientData.folders && clientData.folders.length > 0 && (
+                <div className="flex gap-3 p-4 bg-evans-stone border-b border-black/5 overflow-x-auto">
+                   {clientData.folders.map(f => (
+                      <button 
+                         key={f.id}
+                         onClick={() => setActiveFolderId(f.folderId)}
+                         className={`px-5 py-2.5 rounded font-bold text-sm whitespace-nowrap transition-all flex items-center gap-2 border shadow-sm ${activeFolderId === f.folderId ? 'bg-evans-earth text-white border-evans-earth' : 'bg-white text-evans-earth border-black/10 hover:bg-slate-50'}`}
+                      >
+                         <Folder size={16} className={activeFolderId === f.folderId ? 'text-evans-heritage' : 'text-black/30'} /> 
+                         {f.name}
+                      </button>
+                   ))}
+                </div>
+              )}
+
+              {/* The Iframe */}
               <iframe src={`https://drive.google.com/embeddedfolderview?id=${activeFolderId}#grid`} className="w-full flex-1 border-0 bg-slate-50" title="Files"></iframe>
             </div>
           )}
