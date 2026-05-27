@@ -289,8 +289,8 @@ const systemPrompt = prompts[language];
       title: "Heritage Bathroom Refit", 
       loc: "Montboyer", 
       type: "Interior Refit",
-      img: "/PXL_20240425_090355513 (2).jpg",
-      beforeImg: "/montboyer-before.jpg",
+      img: "/PXL_20231208_170400359.MP.jpg",
+      beforeImg: "/PXL_20231110_155403522.MP.jpg",
       desc: "A full bathroom refit that balances modern luxury with heritage preservation. We integrated high-end fixtures and elegant gold trim while carefully maintaining and highlighting the beautiful, original rustic beams."
     },
     { 
@@ -299,7 +299,7 @@ const systemPrompt = prompts[language];
       loc: "Nanteuil-Auriac-de-Bourzac", 
       type: "Modern Interior",
       img: "/PXL_20240705_101036459.MP.jpg",
-      beforeImg: "/nanteuil-before.jpg",
+      beforeImg: "/PXL_20230821_073138080 (1).jpg",
       desc: "A complete bathroom overhaul featuring a sleek, modern aesthetic. We utilized a dark, sophisticated color palette, custom vanity units, and strategic lighting to create a premium, contemporary space."
     },
     { 
@@ -309,7 +309,7 @@ const systemPrompt = prompts[language];
       type: "Exterior Masonry",
       img: "/IMG_20210702_155510.jpg",
       // EXAMPLE OF A BEFORE PICTURE:
-      beforeImg: "/juignac-before.jpg", 
+      beforeImg: "/IMG_20210330_120722.jpg", 
       desc: "We completely transformed an unusable gravel area into a pristine outdoor living space. The project involved pouring a solid concrete base and expertly tiling it with premium 60x40 travertine."
     },
     { 
@@ -318,7 +318,7 @@ const systemPrompt = prompts[language];
       loc: "Saint Antoine Cumond", 
       type: "Exterior Build",
       img: "/IMG_20220706_121637 (1).jpg",
-      beforeImg: "/saintantoine-before.jpg",
+      beforeImg: "/IMG_20220527_172415.jpg",
       desc: "A major exterior structural upgrade. We installed a full fibre-reinforced levelling screed and slab extension with perimeter drainage, finished seamlessly in travertine opus tiles and custom margelles."
     },
     { 
@@ -327,7 +327,7 @@ const systemPrompt = prompts[language];
       loc: "Orival", 
       type: "Restoration",
       img: "/PXL_20250730_133720074.jpg",
-      beforeImg: "/orival-before.jpg",
+      beforeImg: "/IMG-20241011-WA0007.jpg",
       desc: "A precision like-for-like lintel replacement on a traditional stone property. The job included targeted masonry repairs and a full window replacement to ensure long-term structural integrity and weatherproofing."
     },
     { 
@@ -335,8 +335,8 @@ const systemPrompt = prompts[language];
       title: "Stone Cladding & Exterior Refresh", 
       loc: "Aubeterre-sur-Dronne", 
       type: "Exterior Restoration",
-      img: "/aubeterre-parement.jpg", // PUT YOUR NEW AFTER PHOTO NAME HERE
-      beforeImg: "/aubeterre-before.jpg", // PUT YOUR NEW BEFORE PHOTO NAME HERE
+      img: "/PXL_20260325_101608894.jpg", // PUT YOUR NEW AFTER PHOTO NAME HERE
+      beforeImg: "/PXL_20260106_114854688.jpg", // PUT YOUR NEW BEFORE PHOTO NAME HERE
       desc: "Complete exterior preparation and installation of natural stone cladding (pierre de parement) with traditional pointing. The project also included the full preparation and painting of the adjacent exterior facade to bring the property back to life."
     }
   ];
