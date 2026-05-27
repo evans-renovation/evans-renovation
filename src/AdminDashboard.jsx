@@ -32,6 +32,11 @@ export default function AdminDashboard({ user, onLogout }) {
   const [reqLink, setReqLink] = useState('');
   const [reqName, setReqName] = useState(''); // e.g., "Kitchen Quote"
 
+  // --- MULTI-FOLDER STATE ---
+  const [linkingFolderClient, setLinkingFolderClient] = useState(null);
+  const [newFolderName, setNewFolderName] = useState('');
+  const [newFolderLink, setNewFolderLink] = useState('');
+
   useEffect(() => {
     fetchClients();
     fetchSettings();
@@ -74,6 +79,34 @@ export default function AdminDashboard({ user, onLogout }) {
 
   // --- ACTIONS ---
 
+  const handleAddFolder = async () => {
+    if (!linkingFolderClient || !newFolderName || !newFolderLink) return;
+    const newFolder = {
+      id: Date.now().toString(),
+      name: newFolderName,
+      folderId: extractFolderId(newFolderLink)
+    };
+    try {
+      await updateDoc(doc(db, "clients", linkingFolderClient.id), {
+        folders: arrayUnion(newFolder)
+      });
+      setLinkingFolderClient(null);
+      setNewFolderName('');
+      setNewFolderLink('');
+      fetchClients();
+    } catch (error) { alert("Error adding folder."); }
+  };
+
+  const removeFolder = async (client, folder) => {
+    if (!window.confirm(`Remove the folder "${folder.name}"?`)) return;
+    try {
+      await updateDoc(doc(db, "clients", client.id), {
+        folders: arrayRemove(folder)
+      });
+      fetchClients();
+    } catch (error) { alert("Error removing folder."); }
+  };
+  
   const handleAddRequest = async () => {
     if (!linkingClient || !reqName) return;
 
@@ -262,15 +295,37 @@ export default function AdminDashboard({ user, onLogout }) {
                             client.notes ? <div className="flex items-start gap-2 max-w-[200px]"><StickyNote size={14} className="text-amber-500 shrink-0 mt-0.5" /><span className="text-xs text-slate-600 truncate">{client.notes}</span></div> : <span className="text-xs text-slate-300 italic">No notes</span>
                           )}
                         </td>
-                        <td className="p-4">
-                           {editingId === client.id ? (
-                             <input className="w-full text-xs border p-1 rounded" placeholder="Main ID/Link" value={editForm.folderId} onChange={e => setEditForm({...editForm, folderId: e.target.value})} />
-                           ) : (
-                             <div className="flex items-center gap-2 text-sm text-slate-600">
-                               <Folder size={14} className="text-amber-500"/> <span className="truncate w-20">{client.folderId}</span>
-                               <a href={`https://drive.google.com/drive/folders/${client.folderId}`} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-amber-600"><ExternalLink size={14} /></a>
-                             </div>
-                           )}
+                        {/* MULTI-FOLDER COLUMN */}
+                        <td className="p-4 align-top">
+                          <div className="space-y-2">
+                             
+                             {/* Legacy Main Folder (Kept so old clients don't break) */}
+                             {client.folderId && !client.folders?.length && (
+                               <div className="flex items-center gap-2 text-sm text-black/60">
+                                 <Folder size={14} className="text-evans-heritage"/> <span className="truncate w-20">{client.folderId}</span>
+                                 <a href={`https://drive.google.com/drive/folders/${client.folderId}`} target="_blank" rel="noreferrer" className="text-black/40 hover:text-evans-heritage"><ExternalLink size={14} /></a>
+                               </div>
+                             )}
+
+                             {/* New Specific Job Folders */}
+                             {client.folders?.map((f) => (
+                               <div key={f.id} className="flex items-center justify-between gap-2 bg-evans-stone text-evans-earth px-2 py-1.5 rounded border border-black/5 w-full text-xs">
+                                 <div className="flex items-center gap-2 overflow-hidden">
+                                   <Folder size={12} className="text-evans-heritage shrink-0" />
+                                   <span className="font-semibold truncate">{f.name}</span>
+                                 </div>
+                                 <div className="flex items-center gap-2 shrink-0">
+                                    <a href={`https://drive.google.com/drive/folders/${f.folderId}`} target="_blank" rel="noreferrer" className="text-black/40 hover:text-blue-500"><ExternalLink size={12} /></a>
+                                    <button onClick={() => removeFolder(client, f)} className="text-black/40 hover:text-red-500"><X size={12}/></button>
+                                 </div>
+                               </div>
+                             ))}
+                             
+                             {/* Add Job Folder Button */}
+                             <button onClick={() => { setLinkingFolderClient(client); setNewFolderName(''); setNewFolderLink(''); }} className="text-xs text-evans-heritage font-semibold hover:underline flex items-center gap-1 mt-1">
+                               <Plus size={12}/> Add Job Folder
+                             </button>
+                          </div>
                         </td>
                         
                         {/* MULTI REQUEST COLUMN */}
@@ -351,6 +406,31 @@ export default function AdminDashboard({ user, onLogout }) {
               <div className="flex gap-3 mt-8">
                 <button onClick={() => setLinkingClient(null)} className="flex-1 py-3 text-slate-500 font-bold hover:bg-slate-50 rounded-lg">Cancel</button>
                 <button onClick={handleAddRequest} disabled={!reqName} className="flex-[2] py-3 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 disabled:opacity-50">Add to Queue</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* --- ADD FOLDER MODAL --- */}
+      {linkingFolderClient && (
+        <div className="fixed inset-0 z-[150] bg-evans-earth/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-md rounded shadow-2xl p-6 animate-in zoom-in-95">
+            <h3 className="text-xl font-serif text-evans-earth mb-4">Add Client-Facing Folder</h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold uppercase text-black/50 mb-1">Job Name</label>
+                <input type="text" autoFocus placeholder="e.g. Pool House Plans & Docs" value={newFolderName} onChange={(e) => setNewFolderName(e.target.value)} className="w-full p-3 border border-black/10 rounded outline-none focus:border-evans-heritage" />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase text-black/50 mb-1">Google Drive Folder Link</label>
+                <input type="text" placeholder="Paste the link to the client-facing folder here" value={newFolderLink} onChange={(e) => setNewFolderLink(e.target.value)} className="w-full p-3 border border-black/10 rounded outline-none focus:border-evans-heritage" />
+              </div>
+
+              <div className="flex gap-3 mt-8">
+                <button onClick={() => setLinkingFolderClient(null)} className="flex-1 py-3 text-black/50 font-bold hover:bg-slate-50 rounded">Cancel</button>
+                <button onClick={handleAddFolder} disabled={!newFolderName || !newFolderLink} className="flex-[2] py-3 bg-evans-earth text-white font-bold rounded hover:bg-black/80 disabled:opacity-50">Add Folder</button>
               </div>
             </div>
           </div>
