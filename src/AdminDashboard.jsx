@@ -115,6 +115,16 @@ export default function AdminDashboard({ user, onLogout }) {
       fetchClients();
     } catch (error) { alert("Error setting default folder."); }
   };
+
+  const updateFolder = async (client, folderId, updates) => {
+    const updatedFolders = client.folders.map(f => 
+      f.id === folderId ? { ...f, ...updates } : f
+    );
+    try {
+      await updateDoc(doc(db, "clients", client.id), { folders: updatedFolders });
+      fetchClients();
+    } catch (error) { alert("Error updating folder"); }
+  };
   
   const handleAddRequest = async () => {
     if (!linkingClient || !reqName) return;
@@ -316,24 +326,61 @@ export default function AdminDashboard({ user, onLogout }) {
                                </div>
                              )}
 
-                             {/* New Specific Job Folders */}
+                            {/* New Specific Job Folders */}
                              {client.folders?.map((f) => (
-                               <div key={f.id} className="flex items-center justify-between gap-2 bg-evans-stone text-evans-earth px-2 py-1.5 rounded border border-black/5 w-full text-xs">
-                                 <div className="flex items-center gap-2 overflow-hidden">
-                                   <Folder size={12} className="text-evans-heritage shrink-0" />
-                                   <span className="font-semibold truncate">
-                                     {f.name} {client.defaultFolderId === f.folderId && <span className="text-amber-500 ml-1">(Default)</span>}
-                                   </span>
+                               <div key={f.id} className="flex flex-col gap-2 bg-evans-stone text-evans-earth p-2.5 rounded border border-black/5 w-full text-xs">
+                                 
+                                 {/* Top Row: Name and Actions */}
+                                 <div className="flex items-center justify-between">
+                                   <div className="flex items-center gap-2 overflow-hidden">
+                                     <Folder size={12} className="text-evans-heritage shrink-0" />
+                                     <span className="font-semibold truncate">
+                                       {f.name} {client.defaultFolderId === f.folderId && <span className="text-amber-500 ml-1">(Default)</span>}
+                                     </span>
+                                   </div>
+                                   <div className="flex items-center gap-2 shrink-0">
+                                      <button onClick={() => setDefaultFolder(client, f.folderId)} className={`hover:text-amber-500 transition-colors ${client.defaultFolderId === f.folderId ? 'text-amber-500' : 'text-black/20'}`} title="Set as default folder"><Star size={14} className={client.defaultFolderId === f.folderId ? "fill-current" : ""} /></button>
+                                      <a href={`https://drive.google.com/drive/folders/${f.folderId}`} target="_blank" rel="noreferrer" className="text-black/40 hover:text-blue-500"><ExternalLink size={12} /></a>
+                                      <button onClick={() => removeFolder(client, f)} className="text-black/40 hover:text-red-500"><X size={12}/></button>
+                                   </div>
                                  </div>
-                                 <div className="flex items-center gap-2 shrink-0">
-                                    {/* NEW STAR BUTTON */}
-                                    <button onClick={() => setDefaultFolder(client, f.folderId)} className={`hover:text-amber-500 transition-colors ${client.defaultFolderId === f.folderId ? 'text-amber-500' : 'text-black/20'}`} title="Set as default folder">
-                                      <Star size={14} className={client.defaultFolderId === f.folderId ? "fill-current" : ""} />
-                                    </button>
-                                    
-                                    <a href={`https://drive.google.com/drive/folders/${f.folderId}`} target="_blank" rel="noreferrer" className="text-black/40 hover:text-blue-500"><ExternalLink size={12} /></a>
-                                    <button onClick={() => removeFolder(client, f)} className="text-black/40 hover:text-red-500"><X size={12}/></button>
+                                 
+                                 {/* Middle Row: Status & Note to Client */}
+                                 <div className="flex items-center gap-2">
+                                   <select 
+                                     value={f.status || 'Planning'} 
+                                     onChange={(e) => updateFolder(client, f.id, { status: e.target.value })}
+                                     className="border border-black/10 rounded p-1.5 bg-white outline-none focus:border-evans-heritage cursor-pointer font-semibold"
+                                   >
+                                     <option>Planning</option>
+                                     <option>Quoting</option>
+                                     <option>Pending Approval</option>
+                                     <option>Accepted</option>
+                                     <option>In Progress</option>
+                                     <option>Billed</option>
+                                     <option>Completed</option>
+                                   </select>
+                                   
+                                   <input 
+                                     type="text" 
+                                     placeholder="Note to client..." 
+                                     defaultValue={f.adminNote || ''}
+                                     onBlur={(e) => {
+                                       if (e.target.value !== (f.adminNote || '')) updateFolder(client, f.id, { adminNote: e.target.value });
+                                     }}
+                                     className="flex-1 p-1.5 border border-black/10 rounded outline-none focus:border-evans-heritage"
+                                   />
                                  </div>
+
+                                 {/* Bottom Row: Client Feedback */}
+                                 {(f.clientNote || f.approvedAt || f.declinedAt) && (
+                                   <div className="flex flex-col gap-1.5 border-t border-black/5 pt-2 mt-1">
+                                     {f.clientNote && <div className="text-blue-700 font-medium break-words"><span className="text-black/40 font-bold uppercase mr-1">Client Note:</span> {f.clientNote}</div>}
+                                     {f.approvedAt && <div className="text-green-700 font-bold flex gap-1 items-center"><CheckCircle size={12}/> Quote Accepted ({new Date(f.approvedAt).toLocaleDateString()})</div>}
+                                     {f.declinedAt && <div className="text-red-600 font-bold flex gap-1 items-center"><XCircle size={12}/> Quote Declined ({new Date(f.declinedAt).toLocaleDateString()})</div>}
+                                   </div>
+                                 )}
+
                                </div>
                              ))}
                              
