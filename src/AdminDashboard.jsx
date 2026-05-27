@@ -4,7 +4,7 @@ import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, getDoc, arrayUn
 import { 
   Loader2, Plus, Save, Trash2, PenTool, CheckCircle, XCircle, 
   Folder, Search, RefreshCw, ExternalLink, Users, Wrench, Info,
-  PieChart, Link as LinkIcon, StickyNote, MessageSquare, ArrowRight, FileText, X
+  PieChart, Link as LinkIcon, StickyNote, MessageSquare, ArrowRight, FileText, X, Star
 } from 'lucide-react';
 import { jsPDF } from "jspdf";
 
@@ -105,6 +105,15 @@ export default function AdminDashboard({ user, onLogout }) {
       });
       fetchClients();
     } catch (error) { alert("Error removing folder."); }
+  };
+  
+  const setDefaultFolder = async (client, folderId) => {
+    try {
+      await updateDoc(doc(db, "clients", client.id), {
+        defaultFolderId: folderId
+      });
+      fetchClients();
+    } catch (error) { alert("Error setting default folder."); }
   };
   
   const handleAddRequest = async () => {
@@ -312,9 +321,16 @@ export default function AdminDashboard({ user, onLogout }) {
                                <div key={f.id} className="flex items-center justify-between gap-2 bg-evans-stone text-evans-earth px-2 py-1.5 rounded border border-black/5 w-full text-xs">
                                  <div className="flex items-center gap-2 overflow-hidden">
                                    <Folder size={12} className="text-evans-heritage shrink-0" />
-                                   <span className="font-semibold truncate">{f.name}</span>
+                                   <span className="font-semibold truncate">
+                                     {f.name} {client.defaultFolderId === f.folderId && <span className="text-amber-500 ml-1">(Default)</span>}
+                                   </span>
                                  </div>
                                  <div className="flex items-center gap-2 shrink-0">
+                                    {/* NEW STAR BUTTON */}
+                                    <button onClick={() => setDefaultFolder(client, f.folderId)} className={`hover:text-amber-500 transition-colors ${client.defaultFolderId === f.folderId ? 'text-amber-500' : 'text-black/20'}`} title="Set as default folder">
+                                      <Star size={14} className={client.defaultFolderId === f.folderId ? "fill-current" : ""} />
+                                    </button>
+                                    
                                     <a href={`https://drive.google.com/drive/folders/${f.folderId}`} target="_blank" rel="noreferrer" className="text-black/40 hover:text-blue-500"><ExternalLink size={12} /></a>
                                     <button onClick={() => removeFolder(client, f)} className="text-black/40 hover:text-red-500"><X size={12}/></button>
                                  </div>
