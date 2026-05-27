@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, LogOut, Lock, Loader2, User, PenTool, CheckCircle, Save, Eraser, Folder, ArrowLeft, FileText, ChevronRight, MessageSquare, XCircle, CheckSquare, Square, ListTodo, Wallet } from 'lucide-react';
+import { X, LogOut, Lock, Loader2, User, PenTool, CheckCircle, Save, Eraser, Folder, ArrowLeft, FileText, ChevronRight, MessageSquare, XCircle, CheckSquare, Square, ListTodo, Wallet, Eye, EyeOff } from 'lucide-react';
 import { auth, db, loginWithGoogle, loginWithEmail, logout } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
@@ -91,7 +91,8 @@ export default function ClientPortal({ isOpen, onClose, initialLang = 'en' }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [showPassword, setShowPassword] = useState(false);
+  
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
@@ -232,12 +233,68 @@ export default function ClientPortal({ isOpen, onClose, initialLang = 'en' }) {
             <div className="h-full flex flex-col items-center justify-center p-8">
               <div className="w-full max-w-sm">
                  <div className="text-center mb-8"><div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4 text-amber-600"><User size={32} /></div><h3 className="text-2xl font-serif text-slate-900">{t.loginTitle}</h3></div>
-                <form onSubmit={handleLogin} className="space-y-4 mb-8">
-                  <input type="text" placeholder={t.username} value={usernameInput} onChange={(e) => setUsernameInput(e.target.value)} className="w-full p-3 border border-slate-300 rounded-lg outline-none focus:border-amber-500" required />
-                  <input type="password" placeholder={t.password} value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-3 border border-slate-300 rounded-lg outline-none focus:border-amber-500" required />
-                  {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-                  <button type="submit" disabled={isSubmitting} className="w-full bg-slate-900 text-white py-3 rounded-lg font-bold hover:bg-slate-800 flex justify-center items-center gap-2">{isSubmitting ? <Loader2 className="animate-spin" /> : t.loginBtn}</button>
-                </form>
+                {/* --- BROWSER-OPTIMIZED LOGIN FORM --- */}
+                  <form onSubmit={handleLogin} className="space-y-5 mb-8">
+                    
+                    {/* Username Box */}
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-widest text-black/50 mb-1.5">{t.username}</label>
+                      <div className="relative">
+                        <User size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-black/30" />
+                        <input 
+                          type="text" 
+                          name="username"
+                          autoComplete="username"
+                          placeholder={t.username} 
+                          value={usernameInput} 
+                          onChange={(e) => setUsernameInput(e.target.value)} 
+                          className="w-full pl-11 pr-4 py-3.5 rounded border border-black/10 focus:ring-2 focus:ring-evans-heritage focus:border-transparent outline-none bg-slate-50/50 transition-all text-evans-earth font-medium"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    {/* Password Box with Eye Icon */}
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-widest text-black/50 mb-1.5">{t.password}</label>
+                      <div className="relative">
+                        <Lock size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-black/30" />
+                        <input 
+                          type={showPassword ? "text" : "password"}
+                          name="password"
+                          autoComplete="current-password"
+                          placeholder="••••••••" 
+                          value={password} 
+                          onChange={(e) => setPassword(e.target.value)} 
+                          className="w-full pl-11 pr-12 py-3.5 rounded border border-black/10 focus:ring-2 focus:ring-evans-heritage focus:border-transparent outline-none bg-slate-50/50 transition-all text-evans-earth font-medium"
+                          required
+                        />
+                        {/* Toggle Button */}
+                        <button 
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-black/40 hover:text-evans-heritage focus:outline-none transition-colors"
+                          title={showPassword ? "Hide password" : "Show password"}
+                        >
+                          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                      </div>
+                    </div>
+
+                    {error && (
+                      <div className="bg-red-50 text-red-600 p-3 rounded border border-red-100 text-sm font-bold flex items-center gap-2">
+                        <XCircle size={16} /> {error}
+                      </div>
+                    )}
+
+                    <button 
+                      type="submit" 
+                      disabled={isSubmitting || !usernameInput || !password} 
+                      className="w-full bg-slate-900 text-white font-bold py-3.5 rounded-lg hover:bg-slate-800 transition-all flex justify-center items-center gap-2 disabled:opacity-50 shadow-md"
+                    >
+                      {isSubmitting ? <Loader2 size={18} className="animate-spin" /> : "Secure Login"}
+                    </button>
+                  </form>
                 <div className="flex justify-center"><button onClick={loginWithGoogle} className="text-sm text-slate-500 hover:text-slate-800 underline">{t.googleBtn}</button></div>
               </div>
             </div>
