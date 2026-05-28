@@ -301,7 +301,7 @@ export default function ClientPortal({ isOpen, onClose, initialLang = 'en' }) {
           ) : !activeFolderId ? (
              <div className="h-full flex flex-col items-center justify-center p-8 text-center"><h3 className="text-xl font-bold text-slate-900 mb-2">{t.accessDenied}</h3><p className="text-slate-500">{t.noFolder}</p></div>
           ) : (
-            <div className="h-full flex flex-col">
+            <div className="h-full flex flex-col overflow-y-auto">
               <div className="bg-white p-4 px-6 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
                  <div className="flex items-center gap-4">
                     {currentRequest ? (
