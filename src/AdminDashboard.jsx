@@ -86,31 +86,41 @@ export default function AdminDashboard({ user, onLogout }) {
 
   // --- ACTIONS ---
 
-// --- AI COPILOT SERVER CONNECTION (PERSISTENT & COLLABORATIVE) ---
+// --- AI COPILOT SERVER CONNECTION (PERSISTENT & AUTO-FALLBACK) ---
 const [chatInput, setChatInput] = useState('');
 const [chatLog, setChatLog] = useState([]);
 const [isAiTyping, setIsAiTyping] = useState(false);
 const [isWorkspaceMaximized, setIsWorkspaceMaximized] = useState(false);
 const [modelPreference, setModelPreference] = useState('flash');
 
-// Real-Time Database Sync Hook: Keeps history and streams messages live to all admins
+// Real-Time Database Sync Hook
 useEffect(() => {
-  if (!managingHub?.folder?.id) return;
+  // Use defensive routing to find the correct project document identifier
+  const projectId = managingHub?.id || managingHub?.folder?.id;
+  if (!projectId) return;
 
-  // Query your Firestore database for this specific project's chat history
   const chatQuery = query(
-    collection(db, `projects/${managingHub.folder.id}/aiChatWorkspace`),
+    collection(db, `projects/${projectId}/aiChatWorkspace`),
     orderBy("timestamp", "asc")
   );
 
-  // Live snapshot listener: If you or another admin types a message, everyone sees it instantly
   const unsubscribe = onSnapshot(chatQuery, (snapshot) => {
     const updatedMessages = snapshot.docs.map(doc => doc.data());
     setChatLog(updatedMessages);
+  }, (error) => {
+    console.error("Firestore sync error:", error);
   });
 
   return () => unsubscribe();
-}, [managingHub?.folder?.id]);
+}, [managingHub]);
+
+// Computed log: If the database is empty, always show the default welcome greeting
+const displayLog = chatLog.length > 0 ? chatLog : [
+  { 
+    role: 'model', 
+    text: 'Bonjour! I am your Evans Rénovation Copilot. Ask me anything about this project budget, to-dos, or notes.' 
+  }
+];
 
 const handleAskCopilot = async () => {
   if (!chatInput.trim() || !managingHub?.folder) return;
@@ -119,11 +129,15 @@ const handleAskCopilot = async () => {
   setChatInput('');
   setIsAiTyping(true);
 
+  // Optimistic UI update: Show the question on screen immediately
+  setChatLog(prev => [...prev, { role: 'user', text: userMsg }]);
+
   const targetFolderId = managingHub?.folder?.folderId;
+  const projectId = managingHub?.id || managingHub?.folder?.id || 'default_project';
 
   try {
-    // 1. Permanently save the admin message to Firestore
-    await addDoc(collection(db, `projects/${managingHub.folder.id}/aiChatWorkspace`), {
+    // 1. Attempt to log the message to Firestore permanently
+    await addDoc(collection(db, `projects/${projectId}/aiChatWorkspace`), {
       role: 'user',
       text: userMsg,
       timestamp: new Date(),
@@ -155,8 +169,8 @@ const handleAskCopilot = async () => {
     const data = await response.json();
     if (data.error) throw new Error(data.error);
 
-    // 3. Permanently save Gemini's answer to the shared database path
-    await addDoc(collection(db, `projects/${managingHub.folder.id}/aiChatWorkspace`), {
+    // 3. Save Gemini's answer to the shared database path
+    await addDoc(collection(db, `projects/${projectId}/aiChatWorkspace`), {
       role: 'model',
       text: data.reply,
       timestamp: new Date(),
@@ -164,13 +178,9 @@ const handleAskCopilot = async () => {
     });
 
   } catch (error) {
-    console.error(error);
-    await addDoc(collection(db, `projects/${managingHub.folder.id}/aiChatWorkspace`), {
-      role: 'model',
-      text: `Error connecting to AI: ${error.message}`,
-      timestamp: new Date(),
-      sender: 'System Error'
-    });
+    console.error("Workspace sync error details:", error);
+    // If database rules or paths block the write, show the error locally so the UI stays alive
+    setChatLog(prev => [...prev, { role: 'model', text: `System Notice: ${error.message}` }]);
   } finally {
     setIsAiTyping(false);
   }
