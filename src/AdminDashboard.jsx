@@ -813,7 +813,7 @@ const handleAskCopilot = async () => {
                 
                 {/* MESSAGES DISPLAY ENGINE */}
                 <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 min-h-0">
-                  {chatLog.map((msg, idx) => (
+                  {displayLog.map((msg, idx) => (
                     <div key={idx} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
                       <span className="text-[10px] text-slate-400 font-medium px-2 mb-0.5">
                         {msg.role === 'user' ? 'Admin' : 'AI'}
