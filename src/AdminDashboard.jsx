@@ -86,6 +86,50 @@ export default function AdminDashboard({ user, onLogout }) {
 
   // --- ACTIONS ---
 
+// --- AI COPILOT SERVER CONNECTION ---
+  const [chatInput, setChatInput] = useState('');
+  const [chatLog, setChatLog] = useState([
+    { role: 'model', text: 'Bonjour! I am your Evans Rénovation Copilot. Ask me anything about this project budget, to-dos, or notes.' }
+  ]);
+  const [isAiTyping, setIsAiTyping] = useState(false);
+
+  const handleAskCopilot = async () => {
+    if (!chatInput.trim() || !managingHub?.folder) return;
+    
+    const userMsg = chatInput;
+    setChatInput('');
+    setChatLog(prev => [...prev, { role: 'user', text: userMsg }]);
+    setIsAiTyping(true);
+
+    const context = `
+      You are an expert AI Construction Project Manager for "Evans Rénovation" in France. 
+      You are currently helping the Admin look at the project: "${managingHub.folder.name}".
+      Current Phase: ${managingHub.folder.status || 'Planning'}
+      Budget: €${managingHub.folder.budgetTotal || 0} (Paid: €${managingHub.folder.budgetPaid || 0})
+      Internal Admin Note: ${managingHub.folder.adminNote || 'None'}
+      Client To-Dos: ${JSON.stringify(managingHub.folder.todos || [])}
+      Site Diary Updates: ${JSON.stringify(managingHub.folder.diary || [])}
+      
+      Answer the admin's question concisely, cleanly, and professionally based on this data. Do not make up prices.
+    `;
+
+    try {
+      const response = await fetch('https://askcopilot-wheocns5jq-uc.a.run.app', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ context, message: userMsg })
+      });
+      const data = await response.json();
+      if (data.error) throw new Error(data.error);
+      setChatLog(prev => [...prev, { role: 'model', text: data.reply }]);
+    } catch (error) {
+      console.error(error);
+      setChatLog(prev => [...prev, { role: 'model', text: `Error connecting to server: ${error.message}` }]);
+    } finally {
+      setIsAiTyping(false);
+    }
+  };
+  
   const handleAddFolder = async () => {
     if (!linkingFolderClient || !newFolderName || !newFolderLink) return;
     const newFolder = {
@@ -610,7 +654,55 @@ export default function AdminDashboard({ user, onLogout }) {
                      </div>
                    ))}
                    {(!managingHub.folder.diary || managingHub.folder.diary.length === 0) && <p className="text-xs text-black/40 italic">No diary entries yet.</p>}
-                 </div>
+                 </div>{/* --- AI COPILOT CHAT UI --- */}
+            <div className="mt-8 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden text-left">
+              <div className="bg-slate-800 px-4 py-3 border-b border-slate-700">
+                <h3 className="text-white font-medium flex items-center gap-2">
+                  <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                  </svg>
+                  Evans Rénovation AI Copilot
+                </h3>
+              </div>
+              
+              <div className="h-64 overflow-y-auto p-4 space-y-3 bg-slate-50">
+                {chatLog.map((msg, idx) => (
+                  <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-[80%] p-3 rounded-lg text-sm whitespace-pre-wrap ${msg.role === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-white border border-slate-200 text-slate-700 rounded-bl-none shadow-sm'}`}>
+                      {msg.text}
+                    </div>
+                  </div>
+                ))}
+                {isAiTyping && (
+                  <div className="flex justify-start">
+                    <div className="bg-white border border-slate-200 text-slate-500 p-3 rounded-lg rounded-bl-none text-sm shadow-sm flex items-center gap-2">
+                      <span className="animate-pulse">●</span><span className="animate-pulse delay-75">●</span><span className="animate-pulse delay-150">●</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="p-3 bg-white border-t border-slate-200 flex gap-2">
+                <input 
+                  type="text" 
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleAskCopilot()}
+                  disabled={isAiTyping}
+                  placeholder="Ask about this project's budget, to-dos, or notes..." 
+                  className="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100"
+                />
+                <button 
+                  onClick={handleAskCopilot}
+                  disabled={!chatInput.trim() || isAiTyping}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+                >
+                  Send
+                </button>
+              </div>
+            </div>
+            {/* --- END AI COPILOT --- */}
+                 
                </div>
                
             </div>
