@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from './firebase';
-import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, getDoc, arrayUnion, arrayRemove, addDoc, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, getDoc, arrayUnion, arrayRemove, addDoc, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { 
   Loader2, Plus, Save, Trash2, PenTool, CheckCircle, XCircle, 
   Folder, Search, RefreshCw, ExternalLink, Users, Wrench, Info,
@@ -92,7 +92,7 @@ const [chatLog, setChatLog] = useState([]);
 const [isAiTyping, setIsAiTyping] = useState(false);
 const [isWorkspaceMaximized, setIsWorkspaceMaximized] = useState(false);
 const [modelPreference, setModelPreference] = useState('flash');
-
+const [activeInvite, setActiveInvite] = useState(null);
 // Real-Time Database Sync Hook
 useEffect(() => {
   // Use defensive routing to find the correct project document identifier
@@ -114,6 +114,57 @@ useEffect(() => {
   return () => unsubscribe();
 }, [managingHub]);
 
+// Live listener for instant incoming pings sent to YOU from other admins
+  useEffect(() => {
+    if (!user?.email) return;
+
+    const notificationQuery = query(
+      collection(db, "adminNotifications"),
+      where("toEmail", "==", user.email),
+      where("status", "==", "unread"),
+      orderBy("timestamp", "desc")
+    );
+
+    const unsubscribe = onSnapshot(notificationQuery, (snapshot) => {
+      if (!snapshot.empty) {
+        const latestInvite = { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
+        setActiveInvite(latestInvite);
+      } else {
+        setActiveInvite(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [user?.email]);
+
+  // Transmit an instant ping request to a co-admin
+  const pingAdmin = async (targetEmail, targetName) => {
+    const projectId = managingHub?.id || managingHub?.folder?.id;
+    if (!projectId || !user) return;
+
+    try {
+      await addDoc(collection(db, "adminNotifications"), {
+        toEmail: targetEmail,
+        fromName: user.email.split('@')[0].toUpperCase(),
+        projectName: managingHub?.folder?.name || "A Client Project",
+        projectId: projectId,
+        status: "unread",
+        timestamp: new Date()
+      });
+
+      await addDoc(collection(db, `projects/${projectId}/aiChatWorkspace`), {
+        role: 'model',
+        text: `📢 System: Instant alert invitation transmitted to ${targetName}.`,
+        timestamp: new Date(),
+        sender: 'System'
+      });
+
+      alert(`Notification sent to ${targetName}!`);
+    } catch (err) {
+      console.error("Failed to transmit workspace invite:", err);
+    }
+  };
+  
 // Computed log: If the database is empty, always show the default welcome greeting
 const displayLog = chatLog.length > 0 ? chatLog : [
   { 
