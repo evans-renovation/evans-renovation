@@ -822,7 +822,33 @@ const handleAskCopilot = async () => {
                   
                   {/* ENGINE CONTROLS ACTIONS WRAPPER */}
                   <div className="flex items-center gap-4">
-                    
+                    {/* INSTANT TEAM CO-ADMIN PINGER */}
+                    <div className="relative group">
+                      <button className="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-all border border-slate-600 shadow-sm">
+                        <svg className="w-3.5 h-3.5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                        </svg>
+                        <span>Ping Team</span>
+                      </button>
+                      
+                      <div className="absolute right-0 mt-1 w-44 bg-slate-900 border border-slate-700 rounded-lg shadow-xl py-1 hidden group-hover:block z-50 animate-fadeIn text-xs">
+                        {user?.email !== 'cameron@evansrenovation.fr' && (
+                          <button onClick={() => pingAdmin('cameron@evansrenovation.fr', 'Cameron')} className="w-full text-left px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
+                            ⚡ Alert Cameron
+                          </button>
+                        )}
+                        {user?.email !== 'admin@evansrenovation.fr' && (
+                          <button onClick={() => pingAdmin('admin@evansrenovation.fr', 'Office Admin')} className="w-full text-left px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
+                            ⚡ Alert Main Admin
+                          </button>
+                        )}
+                        {user?.email !== 'bradley@evansrenovation.fr' && (
+                          <button onClick={() => pingAdmin('bradley@evansrenovation.fr', 'Bradley')} className="w-full text-left px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
+                            ⚡ Alert Bradley
+                          </button>
+                        )}
+                      </div>
+                    </div>
                     {/* MODAL ENGINE MODE PILL SWITCHER */}
                     <div className="bg-slate-900/80 border border-slate-700 rounded-lg p-0.5 flex text-xs font-semibold shadow-inner">
                       <button
@@ -913,6 +939,53 @@ const handleAskCopilot = async () => {
 
             </div>
             {/* --- END WORKSPACE LOGIC --- */}
+
+{/* GLOBAL LIVE WORKSPACE INVITATION INTERACTIVE BANNER OVERLAY */}
+      {activeInvite && (
+        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white p-4 rounded-xl shadow-2xl border border-purple-500/40 flex flex-col gap-3 max-w-sm text-left backdrop-blur-md transition-all animate-bounce">
+          <div className="flex items-start gap-3">
+            <div className="bg-purple-500/20 p-2 rounded-lg text-purple-400 shrink-0">
+              <svg className="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+            </div>
+            <div>
+              <h4 className="font-bold text-sm text-purple-300">AI Workspace Invite!</h4>
+              <p className="text-xs text-slate-300 mt-0.5 leading-relaxed">
+                <strong>{activeInvite.fromName}</strong> wants you to join the AI chat for project: <span className="text-white font-semibold underline">{activeInvite.projectName}</span>
+              </p>
+            </div>
+          </div>
+          
+          <div className="flex justify-end gap-2 text-xs font-semibold mt-1">
+            <button 
+              onClick={async () => {
+                await updateDoc(doc(db, "adminNotifications", activeInvite.id), { status: "dismissed" });
+                setActiveInvite(null);
+              }}
+              className="px-3 py-1.5 rounded text-slate-400 hover:text-white transition-colors"
+            >
+              Dismiss
+            </button>
+            <button 
+              onClick={async () => {
+                await updateDoc(doc(db, "adminNotifications", activeInvite.id), { status: "opened" });
+                
+                const projectDoc = await getDoc(doc(db, "projects", activeInvite.projectId));
+                if (projectDoc.exists()) {
+                  setManagingHub({ id: projectDoc.id, folder: projectDoc.data() });
+                  setActiveTab('clients'); 
+                  setIsWorkspaceMaximized(true); 
+                }
+                setActiveInvite(null);
+              }}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-1.5 rounded-lg shadow transition-all"
+            >
+              Join Workspace Chat
+            </button>
+          </div>
+        </div>
+      )}
                  
                </div>
                
