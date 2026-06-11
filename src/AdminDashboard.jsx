@@ -120,7 +120,7 @@ export default function AdminDashboard({ user, onLogout }) {
         body: JSON.stringify({ 
           context, 
           message: userMsg,
-          folderId: managingHub?.folder?.driveFolderId || managingHub?.folder?.id 
+          folderId: managingHub?.folder?.folderId 
         })
       });
       const data = await response.json();
