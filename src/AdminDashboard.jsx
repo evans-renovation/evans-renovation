@@ -92,7 +92,8 @@ export default function AdminDashboard({ user, onLogout }) {
     { role: 'model', text: 'Bonjour! I am your Evans Rénovation Copilot. Ask me anything about this project budget, to-dos, or notes.' }
   ]);
   const [isAiTyping, setIsAiTyping] = useState(false);
-
+const [isWorkspaceMaximized, setIsWorkspaceMaximized] = useState(false);
+  const [modelPreference, setModelPreference] = useState('flash');
   const handleAskCopilot = async () => {
     if (!chatInput.trim() || !managingHub?.folder) return;
     
@@ -120,7 +121,8 @@ export default function AdminDashboard({ user, onLogout }) {
         body: JSON.stringify({ 
           context, 
           message: userMsg,
-          folderId: managingHub?.folder?.folderId 
+          folderId: managingHub?.folder?.folderId,
+          modelPreference: modelPreference
         })
       });
       const data = await response.json();
@@ -659,53 +661,157 @@ export default function AdminDashboard({ user, onLogout }) {
                    ))}
                    {(!managingHub.folder.diary || managingHub.folder.diary.length === 0) && <p className="text-xs text-black/40 italic">No diary entries yet.</p>}
                  </div>{/* --- AI COPILOT CHAT UI --- */}
-            <div className="mt-8 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden text-left">
-              <div className="bg-slate-800 px-4 py-3 border-b border-slate-700">
-                <h3 className="text-white font-medium flex items-center gap-2">
-                  <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                  </svg>
-                  Evans Rénovation AI Copilot
-                </h3>
-              </div>
+            {/* --- EVANS RÉNOVATION COLLABORATIVE WORKSPACE --- */}
+            <div className={
+              isWorkspaceMaximized 
+                ? "fixed inset-0 z-50 bg-slate-900 p-4 md:p-6 flex flex-col md:flex-row gap-6 overflow-hidden text-left" 
+                : "mt-8 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden text-left flex flex-col"
+            }>
               
-              <div className="h-64 overflow-y-auto p-4 space-y-3 bg-slate-50">
-                {chatLog.map((msg, idx) => (
-                  <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[80%] p-3 rounded-lg text-sm whitespace-pre-wrap ${msg.role === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-white border border-slate-200 text-slate-700 rounded-bl-none shadow-sm'}`}>
-                      {msg.text}
+              {/* ASSET METADATA PANEL (Only visible when maximized to full screen layout canvas) */}
+              {isWorkspaceMaximized && (
+                <div className="w-full md:w-80 bg-slate-800 rounded-xl p-5 border border-slate-700 text-white flex flex-col justify-between overflow-y-auto shrink-0 shadow-xl">
+                  <div>
+                    <div className="flex items-center gap-2 text-blue-400 font-bold text-lg border-b border-slate-700 pb-3 mb-4">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                      Workspace Assets
+                    </div>
+                    
+                    <div className="space-y-4 text-sm">
+                      <div className="bg-slate-900/60 p-3 rounded-lg border border-slate-700">
+                        <label className="text-slate-400 font-semibold text-xs uppercase tracking-wider block mb-1">Active Project Context</label>
+                        <span className="font-medium text-white text-base">{managingHub?.folder?.name}</span>
+                      </div>
+
+                      <div className="bg-slate-900/60 p-3 rounded-lg border border-slate-700">
+                        <label className="text-slate-400 font-semibold text-xs uppercase tracking-wider block mb-1">Database Ledger Financials</label>
+                        <div className="flex justify-between mt-1">
+                          <div><span className="text-slate-400 text-xs">Budget:</span> <strong className="text-green-400 block font-bold text-base">€{managingHub?.folder?.budgetTotal || 0}</strong></div>
+                          <div className="text-right"><span className="text-slate-400 text-xs">Collected:</span> <strong className="text-blue-400 block font-bold text-base">€{managingHub?.folder?.budgetPaid || 0}</strong></div>
+                        </div>
+                      </div>
+
+                      <div className="bg-slate-900/60 p-3 rounded-lg border border-slate-700">
+                        <label className="text-slate-400 font-semibold text-xs uppercase tracking-wider block mb-1">Active File Integrations</label>
+                        <div className="text-xs text-slate-300 mt-1 space-y-1 bg-slate-950/40 p-2 rounded max-h-32 overflow-y-auto font-mono">
+                          <div>📍 folderId: {managingHub?.folder?.folderId ? `${managingHub.folder.folderId.substring(0, 12)}...` : 'Not linked'}</div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                ))}
-                {isAiTyping && (
-                  <div className="flex justify-start">
-                    <div className="bg-white border border-slate-200 text-slate-500 p-3 rounded-lg rounded-bl-none text-sm shadow-sm flex items-center gap-2">
-                      <span className="animate-pulse">●</span><span className="animate-pulse delay-75">●</span><span className="animate-pulse delay-150">●</span>
-                    </div>
+
+                  <div className="mt-6 border-t border-slate-700 pt-3 text-xs text-slate-400 flex items-center gap-1.5 font-medium">
+                    <span className="w-2 h-2 rounded-full bg-green-500 animate-ping"></span>
+                    Dynamic Engine Selector Ready
                   </div>
-                )}
+                </div>
+              )}
+
+              {/* CHAT BOX CONTAINER */}
+              <div className={`flex-1 flex flex-col bg-white rounded-xl ${isWorkspaceMaximized ? "border border-slate-200 shadow-2xl h-full overflow-hidden" : "h-96"}`}>
+                
+                {/* HEADLINE ACTIONS STATUS BAR */}
+                <div className="bg-slate-800 px-4 py-2 border-b border-slate-700 flex items-center justify-between shadow-sm shrink-0">
+                  <h3 className="text-white font-medium flex items-center gap-2 text-sm md:text-base">
+                    <svg className="w-5 h-5 text-blue-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    <span>AI Workspace</span>
+                  </h3>
+                  
+                  {/* ENGINE CONTROLS ACTIONS WRAPPER */}
+                  <div className="flex items-center gap-4">
+                    
+                    {/* MODAL ENGINE MODE PILL SWITCHER */}
+                    <div className="bg-slate-900/80 border border-slate-700 rounded-lg p-0.5 flex text-xs font-semibold shadow-inner">
+                      <button
+                        onClick={() => setModelPreference('flash')}
+                        className={`px-3 py-1 rounded-md transition-all ${
+                          modelPreference === 'flash' 
+                            ? 'bg-blue-600 text-white shadow' 
+                            : 'text-slate-400 hover:text-slate-200'
+                        }`}
+                      >
+                        ⚡ Fast Flash
+                      </button>
+                      <button
+                        onClick={() => setModelPreference('pro')}
+                        className={`px-3 py-1 rounded-md transition-all flex items-center gap-1 ${
+                          modelPreference === 'pro' 
+                            ? 'bg-purple-600 text-white shadow' 
+                            : 'text-slate-400 hover:text-slate-200'
+                        }`}
+                      >
+                        🧠 Deep Pro
+                      </button>
+                    </div>
+
+                    {/* EXPAND MODAL TOGGLE BUTTON */}
+                    <button 
+                      onClick={() => setIsWorkspaceMaximized(!isWorkspaceMaximized)}
+                      className="p-1.5 rounded text-slate-400 hover:text-white hover:bg-slate-700 transition-all border border-transparent hover:border-slate-600"
+                      title={isWorkspaceMaximized ? "Collapse View" : "Expand Full Workspace"}
+                    >
+                      {isWorkspaceMaximized ? (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 14h6m0 0v6m0-6L3 21m17-7h-6m0 0v6m0-6l7 7"/></svg>
+                      ) : (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4h6M4 4v6m0-6l7 7m13-3h-6m6 0v6m0-6l-7 7M4 20h6m-6 0v-6m0 6l7-7m13 7h-6m6 0v-6m0 6l-7-7"/></svg>
+                      )}
+                    </button>
+                  </div>
+                </div>
+                
+                {/* MESSAGES DISPLAY ENGINE */}
+                <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 min-h-0">
+                  {chatLog.map((msg, idx) => (
+                    <div key={idx} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
+                      <span className="text-[10px] text-slate-400 font-medium px-2 mb-0.5">
+                        {msg.role === 'user' ? 'Admin' : 'AI'}
+                      </span>
+                      <div className={`max-w-[85%] p-3 rounded-xl text-sm whitespace-pre-wrap shadow-sm leading-relaxed ${
+                        msg.role === 'user' 
+                          ? 'bg-blue-600 text-white rounded-tr-none font-medium' 
+                          : 'bg-white border border-slate-200 text-slate-700 rounded-tl-none'
+                      }`}>
+                        {msg.text}
+                      </div>
+                    </div>
+                  ))}
+                  {isAiTyping && (
+                    <div className="flex flex-col items-start">
+                      <span className="text-[10px] text-slate-400 font-medium px-2 mb-0.5">Evans AI Processing</span>
+                      <div className="bg-white border border-slate-200 text-slate-500 p-3 rounded-xl rounded-tl-none text-sm shadow-sm flex items-center gap-2">
+                        <span className="animate-pulse bg-blue-500 w-1.5 h-1.5 rounded-full"></span>
+                        <span className="animate-pulse bg-blue-500 w-1.5 h-1.5 rounded-full delay-100"></span>
+                        <span className="animate-pulse bg-blue-500 w-1.5 h-1.5 rounded-full delay-200"></span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* BOTTOM INPUT BLOCK */}
+                <div className="p-3 bg-white border-t border-slate-200 flex gap-2 shrink-0">
+                  <input 
+                    type="text" 
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleAskCopilot()}
+                    disabled={isAiTyping}
+                    placeholder={modelPreference === 'pro' ? "Ask Deep Pro to run calculations..." : "Quick question for Fast Flash..."} 
+                    className="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 transition-all"
+                  />
+                  <button 
+                    onClick={handleAskCopilot}
+                    disabled={!chatInput.trim() || isAiTyping}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 shadow-md flex items-center gap-1.5"
+                  >
+                    Send
+                  </button>
+                </div>
               </div>
 
-              <div className="p-3 bg-white border-t border-slate-200 flex gap-2">
-                <input 
-                  type="text" 
-                  value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleAskCopilot()}
-                  disabled={isAiTyping}
-                  placeholder="Ask about this project's budget, to-dos, or notes..." 
-                  className="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100"
-                />
-                <button 
-                  onClick={handleAskCopilot}
-                  disabled={!chatInput.trim() || isAiTyping}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
-                >
-                  Send
-                </button>
-              </div>
             </div>
-            {/* --- END AI COPILOT --- */}
+            {/* --- END WORKSPACE LOGIC --- */}
                  
                </div>
                
