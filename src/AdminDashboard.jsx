@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from './firebase';
-import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, getDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, getDoc, arrayUnion, arrayRemove, addDoc, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { 
   Loader2, Plus, Save, Trash2, PenTool, CheckCircle, XCircle, 
   Folder, Search, RefreshCw, ExternalLink, Users, Wrench, Info,
@@ -86,55 +86,95 @@ export default function AdminDashboard({ user, onLogout }) {
 
   // --- ACTIONS ---
 
-// --- AI COPILOT SERVER CONNECTION ---
-  const [chatInput, setChatInput] = useState('');
-  const [chatLog, setChatLog] = useState([
-    { role: 'model', text: 'Bonjour! I am your Evans Rénovation Copilot. Ask me anything about this project budget, to-dos, or notes.' }
-  ]);
-  const [isAiTyping, setIsAiTyping] = useState(false);
+// --- AI COPILOT SERVER CONNECTION (PERSISTENT & COLLABORATIVE) ---
+const [chatInput, setChatInput] = useState('');
+const [chatLog, setChatLog] = useState([]);
+const [isAiTyping, setIsAiTyping] = useState(false);
 const [isWorkspaceMaximized, setIsWorkspaceMaximized] = useState(false);
-  const [modelPreference, setModelPreference] = useState('flash');
-  const handleAskCopilot = async () => {
-    if (!chatInput.trim() || !managingHub?.folder) return;
-    
-    const userMsg = chatInput;
-    setChatInput('');
-    setChatLog(prev => [...prev, { role: 'user', text: userMsg }]);
-    setIsAiTyping(true);
+const [modelPreference, setModelPreference] = useState('flash');
+
+// Real-Time Database Sync Hook: Keeps history and streams messages live to all admins
+useEffect(() => {
+  if (!managingHub?.folder?.id) return;
+
+  // Query your Firestore database for this specific project's chat history
+  const chatQuery = query(
+    collection(db, `projects/${managingHub.folder.id}/aiChatWorkspace`),
+    orderBy("timestamp", "asc")
+  );
+
+  // Live snapshot listener: If you or another admin types a message, everyone sees it instantly
+  const unsubscribe = onSnapshot(chatQuery, (snapshot) => {
+    const updatedMessages = snapshot.docs.map(doc => doc.data());
+    setChatLog(updatedMessages);
+  });
+
+  return () => unsubscribe();
+}, [managingHub?.folder?.id]);
+
+const handleAskCopilot = async () => {
+  if (!chatInput.trim() || !managingHub?.folder) return;
+  
+  const userMsg = chatInput;
+  setChatInput('');
+  setIsAiTyping(true);
+
+  const targetFolderId = managingHub?.folder?.folderId;
+
+  try {
+    // 1. Permanently save the admin message to Firestore
+    await addDoc(collection(db, `projects/${managingHub.folder.id}/aiChatWorkspace`), {
+      role: 'user',
+      text: userMsg,
+      timestamp: new Date(),
+      sender: 'Admin'
+    });
 
     const context = `
       You are an expert AI Construction Project Manager for "Evans Rénovation" in France. 
-      You are currently helping the Admin look at the project: "${managingHub.folder.name}".
+      You are currently helping the admin team look at the project: "${managingHub.folder.name}".
       Current Phase: ${managingHub.folder.status || 'Planning'}
       Budget: €${managingHub.folder.budgetTotal || 0} (Paid: €${managingHub.folder.budgetPaid || 0})
       Internal Admin Note: ${managingHub.folder.adminNote || 'None'}
       Client To-Dos: ${JSON.stringify(managingHub.folder.todos || [])}
       Site Diary Updates: ${JSON.stringify(managingHub.folder.diary || [])}
-      
-      Answer the admin's question concisely, cleanly, and professionally based on this data. Do not make up prices.
     `;
 
-    try {
-      const response = await fetch('https://askcopilot-wheocns5jq-uc.a.run.app', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          context, 
-          message: userMsg,
-          folderId: managingHub?.folder?.folderId,
-          modelPreference: modelPreference
-        })
-      });
-      const data = await response.json();
-      if (data.error) throw new Error(data.error);
-      setChatLog(prev => [...prev, { role: 'model', text: data.reply }]);
-    } catch (error) {
-      console.error(error);
-      setChatLog(prev => [...prev, { role: 'model', text: `Error connecting to server: ${error.message}` }]);
-    } finally {
-      setIsAiTyping(false);
-    }
-  };
+    // 2. Fetch the AI response payload from your backend server
+    const response = await fetch('https://askcopilot-wheocns5jq-uc.a.run.app', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        context, 
+        message: userMsg,
+        folderId: targetFolderId,
+        modelPreference: modelPreference
+      })
+    });
+    
+    const data = await response.json();
+    if (data.error) throw new Error(data.error);
+
+    // 3. Permanently save Gemini's answer to the shared database path
+    await addDoc(collection(db, `projects/${managingHub.folder.id}/aiChatWorkspace`), {
+      role: 'model',
+      text: data.reply,
+      timestamp: new Date(),
+      sender: 'Evans AI'
+    });
+
+  } catch (error) {
+    console.error(error);
+    await addDoc(collection(db, `projects/${managingHub.folder.id}/aiChatWorkspace`), {
+      role: 'model',
+      text: `Error connecting to AI: ${error.message}`,
+      timestamp: new Date(),
+      sender: 'System Error'
+    });
+  } finally {
+    setIsAiTyping(false);
+  }
+};
   
   const handleAddFolder = async () => {
     if (!linkingFolderClient || !newFolderName || !newFolderLink) return;
