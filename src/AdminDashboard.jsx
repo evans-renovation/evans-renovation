@@ -117,7 +117,11 @@ export default function AdminDashboard({ user, onLogout }) {
       const response = await fetch('https://askcopilot-wheocns5jq-uc.a.run.app', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ context, message: userMsg })
+        body: JSON.stringify({ 
+          context, 
+          message: userMsg,
+          folderId: managingHub?.folder?.driveFolderId || managingHub?.folder?.id 
+        })
       });
       const data = await response.json();
       if (data.error) throw new Error(data.error);
