@@ -664,55 +664,368 @@ export default function AdminDashboard({ user, onLogout }) {
         </div>
       </div>
 
-     {/* --- ADD REQUEST MODAL --- */}
+      {/* --- ADD REQUEST MODAL --- */}
       {linkingClient && (
         <div className="fixed inset-0 z-[150] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-md rounded-xl shadow-2xl p-6 animate-in zoom-in-95">
             <h3 className="text-xl font-serif text-slate-900 mb-4">Request Signature</h3>
+            
             <div className="space-y-4">
-              <input 
-                type="text" 
-                placeholder="Document Name (e.g., Quote #123)" 
-                value={reqName} 
-                onChange={(e) => setReqName(e.target.value)} 
-                className="w-full p-3 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-amber-500" 
-              />
-              <div className="flex gap-3 mt-6">
-                <button 
-                  onClick={() => { setLinkingClient(null); setReqName(''); }} 
-                  className="flex-1 p-3 text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold transition-colors"
-                >
-                  Cancel
-                </button>
-                <button 
-                  onClick={handleAddRequest} 
-                  className="flex-1 p-3 text-white bg-slate-900 hover:bg-slate-800 rounded-lg font-bold transition-colors"
-                >
-                  Send Request
-                </button>
+              <div>
+                <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Document Name</label>
+                <input type="text" autoFocus placeholder="e.g. Kitchen Quote, Variation 01" value={reqName} onChange={(e) => setReqName(e.target.value)} className="w-full p-3 border border-slate-300 rounded-lg outline-none focus:border-amber-500" />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Folder Link (Optional)</label>
+                <input type="text" placeholder="Paste link or leave empty to use Main Folder" value={reqLink} onChange={(e) => setReqLink(e.target.value)} className="w-full p-3 border border-slate-300 rounded-lg outline-none focus:border-amber-500" />
+              </div>
+
+              <div className="flex gap-3 mt-8">
+                <button onClick={() => setLinkingClient(null)} className="flex-1 py-3 text-slate-500 font-bold hover:bg-slate-50 rounded-lg">Cancel</button>
+                <button onClick={handleAddRequest} disabled={!reqName} className="flex-[2] py-3 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 disabled:opacity-50">Add to Queue</button>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* --- MANAGE HUB MODAL (Required so the manage buttons work) --- */}
-      {managingHub && (
-        <div className="fixed inset-0 z-[150] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-lg rounded-xl shadow-2xl p-6 relative">
-            <button onClick={() => setManagingHub(null)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-900">
-              <X />
-            </button>
-            <h3 className="text-xl font-serif mb-4">Hub Settings: {managingHub.folder?.name}</h3>
+      {/* --- ADD FOLDER MODAL --- */}
+      {linkingFolderClient && (
+        <div className="fixed inset-0 z-[150] bg-evans-earth/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-md rounded shadow-2xl p-6 animate-in zoom-in-95">
+            <h3 className="text-xl font-serif text-evans-earth mb-4">Add Client-Facing Folder</h3>
+            
             <div className="space-y-4">
               <div>
-                <label className="text-xs font-bold uppercase text-slate-500 block mb-1">Add To-Do</label>
-                <div className="flex gap-2">
-                  <input type="text" value={newTodoText} onChange={e => setNewTodoText(e.target.value)} className="flex-1 p-2 border rounded" placeholder="New task..." />
-                  <button onClick={handleAddTodo} className="bg-slate-900 text-white px-4 rounded font-bold">Add</button>
-                </div>
+                <label className="block text-xs font-bold uppercase text-black/50 mb-1">Job Name</label>
+                <input type="text" autoFocus placeholder="e.g. Pool House Plans & Docs" value={newFolderName} onChange={(e) => setNewFolderName(e.target.value)} className="w-full p-3 border border-black/10 rounded outline-none focus:border-evans-heritage" />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase text-black/50 mb-1">Google Drive Folder Link</label>
+                <input type="text" placeholder="Paste the link to the client-facing folder here" value={newFolderLink} onChange={(e) => setNewFolderLink(e.target.value)} className="w-full p-3 border border-black/10 rounded outline-none focus:border-evans-heritage" />
+              </div>
+
+              <div className="flex gap-3 mt-8">
+                <button onClick={() => setLinkingFolderClient(null)} className="flex-1 py-3 text-black/50 font-bold hover:bg-slate-50 rounded">Cancel</button>
+                <button onClick={handleAddFolder} disabled={!newFolderName || !newFolderLink} className="flex-[2] py-3 bg-evans-earth text-white font-bold rounded hover:bg-black/80 disabled:opacity-50">Add Folder</button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- MANAGE PROJECT HUB MODAL --- */}
+      {managingHub && (
+        <div className="fixed inset-0 z-[200] bg-evans-earth/90 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-evans-stone w-full max-w-5xl rounded shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            
+            {/* Modal Header */}
+            <div className="bg-white p-6 border-b border-black/5 flex justify-between items-center shrink-0">
+              <div>
+                <h3 className="text-xl font-serif text-evans-earth mb-1">Project Hub: {managingHub.folder.name}</h3>
+                <p className="text-xs font-bold uppercase text-black/40">Manage To-Dos and Site Diary</p>
+              </div>
+              <button onClick={() => setManagingHub(null)} className="bg-black/5 hover:bg-black/10 text-evans-earth rounded-full p-2 transition-colors"><X size={20} /></button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 flex flex-col md:flex-row gap-8 overflow-y-auto">
+               
+               {/* LEFT COL: Action Required (To-Dos) */}
+               <div className="flex-1 bg-white p-5 rounded border border-black/5">
+                 <h4 className="text-sm font-bold uppercase tracking-widest text-black/40 mb-4 flex items-center gap-2"><ListTodo size={16}/> Client To-Do List</h4>
+                 
+                 <div className="flex gap-2 mb-6">
+                   <input type="text" placeholder="e.g. Choose tile grout color" value={newTodoText} onChange={e => setNewTodoText(e.target.value)} className="flex-1 text-sm p-2.5 border border-black/10 rounded focus:border-evans-heritage outline-none" />
+                   <button onClick={handleAddTodo} disabled={!newTodoText} className="bg-evans-heritage text-white px-4 rounded text-xs font-bold uppercase disabled:opacity-50 hover:bg-[#586751]">Add</button>
+                 </div>
+
+                 <div className="flex flex-col gap-2">
+                   {managingHub.folder.todos?.map(todo => (
+                     <div key={todo.id} className="flex justify-between items-start gap-3 p-3 rounded border border-black/5 bg-slate-50 text-sm">
+                       <span className={todo.done ? 'line-through text-black/40' : 'text-evans-earth font-medium'}>{todo.text}</span>
+                       <button onClick={() => handleRemoveTodo(todo.id)} className="text-red-500 hover:text-red-700 shrink-0"><Trash2 size={14}/></button>
+                     </div>
+                   ))}
+                   {(!managingHub.folder.todos || managingHub.folder.todos.length === 0) && <p className="text-xs text-black/40 italic">No tasks assigned.</p>}
+                 </div>
+               </div>
+
+               {/* RIGHT COL: Site Diary */}
+               <div className="flex-1 bg-white p-5 rounded border border-black/5">
+                 <h4 className="text-sm font-bold uppercase tracking-widest text-black/40 mb-4 flex items-center gap-2"><FileText size={16}/> Site Diary Updates</h4>
+                 
+                 <div className="flex flex-col gap-2 mb-6 bg-slate-50 p-3 rounded border border-black/5">
+                   <textarea placeholder="Write a progress update..." value={newDiaryText} onChange={e => setNewDiaryText(e.target.value)} className="w-full text-sm p-2.5 border border-black/10 rounded focus:border-evans-heritage outline-none resize-none h-20" />
+                   <input type="text" placeholder="Google Drive Image Link (Optional)" value={newDiaryImg} onChange={e => setNewDiaryImg(e.target.value)} className="w-full text-xs p-2 border border-black/10 rounded outline-none" />
+                   <button onClick={handleAddDiary} disabled={!newDiaryText} className="w-full mt-1 bg-evans-earth text-white py-2 rounded text-xs font-bold uppercase disabled:opacity-50 hover:bg-black/80">Post Update</button>
+                 </div>
+
+                 <div className="flex flex-col gap-4">
+                   {managingHub.folder.diary?.map(entry => (
+                     <div key={entry.id} className="p-4 rounded border border-black/5 bg-white shadow-sm relative">
+                       <button onClick={() => handleRemoveDiary(entry.id)} className="absolute top-2 right-2 text-black/20 hover:text-red-500"><X size={14}/></button>
+                       <div className="text-[10px] font-bold uppercase text-evans-heritage mb-2">{new Date(entry.date).toLocaleDateString()}</div>
+                       {entry.imgUrl && (
+                         <div className="mb-3 rounded overflow-hidden border border-black/10">
+                           <img src={entry.imgUrl} alt="Progress" className="w-full h-auto object-cover max-h-32" />
+                         </div>
+                       )}
+                       <p className="text-sm text-evans-earth">{entry.text}</p>
+                     </div>
+                   ))}
+                   {(!managingHub.folder.diary || managingHub.folder.diary.length === 0) && <p className="text-xs text-black/40 italic">No diary entries yet.</p>}
+                 </div>
+
+                 {/* --- EVANS RÉNOVATION COLLABORATIVE WORKSPACE --- */}
+                 <div className={
+                   isWorkspaceMaximized
+                     ? "fixed inset-0 z-50 bg-slate-900 p-4 md:p-6 flex flex-col md:flex-row gap-6 overflow-hidden text-left w-full h-full"
+                     : "mt-8 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden text-left flex flex-col w-full max-w-full"
+                 }>
+                     
+                   {/* ASSET METADATA PANEL */}
+                   {isWorkspaceMaximized && (
+                     <div className="w-full md:w-80 bg-slate-800 rounded-xl p-5 border border-slate-700 text-white flex flex-col justify-between overflow-y-auto shrink-0 shadow-xl">
+                       <div>
+                         <div className="flex items-center gap-2 text-blue-400 font-bold text-lg border-b border-slate-700 pb-3 mb-4">
+                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                           Workspace Assets
+                         </div>
+                         
+                         <div className="space-y-4 text-sm">
+                           <div className="bg-slate-900/60 p-3 rounded-lg border border-slate-700">
+                             <label className="text-slate-400 font-semibold text-xs uppercase tracking-wider block mb-1">Active Project Context</label>
+                             <span className="font-medium text-white text-base">{managingHub?.folder?.name}</span>
+                           </div>
+                           <div className="bg-slate-900/60 p-3 rounded-lg border border-slate-700">
+                             <label className="text-slate-400 font-semibold text-xs uppercase tracking-wider block mb-1">Database Ledger Financials</label>
+                             <div className="flex justify-between mt-1">
+                               <div><span className="text-slate-400 text-xs">Budget:</span> <strong className="text-green-400 block font-bold text-base">€{managingHub?.folder?.budgetTotal || 0}</strong></div>
+                               <div className="text-right"><span className="text-slate-400 text-xs">Collected:</span> <strong className="text-blue-400 block font-bold text-base">€{managingHub?.folder?.budgetPaid || 0}</strong></div>
+                             </div>
+                           </div>
+                           <div className="bg-slate-900/60 p-3 rounded-lg border border-slate-700">
+                             <label className="text-slate-400 font-semibold text-xs uppercase tracking-wider block mb-1">Active File Integrations</label>
+                             <div className="text-xs text-slate-300 mt-1 space-y-1 bg-slate-950/40 p-2 rounded max-h-32 overflow-y-auto font-mono">
+                               <div>📍 folderId: {managingHub?.folder?.folderId ? `${managingHub.folder.folderId.substring(0, 12)}...` : 'Not linked'}</div>
+                             </div>
+                           </div>
+                         </div>
+                       </div>
+                       <div className="mt-6 border-t border-slate-700 pt-3 text-xs text-slate-400 flex items-center gap-1.5 font-medium">
+                         <span className="w-2 h-2 rounded-full bg-green-500 animate-ping"></span>
+                         Dynamic Engine Selector Ready
+                       </div>
+                     </div>
+                   )}
+     
+                   {/* CHAT BOX CONTAINER */}
+                   <div className={`flex-1 flex flex-col bg-white rounded-xl border border-slate-200 overflow-hidden ${
+                     isWorkspaceMaximized 
+                       ? "shadow-2xl h-full" 
+                       : "h-96 w-full max-w-full shadow-sm"
+                   }`}>
+                       
+                     {/* HEADLINE ACTIONS STATUS BAR */}
+                     <div className="bg-slate-800 px-4 py-2.5 border-b border-slate-700 flex flex-wrap items-center justify-between gap-3 shadow-sm shrink-0 w-full max-w-full">
+                       <h3 className="text-white font-medium flex items-center gap-2 text-sm md:text-base">
+                         <svg className="w-5 h-5 text-blue-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                         </svg>
+                         <span>AI Workspace</span>
+                       </h3>
+                       
+                       <div className="flex items-center gap-4">
+                         <div className="relative group">
+                           <button className="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-all border border-slate-600 shadow-sm">
+                             <svg className="w-3.5 h-3.5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                             </svg>
+                             <span>Ping Team</span>
+                           </button>
+                           <div className="absolute right-0 mt-1 w-44 bg-slate-900 border border-slate-700 rounded-lg shadow-xl py-1 hidden group-hover:block z-50 animate-fadeIn text-xs">
+                             {user?.email !== 'cameron@evansrenovation.fr' && (
+                               <button onClick={() => pingAdmin('cameron@evansrenovation.fr', 'Cameron')} className="w-full text-left px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
+                                 ⚡ Alert Cameron
+                               </button>
+                             )}
+                             {user?.email !== 'admin@evansrenovation.fr' && (
+                               <button onClick={() => pingAdmin('admin@evansrenovation.fr', 'Office Admin')} className="w-full text-left px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
+                                 ⚡ Alert Main Admin
+                               </button>
+                             )}
+                             {user?.email !== 'bradley@evansrenovation.fr' && (
+                               <button onClick={() => pingAdmin('bradley@evansrenovation.fr', 'Bradley')} className="w-full text-left px-3 py-2 text-slate-300 hover:bg-slate-800 hover:text-white transition-colors">
+                                 ⚡ Alert Bradley
+                               </button>
+                             )}
+                           </div>
+                         </div>
+                         <div className="bg-slate-900/80 border border-slate-700 rounded-lg p-0.5 flex text-xs font-semibold shadow-inner">
+                           <button
+                             onClick={() => setModelPreference('flash')}
+                             className={`px-3 py-1 rounded-md transition-all ${
+                               modelPreference === 'flash' 
+                                 ? 'bg-blue-600 text-white shadow' 
+                                 : 'text-slate-400 hover:text-slate-200'
+                             }`}
+                           >
+                             ⚡ Fast Flash
+                           </button>
+                           <button
+                             onClick={() => setModelPreference('pro')}
+                             className={`px-3 py-1 rounded-md transition-all flex items-center gap-1 ${
+                               modelPreference === 'pro' 
+                                 ? 'bg-purple-600 text-white shadow' 
+                                 : 'text-slate-400 hover:text-slate-200'
+                             }`}
+                           >
+                             🧠 Deep Pro
+                           </button>
+                         </div>
+                         <div className="flex items-center gap-2 shrink-0">
+                           <button 
+                             onClick={clearChatHistory}
+                             title="Clear Chat History"
+                             className="text-slate-400 hover:text-red-400 p-1 rounded transition-colors"
+                           >
+                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                             </svg>
+                           </button>
+                           <button
+                             onClick={() => setIsWorkspaceMaximized(!isWorkspaceMaximized)}
+                             className="p-1.5 rounded text-slate-400 hover:text-white hover:bg-slate-700 transition-all border border-transparent hover:border-slate-600"
+                             title={isWorkspaceMaximized ? "Collapse View" : "Expand Full Workspace"}
+                           >
+                             {isWorkspaceMaximized ? (
+                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4h16v16H4V4z" />
+                               </svg>
+                             ) : (
+                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 19h16M4 5h16M4 12h16" />
+                               </svg>
+                             )}
+                           </button>
+                         </div>
+                       </div>
+                     </div>
+                     
+                     {/* MESSAGES DISPLAY ENGINE */}
+                     <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 bg-slate-50 min-h-0 w-full max-w-full">
+                       {displayLog.map((msg, idx) => (
+                         <div key={idx} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'} mb-2 w-full max-w-full group`}>
+                           <span className="text-[10px] text-slate-400 mb-1 px-1">
+                             {msg.role === 'user' ? 'Admin' : 'AI'}
+                           </span>
+                           <div className={`flex items-center gap-2 max-w-full ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                             <div className={`p-3 rounded-xl text-xs max-w-[85%] shadow-sm border ${
+                               msg.role === 'user' 
+                                 ? 'bg-blue-600 text-white border-blue-500' 
+                                 : 'bg-white text-slate-800 border-slate-200'
+                             } break-words whitespace-pre-wrap overflow-x-hidden w-fit`}>
+                               <p className="leading-relaxed break-words whitespace-pre-wrap w-full">
+                                 {msg.text}
+                               </p>
+                             </div>
+                             <button 
+                               onClick={() => deleteSpecificMessage(msg.id)}
+                               title="Delete this message"
+                               className="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 p-1 rounded-md hover:bg-slate-100 transition-all shrink-0"
+                             >
+                               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                               </svg>
+                             </button>
+                           </div>
+                         </div>
+                       ))}
+                       {isAiTyping && (
+                         <div className="flex flex-col items-start">
+                           <span className="text-[10px] text-slate-400 font-medium px-2 mb-0.5">Evans AI Processing</span>
+                           <div className="bg-white border border-slate-200 text-slate-500 p-3 rounded-xl rounded-tl-none text-sm shadow-sm flex items-center gap-2">
+                             <span className="animate-pulse bg-blue-500 w-1.5 h-1.5 rounded-full"></span>
+                             <span className="animate-pulse bg-blue-500 w-1.5 h-1.5 rounded-full delay-100"></span>
+                             <span className="animate-pulse bg-blue-500 w-1.5 h-1.5 rounded-full delay-200"></span>
+                           </div>
+                         </div>
+                       )}
+                     </div>
+     
+                     {/* BOTTOM INPUT BLOCK */}
+                     <div className="p-3 bg-white border-t border-slate-200 flex gap-2 shrink-0 mt-auto">
+                       <input 
+                         type="text" 
+                         value={chatInput}
+                         onChange={(e) => setChatInput(e.target.value)}
+                         onKeyDown={(e) => e.key === 'Enter' && handleAskCopilot()}
+                         disabled={isAiTyping}
+                         placeholder={modelPreference === 'pro' ? "Ask Deep Pro to run calculations..." : "Quick question for Fast Flash..."} 
+                         className="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 transition-all"
+                       />
+                       <button 
+                         onClick={handleAskCopilot}
+                         disabled={!chatInput.trim() || isAiTyping}
+                         className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 shadow-md flex items-center gap-1.5"
+                       >
+                         Send
+                       </button>
+                     </div>
+                   </div> 
+                 </div> 
+               </div> 
+            </div> 
+          </div> 
+        </div> 
+      )}
+
+      {/* GLOBAL LIVE WORKSPACE INVITATION INTERACTIVE BANNER OVERLAY */}
+      {activeInvite && (
+        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white p-4 rounded-xl shadow-2xl border border-purple-500/40 flex flex-col gap-3 max-w-sm text-left backdrop-blur-md transition-all animate-bounce">
+          <div className="flex items-start gap-3">
+            <div className="bg-purple-500/20 p-2 rounded-lg text-purple-400 shrink-0">
+              <svg className="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+            </div>
+            <div>
+              <h4 className="font-bold text-sm text-purple-300">AI Workspace Invite!</h4>
+              <p className="text-xs text-slate-300 mt-0.5 leading-relaxed">
+                <strong>{activeInvite.fromName}</strong> wants you to join the AI chat for project: <span className="text-white font-semibold underline">{activeInvite.projectName}</span>
+              </p>
+            </div>
+          </div>
+          
+          <div className="flex justify-end gap-2 text-xs font-semibold mt-1">
+            <button 
+              onClick={async () => {
+                await updateDoc(doc(db, "adminNotifications", activeInvite.id), { status: "dismissed" });
+                setActiveInvite(null);
+              }}
+              className="px-3 py-1.5 rounded text-slate-400 hover:text-white transition-colors"
+            >
+              Dismiss
+            </button>
+            <button 
+              onClick={async () => {
+                await updateDoc(doc(db, "adminNotifications", activeInvite.id), { status: "opened" });
+                
+                const projectDoc = await getDoc(doc(db, "projects", activeInvite.projectId));
+                if (projectDoc.exists()) {
+                  setManagingHub({ id: projectDoc.id, folder: projectDoc.data() });
+                  setActiveTab('clients'); 
+                  setIsWorkspaceMaximized(true); 
+                }
+                setActiveInvite(null);
+              }}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-1.5 rounded-lg shadow transition-all"
+            >
+              Join Workspace Chat
+            </button>
           </div>
         </div>
       )}
