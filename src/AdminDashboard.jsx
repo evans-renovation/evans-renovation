@@ -104,10 +104,11 @@ useEffect(() => {
     orderBy("timestamp", "asc")
   );
 
-  const unsubscribe = onSnapshot(chatQuery, (snapshot) => {
-    const updatedMessages = snapshot.docs.map(doc => doc.data());
-    setChatLog(updatedMessages);
-  }, (error) => {
+ const unsubscribe = onSnapshot(chatQuery, (snapshot) => {
+      // Swapped out doc.data() to include the document ID field
+      const updatedMessages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setChatLog(updatedMessages);
+    }, (error) => {
     console.error("Firestore sync error:", error);
   });
 
@@ -162,6 +163,32 @@ useEffect(() => {
       alert(`Notification sent to ${targetName}!`);
     } catch (err) {
       console.error("Failed to transmit workspace invite:", err);
+    }
+  };
+
+// --- CLEAR PROJECT CHAT HISTORY ENGINE ---
+  const clearChatHistory = async () => {
+    const projectId = managingHub?.id || managingHub?.folder?.id;
+    if (!projectId) return;
+
+    const confirmWipe = window.confirm(
+      "⚠️ Are you sure you want to permanently clear this project's chat history? This cannot be undone."
+    );
+    if (!confirmWipe) return;
+
+    try {
+      // 1. Fetch all existing message logs for this project context
+      const chatRef = collection(db, `projects/${projectId}/aiChatWorkspace`);
+      const snapshot = await getDocs(query(chatRef));
+      
+      // 2. Commit a parallel batch wipe sequence to Firestore
+      const deletePromises = snapshot.docs.map((doc) => deleteDoc(doc.ref));
+      await Promise.all(deletePromises);
+      
+      alert("Chat history successfully cleared!");
+    } catch (err) {
+      console.error("Failed to execute chat logs cleanup:", err);
+      alert("Failed to clear log database history.");
     }
   };
   
@@ -808,8 +835,12 @@ const handleAskCopilot = async () => {
                 </div>
               )}
 
-              {/* CHAT BOX CONTAINER */}
-              <div className={`flex-1 flex flex-col bg-white rounded-xl ${isWorkspaceMaximized ? "border border-slate-200 shadow-2xl h-full overflow-hidden" : "h-96"}`}>
+            {/* CHAT BOX CONTAINER */}
+          <div className={`flex-1 flex flex-col bg-white rounded-xl border border-slate-200 overflow-hidden ${
+            isWorkspaceMaximized 
+              ? "shadow-2xl h-full" 
+              : "h-96 w-full max-w-full shadow-sm"
+          }`}>
                 
                 {/* HEADLINE ACTIONS STATUS BAR */}
                <div className="bg-slate-800 px-4 py-2.5 border-b border-slate-700 flex flex-wrap items-center justify-between gap-3 shadow-sm shrink-0 w-full max-w-full">
@@ -873,18 +904,36 @@ const handleAskCopilot = async () => {
                       </button>
                     </div>
 
-                    {/* EXPAND MODAL TOGGLE BUTTON */}
-                    <button 
-                      onClick={() => setIsWorkspaceMaximized(!isWorkspaceMaximized)}
-                      className="p-1.5 rounded text-slate-400 hover:text-white hover:bg-slate-700 transition-all border border-transparent hover:border-slate-600"
-                      title={isWorkspaceMaximized ? "Collapse View" : "Expand Full Workspace"}
-                    >
-                      {isWorkspaceMaximized ? (
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 14h6m0 0v6m0-6L3 21m17-7h-6m0 0v6m0-6l7 7"/></svg>
-                      ) : (
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4h6M4 4v6m0-6l7 7m13-3h-6m6 0v6m0-6l-7 7M4 20h6m-6 0v-6m0 6l7-7m13 7h-6m6 0v-6m0 6l-7-7"/></svg>
-                      )}
-                    </button>
+                   {/* SYSTEM HISTORY & WINDOW ACTIONS */}
+                    <div className="flex items-center gap-2 shrink-0">
+                      {/* CLEAR HISTORY TRASH BUTTON */}
+                      <button 
+                        onClick={clearChatHistory}
+                        title="Clear Chat History"
+                        className="text-slate-400 hover:text-red-400 p-1 rounded transition-colors"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+
+                      {/* EXPAND MODAL TOGGLE BUTTON */}
+                      <button
+                        onClick={() => setIsWorkspaceMaximized(!isWorkspaceMaximized)}
+                        className="p-1.5 rounded text-slate-400 hover:text-white hover:bg-slate-700 transition-all border border-transparent hover:border-slate-600"
+                        title={isWorkspaceMaximized ? "Collapse View" : "Expand Full Workspace"}
+                      >
+                        {isWorkspaceMaximized ? (
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4h16v16H4V4z" />
+                          </svg>
+                        ) : (
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 19h16M4 5h16M4 12h16" />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </div>
                 
