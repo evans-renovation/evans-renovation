@@ -948,31 +948,44 @@ const handleAskCopilot = async () => {
                 </div>
                 
                 {/* MESSAGES DISPLAY ENGINE */}
-               <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 bg-slate-50 min-h-0 w-full max-w-full">
-      {displayLog.map((msg, idx) => (
-        <div key={idx} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'} mb-2 w-full max-w-full`}>
-          
-          {/* Sender Label */}
-          <span className="text-[10px] text-slate-400 mb-1 px-1">
-            {msg.role === 'user' ? 'Admin' : 'AI'}
-          </span>
+            <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 bg-slate-50 min-h-0 w-full max-w-full">
+              {displayLog.map((msg, idx) => (
+                <div key={idx} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'} mb-2 w-full max-w-full group`}>
+                  
+                  {/* Sender Label */}
+                  <span className="text-[10px] text-slate-400 mb-1 px-1">
+                    {msg.role === 'user' ? 'Admin' : 'AI'}
+                  </span>
 
-          {/* MESSAGE BUBBLE CONTAINER */}
-          <div className={`p-3 rounded-xl text-xs max-w-[85%] shadow-sm border ${
-            msg.role === 'user' 
-              ? 'bg-blue-600 text-white border-blue-500' 
-              : 'bg-white text-slate-800 border-slate-200'
-          } break-words whitespace-pre-wrap overflow-x-hidden w-fit`}>
-            
-            {/* THE CRITICAL LINE TEXT WRAPPER */}
-            <p className="leading-relaxed break-words whitespace-pre-wrap w-full overflow-wrap-anywhere">
-              {msg.text}
-            </p>
+                  {/* MESSAGE WRAPPER FLEX ROW */}
+                  <div className={`flex items-center gap-2 max-w-full ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                    
+                    {/* MESSAGE BUBBLE CONTAINER */}
+                    <div className={`p-3 rounded-xl text-xs max-w-[85%] shadow-sm border ${
+                      msg.role === 'user' 
+                        ? 'bg-blue-600 text-white border-blue-500' 
+                        : 'bg-white text-slate-800 border-slate-200'
+                    } break-words whitespace-pre-wrap overflow-x-hidden w-fit`}>
+                      <p className="leading-relaxed break-words whitespace-pre-wrap w-full">
+                        {msg.text}
+                      </p>
+                    </div>
 
-          </div>
-        </div>
-      ))}
-    </div>
+                    {/* HOVER INDIVIDUAL TRASH BUTTON TARGET */}
+                    <button 
+                      onClick={() => deleteSpecificMessage(msg.id)}
+                      title="Delete this message"
+                      className="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 p-1 rounded-md hover:bg-slate-100 transition-all shrink-0"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+
+                  </div>
+                </div>
+              ))}
+            </div>
                   {isAiTyping && (
                     <div className="flex flex-col items-start">
                       <span className="text-[10px] text-slate-400 font-medium px-2 mb-0.5">Evans AI Processing</span>
