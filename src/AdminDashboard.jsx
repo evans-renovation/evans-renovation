@@ -106,7 +106,7 @@ useEffect(() => {
 
  const unsubscribe = onSnapshot(chatQuery, (snapshot) => {
       // Swapped out doc.data() to include the document ID field
-      const updatedMessages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const updatedMessages = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
       setChatLog(updatedMessages);
     }, (error) => {
     console.error("Firestore sync error:", error);
