@@ -182,7 +182,7 @@ useEffect(() => {
       const snapshot = await getDocs(query(chatRef));
       
       // 2. Commit a parallel batch wipe sequence to Firestore
-      const deletePromises = snapshot.docs.map((doc) => deleteDoc(doc.ref));
+      const deletePromises = snapshot.docs.map((d) => deleteDoc(d.ref));
       await Promise.all(deletePromises);
       
       alert("Chat history successfully cleared!");
