@@ -664,8 +664,59 @@ export default function AdminDashboard({ user, onLogout }) {
         </div>
       </div>
 
-      {/* --- ADD REQUEST MODAL --- */}
+     {/* --- ADD REQUEST MODAL --- */}
       {linkingClient && (
         <div className="fixed inset-0 z-[150] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-md rounded-xl shadow-2xl p-6 animate-in zoom-in-95">
             <h3 className="text-xl font-serif text-slate-900 mb-4">Request Signature</h3>
+            <div className="space-y-4">
+              <input 
+                type="text" 
+                placeholder="Document Name (e.g., Quote #123)" 
+                value={reqName} 
+                onChange={(e) => setReqName(e.target.value)} 
+                className="w-full p-3 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-amber-500" 
+              />
+              <div className="flex gap-3 mt-6">
+                <button 
+                  onClick={() => { setLinkingClient(null); setReqName(''); }} 
+                  className="flex-1 p-3 text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleAddRequest} 
+                  className="flex-1 p-3 text-white bg-slate-900 hover:bg-slate-800 rounded-lg font-bold transition-colors"
+                >
+                  Send Request
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- MANAGE HUB MODAL (Required so the manage buttons work) --- */}
+      {managingHub && (
+        <div className="fixed inset-0 z-[150] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-lg rounded-xl shadow-2xl p-6 relative">
+            <button onClick={() => setManagingHub(null)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-900">
+              <X />
+            </button>
+            <h3 className="text-xl font-serif mb-4">Hub Settings: {managingHub.folder?.name}</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs font-bold uppercase text-slate-500 block mb-1">Add To-Do</label>
+                <div className="flex gap-2">
+                  <input type="text" value={newTodoText} onChange={e => setNewTodoText(e.target.value)} className="flex-1 p-2 border rounded" placeholder="New task..." />
+                  <button onClick={handleAddTodo} className="bg-slate-900 text-white px-4 rounded font-bold">Add</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+}
