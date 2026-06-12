@@ -734,7 +734,7 @@ export default function AdminDashboard({ user, onLogout }) {
             <div className="p-6 flex flex-col md:flex-row gap-8 overflow-y-auto">
                
                {/* LEFT COL: Action Required (To-Dos) */}
-               <div className="flex-1 bg-white p-5 rounded border border-black/5">
+               <div className="flex-1 bg-white p-5 rounded border border-black/5 min-w-0">
                  <h4 className="text-sm font-bold uppercase tracking-widest text-black/40 mb-4 flex items-center gap-2"><ListTodo size={16}/> Client To-Do List</h4>
                  
                  <div className="flex gap-2 mb-6">
@@ -754,7 +754,7 @@ export default function AdminDashboard({ user, onLogout }) {
                </div>
 
                {/* RIGHT COL: Site Diary */}
-               <div className="flex-1 bg-white p-5 rounded border border-black/5">
+               <div className="flex-1 bg-white p-5 rounded border border-black/5 min-w-0">
                  <h4 className="text-sm font-bold uppercase tracking-widest text-black/40 mb-4 flex items-center gap-2"><FileText size={16}/> Site Diary Updates</h4>
                  
                  <div className="flex flex-col gap-2 mb-6 bg-slate-50 p-3 rounded border border-black/5">
