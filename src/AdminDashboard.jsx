@@ -4,8 +4,8 @@ import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, getDoc, arrayUn
 import { 
   Loader2, Plus, Save, Trash2, PenTool, CheckCircle, XCircle, 
   Folder, Search, RefreshCw, ExternalLink, Users, Wrench, Info,
-  PieChart, Link as LinkIcon, StickyNote, MessageSquare, ArrowRight, FileText, X, Star,
-  ListTodo, TrendingUp, PlusCircle
+  PieChart, Link as LinkIcon, StickyNote, MessageSquare, X, Star,
+  ListTodo, TrendingUp
 } from 'lucide-react';
 import { jsPDF } from "jspdf";
 
@@ -44,6 +44,14 @@ export default function AdminDashboard({ user, onLogout }) {
   const [newDiaryText, setNewDiaryText] = useState('');
   const [newDiaryImg, setNewDiaryImg] = useState('');
 
+  // --- AI COPILOT SERVER CONNECTION ---
+  const [chatInput, setChatInput] = useState('');
+  const [chatLog, setChatLog] = useState([]);
+  const [isAiTyping, setIsAiTyping] = useState(false);
+  const [isWorkspaceMaximized, setIsWorkspaceMaximized] = useState(false);
+  const [modelPreference, setModelPreference] = useState('flash');
+  const [activeInvite, setActiveInvite] = useState(null);
+
   useEffect(() => {
     fetchClients();
     fetchSettings();
@@ -53,7 +61,7 @@ export default function AdminDashboard({ user, onLogout }) {
     setLoading(true);
     try {
       const querySnapshot = await getDocs(collection(db, "clients"));
-      setClients(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setClients(querySnapshot.docs.map(d => ({ id: d.id, ...d.data() })));
     } catch (error) { console.error(error); } 
     finally { setLoading(false); }
   };
@@ -84,14 +92,6 @@ export default function AdminDashboard({ user, onLogout }) {
     return input;
   };
 
-  // --- AI COPILOT SERVER CONNECTION (PERSISTENT & AUTO-FALLBACK) ---
-  const [chatInput, setChatInput] = useState('');
-  const [chatLog, setChatLog] = useState([]);
-  const [isAiTyping, setIsAiTyping] = useState(false);
-  const [isWorkspaceMaximized, setIsWorkspaceMaximized] = useState(false);
-  const [modelPreference, setModelPreference] = useState('flash');
-  const [activeInvite, setActiveInvite] = useState(null);
-
   // Real-Time Database Sync Hook
   useEffect(() => {
     const projectId = managingHub?.id || managingHub?.folder?.id;
@@ -103,7 +103,6 @@ export default function AdminDashboard({ user, onLogout }) {
     );
 
     const unsubscribe = onSnapshot(chatQuery, (snapshot) => {
-      // FIX: Changed 'doc' to 'd' to prevent linter shadowing errors
       const updatedMessages = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
       setChatLog(updatedMessages);
     }, (error) => {
@@ -113,7 +112,7 @@ export default function AdminDashboard({ user, onLogout }) {
     return () => unsubscribe();
   }, [managingHub]);
 
-  // Live listener for instant incoming pings sent to YOU from other admins
+  // Live listener for instant incoming pings
   useEffect(() => {
     if (!user?.email) return;
 
@@ -163,7 +162,6 @@ export default function AdminDashboard({ user, onLogout }) {
     }
   };
 
-  // --- CLEAR PROJECT CHAT HISTORY ENGINE ---
   const clearChatHistory = async () => {
     const projectId = managingHub?.id || managingHub?.folder?.id;
     if (!projectId) return;
@@ -177,7 +175,6 @@ export default function AdminDashboard({ user, onLogout }) {
       const chatRef = collection(db, `projects/${projectId}/aiChatWorkspace`);
       const snapshot = await getDocs(query(chatRef));
       
-      // FIX: Changed 'doc' to 'd' to prevent linter shadowing errors
       const deletePromises = snapshot.docs.map((d) => deleteDoc(d.ref));
       await Promise.all(deletePromises);
       
@@ -188,7 +185,6 @@ export default function AdminDashboard({ user, onLogout }) {
     }
   };
 
-  // --- DELETE SPECIFIC INDIVIDUAL MESSAGE ---
   const deleteSpecificMessage = async (messageId) => {
     const projectId = managingHub?.id || managingHub?.folder?.id;
     if (!projectId || !messageId) return;
@@ -448,7 +444,10 @@ export default function AdminDashboard({ user, onLogout }) {
         <div className="flex px-4 max-w-7xl mx-auto w-full gap-1">
           {['clients', 'analytics', 'tools', 'info'].map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)} className={`px-6 py-3 text-sm font-bold capitalize flex items-center gap-2 rounded-t-lg transition-colors ${activeTab === tab ? 'bg-slate-100 text-slate-900' : 'text-slate-400 hover:text-white hover:bg-white/10'}`}>
-              {tab === 'clients' && <Users size={16} />}{tab === 'analytics' && <PieChart size={16} />}{tab === 'tools' && <Wrench size={16} />}{tab === 'info' && <Info size={16} />}
+              {tab === 'clients' && <Users size={16} />}
+              {tab === 'analytics' && <PieChart size={16} />}
+              {tab === 'tools' && <Wrench size={16} />}
+              {tab === 'info' && <Info size={16} />}
               {tab}
             </button>
           ))}
@@ -479,7 +478,12 @@ export default function AdminDashboard({ user, onLogout }) {
                 <div className="flex-1 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden min-h-[600px] relative">
                   <iframe src={analyticsUrl} className="absolute inset-0 w-full h-full border-0" title="Analytics Embed" allowFullScreen></iframe>
                 </div>
-              ) : !isEditingUrl && <div className="flex flex-col items-center justify-center py-20 bg-white rounded-xl border border-dashed border-slate-300"><PieChart size={48} className="text-slate-300 mb-4" /><p className="text-slate-500">No data connected yet.</p></div>}
+              ) : (!isEditingUrl && (
+                <div className="flex flex-col items-center justify-center py-20 bg-white rounded-xl border border-dashed border-slate-300">
+                  <PieChart size={48} className="text-slate-300 mb-4" />
+                  <p className="text-slate-500">No data connected yet.</p>
+                </div>
+              ))}
             </div>
           )}
 
@@ -498,4 +502,170 @@ export default function AdminDashboard({ user, onLogout }) {
                 <form onSubmit={handleAddClient} className="bg-white p-6 rounded-xl shadow-lg mb-8 border border-amber-100">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <input type="text" placeholder="Username / Email" value={newEmail} onChange={e => setNewEmail(e.target.value)} className="p-3 border rounded-lg w-full" required />
-                    <input type="text" placeholder="Drive Folder Link or ID" value={newFolderId} onChange={e => setNewFolderId(e.target.value)} className="p-3 border rounded-lg w-full"
+                    <input type="text" placeholder="Drive Folder Link or ID" value={newFolderId} onChange={e => setNewFolderId(e.target.value)} className="p-3 border rounded-lg w-full" required />
+                  </div>
+                  <button className="bg-evans-amber px-6 py-2 rounded font-bold">Save</button>
+                </form>
+              )}
+
+              <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead className="bg-slate-50 border-b border-slate-200 text-xs font-bold uppercase text-slate-500">
+                    <tr>
+                      <th className="p-4">Client</th>
+                      <th className="p-4">Private Notes</th>
+                      <th className="p-4">Folders</th>
+                      <th className="p-4">Pending Requests</th>
+                      <th className="p-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {filteredClients.map(client => (
+                      <tr key={client.id} className="hover:bg-slate-50">
+                        <td className="p-4">
+                          <div className="font-medium text-slate-900">{client.id.replace('@evans-portal.com', '')}</div>
+                          <button onClick={() => copyInvite(client)} className="text-xs mt-1 flex items-center gap-1 text-blue-600 hover:text-blue-800 transition-colors">
+                             {copySuccess === client.id ? <CheckCircle size={12}/> : <MessageSquare size={12} />} {copySuccess === client.id ? "Copied!" : "Copy Invite"}
+                          </button>
+                        </td>
+                        <td className="p-4">
+                          {editingId === client.id ? (
+                            <textarea className="w-full p-2 border rounded text-xs h-20" placeholder="Notes..." value={editForm.notes} onChange={e => setEditForm({...editForm, notes: e.target.value})} />
+                          ) : (
+                            client.notes ? <div className="flex items-start gap-2 max-w-[200px]"><StickyNote size={14} className="text-amber-500 shrink-0 mt-0.5" /><span className="text-xs text-slate-600 truncate">{client.notes}</span></div> : <span className="text-xs text-slate-300 italic">No notes</span>
+                          )}
+                        </td>
+                        {/* MULTI-FOLDER COLUMN */}
+                        <td className="p-4 align-top">
+                          <div className="space-y-2">
+                             
+                             {/* Legacy Main Folder */}
+                             {client.folderId && !client.folders?.length && (
+                               <div className="flex items-center gap-2 text-sm text-black/60">
+                                 <Folder size={14} className="text-evans-heritage"/> <span className="truncate w-20">{client.folderId}</span>
+                                 <a href={`https://drive.google.com/drive/folders/${client.folderId}`} target="_blank" rel="noreferrer" className="text-black/40 hover:text-evans-heritage"><ExternalLink size={14} /></a>
+                               </div>
+                             )}
+
+                            {/* New Specific Job Folders */}
+                             {client.folders?.map((f) => (
+                               <div key={f.id} className="flex flex-col gap-3 bg-evans-stone text-evans-earth p-3 rounded border border-black/5 w-full text-xs shadow-sm mb-2">
+                                 <div className="flex items-center justify-between border-b border-black/5 pb-2">
+                                   <div className="flex items-center gap-2 overflow-hidden">
+                                     <Folder size={14} className="text-evans-heritage shrink-0" />
+                                     <span className="font-bold text-sm truncate">
+                                       {f.name} {client.defaultFolderId === f.folderId && <span className="text-amber-500 ml-1 text-xs">(Default)</span>}
+                                     </span>
+                                   </div>
+                                   <div className="flex items-center gap-3 shrink-0">
+                                      <button onClick={() => setDefaultFolder(client, f.folderId)} className={`hover:text-amber-500 transition-colors ${client.defaultFolderId === f.folderId ? 'text-amber-500' : 'text-black/20'}`} title="Set as default folder"><Star size={16} className={client.defaultFolderId === f.folderId ? "fill-current" : ""} /></button>
+                                      <a href={`https://drive.google.com/drive/folders/${f.folderId}`} target="_blank" rel="noreferrer" className="text-black/40 hover:text-blue-500"><ExternalLink size={16} /></a>
+                                      <button onClick={() => removeFolder(client, f)} className="text-black/40 hover:text-red-500"><X size={16}/></button>
+                                   </div>
+                                 </div>
+                                 
+                                 <div className="flex items-center gap-2">
+                                   <select value={f.status || 'Planning'} onChange={(e) => updateFolder(client, f.id, { status: e.target.value })} className="border border-black/10 rounded p-1.5 bg-white outline-none focus:border-evans-heritage font-semibold">
+                                     <option>Planning</option>
+                                     <option>Quoting</option>
+                                     <option>Pending Approval</option>
+                                     <option>Accepted</option>
+                                     <option>In Progress</option>
+                                     <option>Billed</option>
+                                     <option>Completed</option>
+                                   </select>
+                                   <input type="text" placeholder="Note to client..." defaultValue={f.adminNote || ''} onBlur={(e) => { if (e.target.value !== (f.adminNote || '')) updateFolder(client, f.id, { adminNote: e.target.value }); }} className="flex-1 p-1.5 border border-black/10 rounded outline-none focus:border-evans-heritage" />
+                                 </div>
+
+                                 <div className="flex flex-wrap items-center gap-4 bg-white p-2 rounded border border-black/5">
+                                    <div className="flex items-center gap-2">
+                                      <TrendingUp size={14} className="text-black/40" />
+                                      <span className="font-semibold text-black/50 uppercase tracking-wider text-[10px]">Budget: €</span>
+                                      <input type="number" placeholder="Total" defaultValue={f.budgetTotal || ''} onBlur={(e) => updateFolder(client, f.id, { budgetTotal: e.target.value })} className="w-20 p-1 border-b border-black/10 outline-none focus:border-evans-heritage text-center" />
+                                      <span className="text-black/40">/ Paid: €</span>
+                                      <input type="number" placeholder="Paid" defaultValue={f.budgetPaid || ''} onBlur={(e) => updateFolder(client, f.id, { budgetPaid: e.target.value })} className="w-20 p-1 border-b border-black/10 outline-none focus:border-evans-heritage text-center" />
+                                    </div>
+
+                                    <div className="flex gap-3 ml-auto">
+                                      <button onClick={() => setManagingHub({ client, folder: f })} className="flex items-center gap-1 bg-evans-earth text-white px-3 py-1.5 rounded hover:bg-black/80 font-bold text-[11px] uppercase transition-all shadow-sm">
+                                        Manage Project Hub
+                                      </button>
+                                    </div>
+                                 </div>
+
+                                 {(f.clientNote || f.approvedAt || f.declinedAt) && (
+                                   <div className="flex flex-col gap-1.5 border-t border-black/5 pt-2">
+                                     {f.clientNote && <div className="text-blue-700 font-medium break-words"><span className="text-black/40 font-bold uppercase mr-1">Client Note:</span> {f.clientNote}</div>}
+                                     {f.approvedAt && <div className="text-green-700 font-bold flex gap-1 items-center"><CheckCircle size={12}/> Quote Accepted</div>}
+                                     {f.declinedAt && <div className="text-red-600 font-bold flex gap-1 items-center"><XCircle size={12}/> Quote Declined</div>}
+                                   </div>
+                                 )}
+                               </div>
+                             ))}
+                             
+                             <button onClick={() => { setLinkingFolderClient(client); setNewFolderName(''); setNewFolderLink(''); }} className="text-xs text-evans-heritage font-semibold hover:underline flex items-center gap-1 mt-1">
+                               <Plus size={12}/> Add Job Folder
+                             </button>
+                          </div>
+                        </td>
+                        
+                        {/* MULTI REQUEST COLUMN */}
+                        <td className="p-4">
+                          <div className="space-y-2">
+                             {client.signatureRequests?.map((req) => (
+                               <div key={req.id} className="flex items-center gap-2 bg-amber-50 text-amber-900 px-2 py-1 rounded border border-amber-100 w-fit text-xs">
+                                 <PenTool size={10} />
+                                 <span className="font-bold">{req.name}</span>
+                                 <button onClick={() => removeRequest(client, req)} className="text-amber-400 hover:text-red-500"><X size={12}/></button>
+                               </div>
+                             ))}
+                             
+                             {client.signatures?.map((sig, idx) => (
+                               <div key={idx} className="flex items-center gap-2 bg-green-50 text-green-900 px-2 py-1 rounded border border-green-100 w-fit text-xs">
+                                 <CheckCircle size={10} />
+                                 <span>{sig.docName || "Quote"}</span>
+                                 <button onClick={() => downloadReceipt(client, sig)} className="text-green-600 hover:text-green-900"><Save size={12}/></button>
+                               </div>
+                             ))}
+
+                             {client.signature && !client.signatures && (
+                               <div className="flex items-center gap-2 bg-green-50 text-green-900 px-2 py-1 rounded border border-green-100 w-fit text-xs">
+                                 <CheckCircle size={10} /> <span>Old Quote</span>
+                                 <button onClick={() => downloadReceipt(client, client.signature)} className="text-green-600 hover:text-green-900"><Save size={12}/></button>
+                               </div>
+                             )}
+
+                             <button onClick={() => { setLinkingClient(client); setReqName(''); setReqLink(''); }} className="text-xs text-blue-600 hover:underline flex items-center gap-1">
+                               <Plus size={12}/> Add Request
+                             </button>
+                          </div>
+                        </td>
+
+                        <td className="p-4 text-right">
+                          {editingId === client.id ? (
+                            <div className="flex justify-end gap-2"><button onClick={saveEdit} className="p-2 bg-green-100 text-green-700 rounded"><Save size={16}/></button><button onClick={() => setEditingId(null)} className="p-2 bg-slate-100 text-slate-600 rounded"><XCircle size={16}/></button></div>
+                          ) : (
+                            <div className="flex justify-end gap-2"><button onClick={() => startEdit(client)} className="p-2 text-slate-400 hover:text-slate-900 rounded"><Wrench size={16}/></button><button onClick={() => deleteClient(client.id)} className="p-2 text-slate-400 hover:text-red-600 rounded"><Trash2 size={16}/></button></div>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* TOOLS & INFO TABS */}
+          {activeTab === 'tools' && <div className="p-8 bg-white rounded-xl shadow-sm border border-slate-200">...Tools content...</div>}
+          {activeTab === 'info' && <div className="p-8 bg-white rounded-xl shadow-sm border border-slate-200">...Info content...</div>}
+        </div>
+      </div>
+
+      {/* --- ADD REQUEST MODAL --- */}
+      {linkingClient && (
+        <div className="fixed inset-0 z-[150] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-md rounded-xl shadow-2xl p-6 animate-in zoom-in-95">
+            <h3 className="text-xl font-serif text-slate-900 mb-4">Request Signature</h3>
