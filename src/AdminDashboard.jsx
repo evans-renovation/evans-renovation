@@ -1073,7 +1073,6 @@ const handleAskCopilot = async () => {
                
             </div>
           </div>
-        </div>
       )}
     </div>
   );
