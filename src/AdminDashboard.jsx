@@ -889,30 +889,31 @@ const handleAskCopilot = async () => {
                 </div>
                 
                 {/* MESSAGES DISPLAY ENGINE */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 min-h-0">
-                  {displayLog.map((msg, idx) => (
-  <div key={idx} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'} mb-4 w-full max-w-full`}>
-    
-    {/* Sender Label */}
-    <span className="text-[10px] text-slate-400 mb-1 px-1">
-      {msg.role === 'user' ? 'Admin' : 'AI'}
-    </span>
+               <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 bg-slate-50 min-h-0 w-full max-w-full">
+      {displayLog.map((msg, idx) => (
+        <div key={idx} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'} mb-2 w-full max-w-full`}>
+          
+          {/* Sender Label */}
+          <span className="text-[10px] text-slate-400 mb-1 px-1">
+            {msg.role === 'user' ? 'Admin' : 'AI'}
+          </span>
 
-    {/* MESSAGE BUBBLE CONTAINER */}
-    <div className={`p-3 rounded-xl text-xs max-w-[90%] md:max-w-[85%] shadow-sm border ${
-      msg.role === 'user' 
-        ? 'bg-blue-600 text-white border-blue-500' 
-        : 'bg-slate-50 text-slate-800 border-slate-200'
-    } break-words whitespace-pre-wrap overflow-x-hidden w-full`}>
-      
-      {/* 🚨 THE CRITICAL LINE TEXT WRAPPER 🚨 */}
-      <p className="leading-relaxed break-words whitespace-pre-wrap w-full overflow-wrap-anywhere">
-        {msg.text}
-      </p>
+          {/* MESSAGE BUBBLE CONTAINER */}
+          <div className={`p-3 rounded-xl text-xs max-w-[85%] shadow-sm border ${
+            msg.role === 'user' 
+              ? 'bg-blue-600 text-white border-blue-500' 
+              : 'bg-white text-slate-800 border-slate-200'
+          } break-words whitespace-pre-wrap overflow-x-hidden w-fit`}>
+            
+            {/* THE CRITICAL LINE TEXT WRAPPER */}
+            <p className="leading-relaxed break-words whitespace-pre-wrap w-full overflow-wrap-anywhere">
+              {msg.text}
+            </p>
 
+          </div>
+        </div>
+      ))}
     </div>
-  </div>
-))}
                   {isAiTyping && (
                     <div className="flex flex-col items-start">
                       <span className="text-[10px] text-slate-400 font-medium px-2 mb-0.5">Evans AI Processing</span>
