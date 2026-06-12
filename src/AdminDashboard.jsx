@@ -220,7 +220,7 @@ export default function AdminDashboard({ user, onLogout }) {
         role: 'user',
         text: userMsg,
         timestamp: new Date(),
-        sender: 'Admin'
+        sender: user?.email ? user.email.split('@')[0] : 'Admin'
       });
 
       const context = `
@@ -916,18 +916,46 @@ export default function AdminDashboard({ user, onLogout }) {
                      </div>
                      
                      {/* MESSAGES DISPLAY ENGINE */}
-                     <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 bg-slate-50 min-h-0 w-full max-w-full">
-                       {displayLog.map((msg, idx) => (
-                         <div key={idx} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'} mb-2 w-full max-w-full group`}>
-                           <span className="text-[10px] text-slate-400 mb-1 px-1">
-                             {msg.role === 'user' ? 'Admin' : 'AI'}
-                           </span>
-                           <div className={`flex items-center gap-2 max-w-full ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                             <div className={`p-3 rounded-xl text-xs max-w-[85%] shadow-sm border ${
-                               msg.role === 'user' 
-                                 ? 'bg-blue-600 text-white border-blue-500' 
-                                 : 'bg-white text-slate-800 border-slate-200'
-                             } break-words whitespace-pre-wrap overflow-x-hidden w-fit`}>
+                    <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 bg-slate-50 min-h-0 w-full max-w-full">
+                       {displayLog.map((msg, idx) => {
+                         // 1. Get the sender's name
+                         const senderName = msg.sender || (msg.role === 'user' ? 'Admin' : 'Evans AI');
+                         
+                         // 2. Assign specific colors based on who is logged in
+                         let bubbleColor = 'bg-white text-slate-800 border-slate-200'; // AI Default
+                         
+                         if (msg.role === 'user') {
+                           const s = senderName.toLowerCase();
+                           if (s.includes('cameron')) bubbleColor = 'bg-blue-600 text-white border-blue-500'; // Cameron is Blue
+                           else if (s.includes('bradley')) bubbleColor = 'bg-emerald-600 text-white border-emerald-500'; // Bradley is Green
+                           else if (s.includes('admin')) bubbleColor = 'bg-amber-600 text-white border-amber-500'; // Office is Amber/Orange
+                           else bubbleColor = 'bg-indigo-600 text-white border-indigo-500'; // Fallback
+                         }
+
+                         return (
+                           <div key={idx} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'} mb-2 w-full max-w-full group`}>
+                             <span className="text-[10px] text-slate-400 mb-1 px-1 capitalize">
+                               {senderName}
+                             </span>
+                             <div className={`flex items-center gap-2 max-w-full ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                               <div className={`p-3 rounded-xl text-xs max-w-[85%] shadow-sm border ${bubbleColor} break-words whitespace-pre-wrap overflow-x-hidden w-fit`}>
+                                 <p className="leading-relaxed break-words whitespace-pre-wrap w-full">
+                                   {msg.text}
+                                 </p>
+                               </div>
+                               <button 
+                                 onClick={() => deleteSpecificMessage(msg.id)}
+                                 title="Delete this message"
+                                 className="text-slate-300 hover:text-red-500 p-1 rounded-md hover:bg-slate-100 transition-all shrink-0"
+                               >
+                                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                 </svg>
+                               </button>
+                             </div>
+                           </div>
+                         );
+                       })}
                                <p className="leading-relaxed break-words whitespace-pre-wrap w-full">
                                  {msg.text}
                                </p>
