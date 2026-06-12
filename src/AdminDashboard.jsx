@@ -763,11 +763,11 @@ const handleAskCopilot = async () => {
                    {(!managingHub.folder.diary || managingHub.folder.diary.length === 0) && <p className="text-xs text-black/40 italic">No diary entries yet.</p>}
                  </div>{/* --- AI COPILOT CHAT UI --- */}
             {/* --- EVANS RÉNOVATION COLLABORATIVE WORKSPACE --- */}
-            <div className={
-              isWorkspaceMaximized 
-                ? "fixed inset-0 z-50 bg-slate-900 p-4 md:p-6 flex flex-col md:flex-row gap-6 overflow-hidden text-left" 
-                : "mt-8 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden text-left flex flex-col"
-            }>
+          <div className={`
+            isWorkspaceMaximized
+              ? "fixed inset-0 z-50 bg-slate-900 p-4 md:p-6 flex flex-col md:flex-row gap-6 overflow-hidden text-left w-full max-w-full"
+              : "mt-8 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden text-left flex flex-col w-full max-w-full"
+          `}>
               
               {/* ASSET METADATA PANEL (Only visible when maximized to full screen layout canvas) */}
               {isWorkspaceMaximized && (
