@@ -996,10 +996,9 @@ const handleAskCopilot = async () => {
                       </div>
                     </div>
                   )}
-                </div>
 
                 {/* BOTTOM INPUT BLOCK */}
-                <div className="p-3 bg-white border-t border-slate-200 flex gap-2 shrink-0">
+                <div className="p-3 bg-white border-t border-slate-200 flex gap-2 shrink-0 mt-auto">
                   <input 
                     type="text" 
                     value={chatInput}
@@ -1017,11 +1016,8 @@ const handleAskCopilot = async () => {
                     Send
                   </button>
                 </div>
-              </div>
-
-            </div>
-            {/* --- END WORKSPACE LOGIC --- */}
-
+              </div> {/* <-- This safely closes the Chat Box Container */}
+            </div> {/* <-- This safely closes the Workspace Wrapper */}
 {/* GLOBAL LIVE WORKSPACE INVITATION INTERACTIVE BANNER OVERLAY */}
       {activeInvite && (
         <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white p-4 rounded-xl shadow-2xl border border-purple-500/40 flex flex-col gap-3 max-w-sm text-left backdrop-blur-md transition-all animate-bounce">
