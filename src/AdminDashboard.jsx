@@ -191,7 +191,17 @@ useEffect(() => {
       alert("Failed to clear log database history.");
     }
   };
-  
+  // --- DELETE SPECIFIC INDIVIDUAL MESSAGE ---
+  const deleteSpecificMessage = async (messageId) => {
+    const projectId = managingHub?.id || managingHub?.folder?.id;
+    if (!projectId || !messageId) return;
+
+    try {
+      await deleteDoc(doc(db, `projects/${projectId}/aiChatWorkspace`, messageId));
+    } catch (err) {
+      console.error("Failed to delete specific log message:", err);
+    }
+  };
 // Computed log: If the database is empty, always show the default welcome greeting
 const displayLog = chatLog.length > 0 ? chatLog : [
   { 
