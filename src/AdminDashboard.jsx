@@ -5,7 +5,7 @@ import {
   Loader2, Plus, Save, Trash2, PenTool, CheckCircle, XCircle, 
   Folder, Search, RefreshCw, ExternalLink, Users, Wrench, Info,
   PieChart, Link as LinkIcon, StickyNote, MessageSquare, X, Star,
-  ListTodo, TrendingUp
+  ListTodo, TrendingUp, FileText
 } from 'lucide-react';
 import { jsPDF } from "jspdf";
 
