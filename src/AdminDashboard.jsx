@@ -765,7 +765,7 @@ const handleAskCopilot = async () => {
            {/* --- EVANS RÉNOVATION COLLABORATIVE WORKSPACE --- */}
           <div className={
             isWorkspaceMaximized
-              ? "fixed inset-0 z-50 bg-slate-900 p-4 md:p-6 flex flex-col md:flex-row gap-6 overflow-hidden text-left w-screen h-screen"
+              ? "fixed inset-0 z-50 bg-slate-900 p-4 md:p-6 flex flex-col md:flex-row gap-6 overflow-hidden text-left w-full h-full"
               : "mt-8 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden text-left flex flex-col w-full max-w-full"
           }>
               
@@ -812,7 +812,7 @@ const handleAskCopilot = async () => {
               <div className={`flex-1 flex flex-col bg-white rounded-xl ${isWorkspaceMaximized ? "border border-slate-200 shadow-2xl h-full overflow-hidden" : "h-96"}`}>
                 
                 {/* HEADLINE ACTIONS STATUS BAR */}
-                <div className="bg-slate-800 px-4 py-2 border-b border-slate-700 flex items-center justify-between shadow-sm shrink-0">
+               <div className="bg-slate-800 px-4 py-2.5 border-b border-slate-700 flex flex-wrap items-center justify-between gap-3 shadow-sm shrink-0 w-full max-w-full">
                   <h3 className="text-white font-medium flex items-center gap-2 text-sm md:text-base">
                     <svg className="w-5 h-5 text-blue-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
